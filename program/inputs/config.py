@@ -34,7 +34,6 @@ Y_MAX_i = 1.5e-2
 V_MAX = 6e6
 ORDER = 3
 
-# DO NOT EDIT
 I_P = {'F0': 933e6, 'F_MAX': 8e6}
 K_RADAR = - 2 * I_P['F0'] * 2 * np.pi / const.c  # Radar wavenumber
 # If 'plasma' == True, might as well set f_min ≈ 1e6
