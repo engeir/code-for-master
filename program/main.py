@@ -329,20 +329,6 @@ class PlotClass:
 
 class Simulation:
     def __init__(self):
-        # === Input parameters ===
-        # B -- Magnetic field strength [T]
-        # F0 -- Radar frequency [Hz]
-        # F_MAX -- Range of frequency domain [Hz]
-        # MI -- Ion mass in atomic mass units [u]
-        # NE -- Electron number density [m^(-3)]
-        # NU_E -- Electron collision frequency [Hz]
-        # NU_I -- Ion collision frequency [Hz]
-        # T_E -- Electron temperature [K]
-        # T_I -- Ion temperature [K]
-        # T_ES -- Temperature of suprathermal electrons in the gauss_shell VDF [K]
-        # THETA -- Pitch angle [1]
-        # Z -- Height of real data [100, 599] [km]
-        # mat_file -- Important when using real data and decides the time of day
         self.f = np.ndarray([])
         self.data = []
         self.meta_data = []
@@ -363,6 +349,22 @@ class Simulation:
         plt_ridge, since this text will go on the left of every ridge.
         The list self.legend_txt should be the same length as the length of the inner lists, and will give
         the legend for the spectra given in the inner lists.
+
+        Notes:
+        Possible items in the sys_set dictionary include:
+            B -- Magnetic field strength [T]
+            F0 -- Radar frequency [Hz]
+            F_MAX -- Range of frequency domain [Hz]
+            MI -- Ion mass in atomic mass units [u]
+            NE -- Electron number density [m^(-3)]
+            NU_E -- Electron collision frequency [Hz]
+            NU_I -- Ion collision frequency [Hz]
+            T_E -- Electron temperature [K]
+            T_I -- Ion temperature [K]
+            T_ES -- Temperature of suprathermal electrons in the gauss_shell VDF [K]
+            THETA -- Pitch angle [1]
+            Z -- Height of real data [100, 599] [km]
+            mat_file -- Important when using real data and decides the time of day
 
         Examples:
         ::
