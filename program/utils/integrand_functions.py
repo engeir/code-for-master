@@ -98,7 +98,7 @@ class INT_MAXWELL(INTEGRAND):
 
 
 class INT_LONG(INTEGRAND):
-    the_type = 'long_calc'
+    the_type = 'a_vdf'
 
     def __init__(self):
         self.y = np.array([])

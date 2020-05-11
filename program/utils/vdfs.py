@@ -1,6 +1,6 @@
-"""Velocity distribution function used in the version long_calc, one of the integrands available for use in the Gordeyev integral.
+"""Velocity distribution function used in the version a_vdf, one of the integrands available for use in the Gordeyev integral.
 
-Any new VDF must be added as an option in the long_calc function in integrand_functions.py.
+Any new VDF must be added as an option in the a_vdf function in integrand_functions.py.
 """
 
 from abc import ABC, abstractmethod

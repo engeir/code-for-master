@@ -35,6 +35,7 @@
         "imag",
         "interp",
         "intf",
+        "isalpha",
         "isspec",
         "itertools",
         "k",

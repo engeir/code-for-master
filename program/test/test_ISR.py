@@ -55,7 +55,7 @@ class TestISR(unittest.TestCase):
         self.assertEqual(meta_data['mat_file'], None)
 
     def test_isr_long_calc_gauss(self):
-        self.a, self.b, meta_data = isr.isr_spectrum('long_calc', self.sys_set, **self.params)
+        self.a, self.b, meta_data = isr.isr_spectrum('a_vdf', self.sys_set, **self.params)
         self.assertEqual(meta_data['kappa'], None)
         self.assertEqual(meta_data['vdf'], 'gauss_shell')
         self.assertEqual(meta_data['T_ES'], 90000)
@@ -64,7 +64,7 @@ class TestISR(unittest.TestCase):
 
     def test_isr_long_calc_real(self):
         self.params['vdf'] = 'real_data'
-        self.a, self.b, meta_data = isr.isr_spectrum('long_calc', self.sys_set, **self.params)
+        self.a, self.b, meta_data = isr.isr_spectrum('a_vdf', self.sys_set, **self.params)
         self.assertEqual(meta_data['kappa'], None)
         self.assertEqual(meta_data['vdf'], 'real_data')
         self.assertEqual(meta_data['T_ES'], None)

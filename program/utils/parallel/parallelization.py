@@ -43,11 +43,11 @@ def integrate(m, T, nu, y, function, kappa=None):
     pool.close()
     if function.the_type == 'kappa':
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))
-    elif function.the_type == 'long_calc':
+    elif function.the_type == 'a_vdf':
         a = 4 * np.pi * T * const.k * array / m
     else:
         a = array
-    if function.the_type == 'long_calc':
+    if function.the_type == 'a_vdf':
         F = a
     else:
         F = 1 - (1j * cf.w + nu) * a

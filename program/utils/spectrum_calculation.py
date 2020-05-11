@@ -2,7 +2,7 @@
 
 Raises:
     SystemError: if no known version of particle distribution is given
-    SystemError: if, with the long_calc version, no known VDF is given
+    SystemError: if, with the a_vdf version, no known VDF is given
     SystemError: if, given a kappa particle distribution, no kappa index is given
 """
 
@@ -28,7 +28,7 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
 
     Keyword Arguments:
         kappa {int} -- kappa index used in any kappa distribution (default: {None})
-        vdf {str} -- gives the VDF used in the long_calc calculation (default: {None})
+        vdf {str} -- gives the VDF used in the a_vdf calculation (default: {None})
         area {bool} -- if True, calculates the area under the ion line (default: {False})
 
     Returns:
@@ -60,9 +60,9 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
         const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
 
     Xp_i = np.sqrt(
-        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * cf.K_RADAR**2))
+        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=3)**2 * cf.K_RADAR**2))
     Xp_e = np.sqrt(
-        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * cf.K_RADAR**2))
+        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=3)**2 * cf.K_RADAR**2))
 
     # f_scaled = cf.f
     # In case we have \omega = 0 in our frequency array, we just ignore this warning message
@@ -78,6 +78,7 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
             print('F_MAX is set too high. The area was not calculated.')
 
     sys_set['THETA'] = round(params['THETA'] * 180 / np.pi, 1)
+    sys_set['version'] = version
     return cf.f, Is, dict(sys_set, **p)
 
 
@@ -151,20 +152,20 @@ def w_e_gyro(B):
 def correct_inputs(version, sys_set, params):
     """Extra check suppressing the parameters that was given but is not necessary.
     """
-    if version != 'kappa' and not (version == 'long_calc' and params['vdf'] in ['kappa', 'kappa_vol2']):
+    if version != 'kappa' and not (version == 'a_vdf' and params['vdf'] in ['kappa', 'kappa_vol2']):
         params['kappa'] = None
-    if version != 'long_calc':
+    if version != 'a_vdf':
         params['vdf'] = None
-    if version != 'long_calc' or params['vdf'] != 'gauss_shell':
+    if version != 'a_vdf' or params['vdf'] != 'gauss_shell':
         sys_set['T_ES'] = None
-    if version != 'long_calc' or params['vdf'] != 'real_data':
+    if version != 'a_vdf' or params['vdf'] != 'real_data':
         sys_set['Z'] = None
         sys_set['mat_file'] = None
     return sys_set, params
 
 
 def version_check(version, vdf, kappa, sys_set):
-    versions = ['kappa', 'maxwell', 'long_calc']
+    versions = ['kappa', 'maxwell', 'a_vdf']
     try:
         if not version in versions:
             raise SystemError
@@ -176,7 +177,7 @@ def version_check(version, vdf, kappa, sys_set):
     elif version == 'kappa':
         kappa_check(kappa, sys_set)
         func = intf.INT_KAPPA()
-    elif version == 'long_calc':
+    elif version == 'a_vdf':
         vdfs = ['maxwell', 'kappa', 'kappa_vol2', 'gauss_shell', 'real_data']
         try:
             if not vdf in vdfs:
@@ -187,7 +188,7 @@ def version_check(version, vdf, kappa, sys_set):
         if vdf in ['kappa', 'kappa_vol2']:
             kappa_check(kappa, sys_set)
             if isinstance(kappa, list):
-                sys.exit(print('kappa as a list is not accepted for the long_calc version.'))
+                sys.exit(print('kappa as a list is not accepted for the a_vdf version.'))
         func = intf.INT_LONG()
     return func
 

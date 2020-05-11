@@ -69,12 +69,19 @@ class PlotClass:
         except Exception:
             pass
 
-    def save_it(self, version, params):
+    def save_it(self, params):
         """Save the figure as a multi page pdf with all parameters saved in the meta data.
 
         The date and time is used in the figure name, in addition to it ending with which method was used.
         The settings that was used in config as inputs to the plot object is saved in the metadata of the figure.
         """
+        version = ''
+        for d in params:
+            if 'version' in d:
+                if any(c.isalpha() for c in version):
+                    version += f'_{d["version"][0]}'
+                else:
+                    version += f'{d["version"][0]}'
         params.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'], 'V:MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
                           'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
         tt = time.localtime()
@@ -162,7 +169,6 @@ class PlotClass:
                                 Same length as outer list or None (default: {None})
         """
         # Inspired by https://matplotlib.org/matplotblog/posts/create-ridgeplots-in-matplotlib/
-        # To make sure not to alter any list objects, they are copied.
         try:
             getattr(plt, func_type)
         except Exception:
@@ -171,6 +177,9 @@ class PlotClass:
             func_type = 'plot'
         if len(multi_parameters) != len(ridge_txt):
             print('Warning: The list of spectra lists is not of the same length as the length of "ridge_txt"')
+            if len(multi_parameters) > len(ridge_txt):
+                for _ in range(len(multi_parameters) - len(ridge_txt)):
+                    ridge_txt.append('')
         f_original = frequency.copy()
         multi_params = multi_parameters.copy()
         multi_params.reverse()
@@ -394,24 +403,44 @@ class Simulation:
         # Message for ToD
         # the_time = [8 + (int(j.split('-')[-1].split('.')[0]) + 1) / 2 for j in cf.I_P['mat_file']]
         # ridge_txt = [f"ToD: {int(j):02d}:{int(j * 60 % 60):02d} UT" for j in the_time]
-        TEMPS = [2000]  # , 5000]
-        methods = ['maxwell', 'kappa']
+
+        ridge = []
         sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat'}
         params = {'kappa': 3, 'vdf': 'kappa', 'area': False}
-        for T in TEMPS:
-            ridge = []
-            sys_set['T_E'] = T
-            self.ridge_txt.append(f'$T_e = {T}$ K')
-            for m in methods:
-                self.f, s, meta_data = isr.isr_spectrum(m, sys_set, **params)
-                self.meta_data.append(meta_data)
-                ridge.append(s)
-            self.data.append(ridge)
+        # Ridge 1
+        # self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        self.data.append(ridge)
+        # # Ridge 2
+        # ridge = []
+        # self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        # params['vdf'] = 'kappa'
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        # self.data.append(ridge)
 
-        # For a nicer legend, it is added after
-        self.legend_txt.append('Maxwellian')
+        self.legend_txt.append('Maxwell')
         self.legend_txt.append('Kappa')
+        self.legend_txt.append('Kappa Long calc')
+        self.ridge_txt.append('Maxwell')
+        self.ridge_txt.append('Kappa')
+
+            # self.ridge_txt.append(f'${H}$ km')
+            # for m in ToD:
+            #     sys_set['mat_file'] = m
+            #     ridge.append(s)
+            #     the_time = 8 + (int(m.split('-')[-1].split('.')[0]) + 1) / 2
 
     def plot_data(self):
         """Plot the created data from self.data.
@@ -433,15 +462,16 @@ class Simulation:
             self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         """
         self.plot.plasma = True
-        self.plot.plot_normal(self.f, self.data[0], 'plot', self.legend_txt)
-        self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
+        # self.plot.plot_normal(self.f, self.data[0], 'plot', self.legend_txt)
+        # self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
         self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
         self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
+        self.plot.plot_ridge(self.f, self.data, 'loglog', self.legend_txt, self.ridge_txt)
 
     def save_handle(self, mode):
         if mode == 'setUp':
             if self.plot.save in ['y', 'yes']:
-                self.plot.save_it('m_k', self.meta_data)
+                self.plot.save_it(self.meta_data)
         elif mode == 'tearDown':
             if self.plot.save in ['y', 'yes']:
                 self.plot.pdffig.close()
@@ -455,5 +485,6 @@ class Simulation:
 
 
 if __name__ == '__main__':
+    # TODO: answer, what happens to the Debye length when we use different VDFs?
     sim = Simulation()
     sim.run()
