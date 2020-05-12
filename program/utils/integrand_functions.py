@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
 import scipy.constants as const
 import scipy.special as sps
+import scipy.integrate as si
 
 from inputs import config as cf
 from utils import vdfs
@@ -103,6 +104,7 @@ class INT_LONG(INTEGRAND):
     def __init__(self):
         self.y = np.array([])
         self.params = {}
+        self.char_vel = float
 
     def initialize(self, y, params):
         self.y = y
@@ -121,7 +123,16 @@ class INT_LONG(INTEGRAND):
         elif self.params['vdf'] == 'real_data':
             f = vdfs.F_REAL_DATA(v, self.params)
 
+        # Compare the velocity integral to the Maxwellian case.
+        # This way we make up for the change in characteristic velocity
+        # and Debye length for different particle distributions.
+        # res_max = para_int.integrand(self.y, self.params, v, vdfs.F_MAXWELL(v, self.params).f_0())
+        # sint_max = si.simps(res_max, self.y)
         res = para_int.integrand(self.y, self.params, v, f.f_0())
+        sint_res = si.simps(res, self.y)
+        sint_maxwellian = 3.5436498998618917e-14
+        # The scaling of the factor describing the characteristic velocity
+        self.char_vel = sint_maxwellian / sint_res
         return res
 
     def p_d(self):

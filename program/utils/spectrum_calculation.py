@@ -44,8 +44,8 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
     W_c = w_ion_gyro(np.linalg.norm([sys_set['B']], 2), M_i)
 
     # Ions
-    params = {'THETA': sys_set['THETA'], 'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'],
-              'w_c': W_c, 'kappa': kappa, 'vdf': vdf}
+    params = {'THETA': sys_set['THETA'], 'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'], 'w_c': W_c}
+            #   , 'kappa': kappa, 'vdf': vdf}
     y = np.linspace(0, cf.Y_MAX_i**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     f_ion = intf.INT_MAXWELL()
     f_ion.initialize(y, params)
@@ -60,9 +60,16 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
         const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
 
     Xp_i = np.sqrt(
-        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=3)**2 * cf.K_RADAR**2))
-    Xp_e = np.sqrt(
-        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=3)**2 * cf.K_RADAR**2))
+        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * cf.K_RADAR**2))
+    if func.the_type == 'a_vdf':
+        Xp_e = np.sqrt(
+            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * cf.K_RADAR**2))
+    elif func.the_type == 'kappa':
+        Xp_e = np.sqrt(
+            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * cf.K_RADAR**2))
+    else:
+        Xp_e = np.sqrt(
+            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'])**2 * cf.K_RADAR**2))
 
     # f_scaled = cf.f
     # In case we have \omega = 0 in our frequency array, we just ignore this warning message
@@ -82,7 +89,7 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
     return cf.f, Is, dict(sys_set, **p)
 
 
-def L_Debye(*args, kappa=None):
+def L_Debye(*args, kappa=None, char_vel=None):
     """Calculate the Debye length.
 
     Input args may be
@@ -107,12 +114,15 @@ def L_Debye(*args, kappa=None):
     Ep0 = 1e-09 / 36 / np.pi
 
     if nargin < 3:
-        if kappa is None:
-            LD = np.sqrt(Ep0 * const.k * T_e /
-                         (max(0, n_e) * const.e**2))
-        else:
+        if kappa is not None:
             LD = np.sqrt(Ep0 * const.k * T_e / (max(0, n_e) * const.e**2)
                          ) * np.sqrt((kappa - 3 / 2) / (kappa - 1 / 2))
+        elif char_vel is not None:
+            LD = np.sqrt(Ep0 * const.k * T_e / (max(0, n_e) * const.e**2)
+                         ) * np.sqrt(char_vel)
+        else:
+            LD = np.sqrt(Ep0 * const.k * T_e /
+                         (max(0, n_e) * const.e**2))
     else:
         LD = np.sqrt(Ep0 * const.k /
                      ((max(0, n_e) / T_e + max(0, n_e) / T_i) / const.e**2))

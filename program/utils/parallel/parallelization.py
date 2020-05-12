@@ -44,7 +44,14 @@ def integrate(m, T, nu, y, function, kappa=None):
     if function.the_type == 'kappa':
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))
     elif function.the_type == 'a_vdf':
-        a = 4 * np.pi * T * const.k * array / m
+        # FIXME: need the characteristic velocity of the VDF, not v_th^2 = T * k_B / m
+        # Kappa characteristic velocity scaling, kappa = 3
+        # a = 4 * np.pi * T * const.k * array / m * (kappa - 3 / 2) / (kappa - 1 / 2)
+        # a = 4 * np.pi * T * const.k * array / m * (8 - 3 / 2) / (8 - 1 / 2)
+        # Maxwellian characteristic velocity scaling
+        # a = 4 * np.pi * T * const.k * array / m
+        # General for any VDF
+        a = 4 * np.pi * T * const.k * array / m * function.char_vel
     else:
         a = array
     if function.the_type == 'a_vdf':

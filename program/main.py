@@ -407,34 +407,29 @@ class Simulation:
         ridge = []
         sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat'}
-        params = {'kappa': 3, 'vdf': 'kappa', 'area': False}
+        params = {'kappa': 8, 'vdf': 'kappa', 'area': False}
         # Ridge 1
-        # self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
         self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        self.data.append(ridge)
-        # # Ridge 2
-        # ridge = []
-        # self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-        # params['vdf'] = 'kappa'
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-        # self.data.append(ridge)
+        self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        params['vdf'] = 'maxwell'
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
 
-        self.legend_txt.append('Maxwell')
+        self.data.append(ridge)
         self.legend_txt.append('Kappa')
         self.legend_txt.append('Kappa Long calc')
-        self.ridge_txt.append('Maxwell')
-        self.ridge_txt.append('Kappa')
+        self.legend_txt.append('Maxwell')
+        self.legend_txt.append('Maxwell Long calc')
+        self.ridge_txt.append('All')
+        # self.ridge_txt.append('Kappa')
 
             # self.ridge_txt.append(f'${H}$ km')
             # for m in ToD:
@@ -461,10 +456,10 @@ class Simulation:
             self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
             self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         """
-        self.plot.plasma = True
         # self.plot.plot_normal(self.f, self.data[0], 'plot', self.legend_txt)
         # self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
         self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
+        self.plot.plasma = True
         self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         self.plot.plot_ridge(self.f, self.data, 'loglog', self.legend_txt, self.ridge_txt)
 
@@ -485,6 +480,5 @@ class Simulation:
 
 
 if __name__ == '__main__':
-    # TODO: answer, what happens to the Debye length when we use different VDFs?
     sim = Simulation()
     sim.run()
