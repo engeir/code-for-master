@@ -133,6 +133,7 @@ class INT_LONG(INTEGRAND):
         sint_maxwellian = 3.5436498998618917e-14
         # The scaling of the factor describing the characteristic velocity
         self.char_vel = sint_maxwellian / sint_res
+        print(self.char_vel)
         return res
 
     def p_d(self):

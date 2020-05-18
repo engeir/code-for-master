@@ -70,6 +70,15 @@ def interpolate_data(v, params):
 
     return f0_f1
 
+def view_mat_file():
+    path = 'Arecibo-photo-electrons/'
+    x = loadmat(path + 'fe_zmuE-01.mat')
+    data = x['fe_zmuE']
+
+    plt.figure()
+    plt.plot(data[2, 2, :])
+    plt.show()
+
 
 # def moving_average(data_set, periods=3):
 #     weights = np.ones(periods) / periods

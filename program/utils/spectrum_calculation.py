@@ -45,7 +45,6 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
 
     # Ions
     params = {'THETA': sys_set['THETA'], 'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'], 'w_c': W_c}
-            #   , 'kappa': kappa, 'vdf': vdf}
     y = np.linspace(0, cf.Y_MAX_i**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     f_ion = intf.INT_MAXWELL()
     f_ion.initialize(y, params)
