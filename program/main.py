@@ -27,7 +27,7 @@ from utils import hello_kitty as hk
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
-    'font.family': 'Ovo',
+    # 'font.family': 'Ovo',
     'axes.unicode_minus': False,
     'pgf.texsystem': 'pdflatex'
 })
@@ -408,30 +408,52 @@ class Simulation:
         # ridge_txt = [f"ToD: {int(j):02d}:{int(j * 60 % 60):02d} UT" for j in the_time]
 
         ridge = []
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                   'THETA': 20 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat'}
-        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
+        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
+                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+        params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # Ridge 1
-        self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
+        # self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        # self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        sys_set['mat_file'] = 'fe_zmuE-10.mat'
+        sys_set['NE'] = 3e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        sys_set['NE'] = 5e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        sys_set['NE'] = 7e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        sys_set['NE'] = 9e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        sys_set['NE'] = 2e12
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
 
         self.data.append(ridge)
-        self.legend_txt.append('Maxwell')
-        self.legend_txt.append('Kappa')
-        self.legend_txt.append('ToD: $09:00$')
-        self.legend_txt.append('ToD: $14:30$')
-        self.ridge_txt.append('ToD')
+        # self.legend_txt.append('Maxwell')
+        # self.legend_txt.append('Kappa')
+        # self.legend_txt.append('ToD: $09:00$')
+        # self.legend_txt.append('ToD: $14:30$')
+        self.legend_txt.append('NE=1e11')
+        self.legend_txt.append('NE=3e11')
+        self.legend_txt.append('NE=5e11')
+        self.legend_txt.append('NE=7e11')
+        self.legend_txt.append('NE=9e11')
+        self.legend_txt.append('NE=2e12')
+        self.ridge_txt.append('NE')
         # self.ridge_txt.append('Kappa')
 
             # self.ridge_txt.append(f'${H}$ km')
@@ -463,8 +485,8 @@ class Simulation:
         self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
         # self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
         # self.plot.plasma = True
-        self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
-        self.plot.plot_ridge(self.f, self.data, 'loglog', self.legend_txt, self.ridge_txt)
+        # self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
+        # self.plot.plot_ridge(self.f, self.data, 'loglog', self.legend_txt, self.ridge_txt)
 
     def save_handle(self, mode):
         if mode == 'setUp':

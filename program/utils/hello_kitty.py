@@ -13,7 +13,7 @@ from utils import spectrum_calculation as isr  # pylint: disable=C0413
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
-    'font.family': 'Ovo',
+    # 'font.family': 'Ovo',
     'axes.unicode_minus': False,
     'pgf.texsystem': 'pdflatex'
 })
@@ -21,9 +21,10 @@ matplotlib.rcParams.update({
 
 class HelloKitty:
     def __init__(self):
-        self.Z = np.arange(100, 350, 50)
-        self.A = 40 - 20 * np.cos(np.linspace(0, np.pi, int(1e1)))
-        print(len(self.Z) * len(self.A))
+        # self.Z = np.arange(100, 350, 50)
+        self.Z = np.linspace(4e11, 14e11, 10)
+        self.A = 44 - 20 * np.cos(np.linspace(0, np.pi, int(1e1)))
+        # print(len(self.Z) * len(self.A))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.create_data()
         self.plot_data()
@@ -31,21 +32,27 @@ class HelloKitty:
     def create_data(self):
         sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
+        params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         for i, z in enumerate(self.Z):
-            sys_set['Z'] = z
+            # plt.figure()
+            # sys_set['Z'] = z
+            sys_set['NE'] = z
             for j, a in enumerate(self.A):
                 sys_set['THETA'] = a * np.pi / 180
                 f, s, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
+                # plt.plot(f, s)
+                res = si.simps(s, f)
+                print(f'{res:.4e}')
                 # s = np.random.uniform(0, 200)
-                self.g[i, j] = np.max(s)
+                self.g[i, j] = res
+            # plt.show()
 
     def plot_data(self):
+        # Hello kitty figure
         # Z, A = np.meshgrid(self.Z, self.A)
         f = plt.figure(figsize=(6, 6))
         # f, (ax1, ax2) = plt.subplots(2, 1, sharex='col', figsize=(6, 6))
         gs = gridspec.GridSpec(2, 1, height_ratios=[3, 1])
-        # plt.contourf(Z, A. self.g)
         ax0 = plt.subplot(gs[0])
         im = ax0.imshow(self.g, extent=[20, 60, np.min(self.Z), np.max(self.Z)],
                         origin='lower', aspect='auto', cmap='gist_heat')
@@ -65,8 +72,11 @@ class HelloKitty:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        # ax2.plot(self.A)
-        # plt.tight_layout()
         plt.savefig('hello_kitty.pdf', bbox_inches='tight', dpi=200)
         plt.savefig('hello_kitty.pgf', bbox_inches='tight')
+        
+        # Plot of each angle
+        plt.figure()
+        for i in range(self.g.shape[1]):
+            plt.plot(self.g[:, i])
         plt.show()

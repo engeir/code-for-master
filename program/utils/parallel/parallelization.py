@@ -37,9 +37,10 @@ def integrate(m, T, nu, y, function, kappa=None):
     pool = mp.Pool(processes=96)
     # tqdm give a neat progress bar for the iterative process
     with tqdm(total=len(cf.w)) as pbar:
-        for _ in pool.imap(func, idx):
-            pbar.set_description("Calculating spectrum")
-            pbar.update(1)
+        for _ in pool.map(func, idx):
+            pass
+            # pbar.set_description("Calculating spectrum")
+            # pbar.update(1)
     pool.close()
     if function.the_type == 'kappa':
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))

@@ -13,7 +13,7 @@ from inputs import config as cf
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
-    'font.family': 'Ovo',
+    # 'font.family': 'Ovo',
     # 'font.serif': 'Ovo',
     # 'mathtext.fontset': 'cm',
     # Use ASCII minus
