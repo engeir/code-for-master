@@ -409,7 +409,7 @@ class Simulation:
 
         ridge = []
         sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # Ridge 1
         # self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
@@ -505,5 +505,5 @@ class Simulation:
 
 
 if __name__ == '__main__':
-    Simulation().run()
-    # hk.HelloKitty()
+    # Simulation().run()
+    hk.HelloKitty()

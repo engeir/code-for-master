@@ -22,15 +22,15 @@ matplotlib.rcParams.update({
 class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
-        self.Z = np.linspace(4e11, 14e11, 10)
-        self.A = 44 - 20 * np.cos(np.linspace(0, np.pi, int(1e1)))
+        self.Z = np.linspace(1e11, 2e12, 10)
+        self.A = 45 - 15 * np.cos(np.linspace(0, np.pi, int(1e1)))
         # print(len(self.Z) * len(self.A))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.create_data()
         self.plot_data()
 
     def create_data(self):
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
+        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         for i, z in enumerate(self.Z):
@@ -42,7 +42,7 @@ class HelloKitty:
                 f, s, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
                 # plt.plot(f, s)
                 res = si.simps(s, f)
-                print(f'{res:.4e}')
+                # print(f'{res:.4e}')
                 # s = np.random.uniform(0, 200)
                 self.g[i, j] = res
             # plt.show()
@@ -72,8 +72,8 @@ class HelloKitty:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        plt.savefig('hello_kitty.pdf', bbox_inches='tight', dpi=200)
-        plt.savefig('hello_kitty.pgf', bbox_inches='tight')
+        plt.savefig('hello_kitty2.pdf', bbox_inches='tight', dpi=200)
+        plt.savefig('hello_kitty2.pgf', bbox_inches='tight')
         
         # Plot of each angle
         plt.figure()
