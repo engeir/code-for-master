@@ -5,6 +5,7 @@ import numpy as np  # pylint: disable=C0413
 import matplotlib  # pylint: disable=C0413
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+import scipy.integrate as si
 
 # from inputs import config as cf  # pylint: disable=C0413
 from utils import spectrum_calculation as isr  # pylint: disable=C0413
@@ -35,7 +36,7 @@ class HelloKitty:
             sys_set['Z'] = z
             for j, a in enumerate(self.A):
                 sys_set['THETA'] = a * np.pi / 180
-                _, s, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
+                f, s, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
                 # s = np.random.uniform(0, 200)
                 self.g[i, j] = np.max(s)
 

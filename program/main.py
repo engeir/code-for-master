@@ -483,5 +483,5 @@ class Simulation:
 
 
 if __name__ == '__main__':
-    # Simulation().run()
-    hk.HelloKitty()
+    Simulation().run()
+    # hk.HelloKitty()
