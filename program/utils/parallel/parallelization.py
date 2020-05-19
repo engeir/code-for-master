@@ -39,14 +39,13 @@ def integrate(m, T, nu, y, function, kappa=None):
     # with tqdm(total=len(cf.w)) as pbar:
     #     for _ in pool.map(func, idx):
     #         pass
-    pool.map(func, idx)
             # pbar.set_description("Calculating spectrum")
             # pbar.update(1)
+    pool.map(func, idx)
     pool.close()
     if function.the_type == 'kappa':
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))
     elif function.the_type == 'a_vdf':
-        # FIXME: need the characteristic velocity of the VDF, not v_th^2 = T * k_B / m
         # Kappa characteristic velocity scaling, kappa = 3
         # a = 4 * np.pi * T * const.k * array / m * (kappa - 3 / 2) / (kappa - 1 / 2)
         # a = 4 * np.pi * T * const.k * array / m * (8 - 3 / 2) / (8 - 1 / 2)

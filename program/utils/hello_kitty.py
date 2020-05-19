@@ -27,7 +27,7 @@ matplotlib.rcParams.update({
 #     with open(os.devnull, "w") as devnull:
 #         old_stdout = sys.stdout
 #         sys.stdout = devnull
-#         try:  
+#         try:
 #             yield
 #         finally:
 #             sys.stdout = old_stdout
@@ -36,8 +36,8 @@ matplotlib.rcParams.update({
 class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
-        self.Z = np.linspace(1e11, 2e12, 30)
-        self.A = 45 + 15 * np.cos(np.linspace(0, 2 * np.pi, int(5e1)))
+        self.Z = np.linspace(1e11, 2e12, 10)
+        self.A = 45 + 15 * np.cos(np.linspace(0, 2 * np.pi, int(5e0)))
         # print(len(self.Z) * len(self.A))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.create_data()
@@ -45,13 +45,13 @@ class HelloKitty:
 
     def create_data(self):
         # Seems to be close to working with gauss_shell, f_0 = 933e6, NE ≈ [1e11, 2e12], 1e3, 5e4, 2e4
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                   'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
-        # Seems to be close to working with real_data, f_0 = 430e6, NE = [], 1e4, 2e5, 2e4
         # sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
         #            'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        # params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
+        # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
+        # Seems to be close to working with real_data, f_0 = 430e6, NE = [], 1e4, 2e5, 2e4
+        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+                   'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # c = 0
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
             for i, z in enumerate(self.Z):
@@ -103,7 +103,7 @@ class HelloKitty:
                         top=False, labelbottom=False)
         # plt.savefig('hello_kitty_3.pdf', bbox_inches='tight', dpi=200)
         # plt.savefig('hello_kitty_3.pgf', bbox_inches='tight')
-        
+
         # Plot of each angle
         # plt.figure()
         # for i in range(self.g.shape[1]):

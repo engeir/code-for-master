@@ -32,9 +32,9 @@ def integrand(y, params, v, f):
     # with tqdm(total=len(y)) as pbar:
     #     for _ in pool.map(func, idx):
     #         pass
-    pool.map(func, idx)
             # pbar.set_description("Calculating velocity integral")
             # pbar.update(1)
+    pool.map(func, idx)
     pool.close()
     return array
 

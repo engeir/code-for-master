@@ -34,7 +34,7 @@ Y_MAX_i = 1.5e-2
 V_MAX = 6e6
 ORDER = 3
 
-I_P = {'F0': 933e6, 'F_MAX': 12e6}
+I_P = {'F0': 430e6, 'F_MAX': 10e6}
 K_RADAR = - 2 * I_P['F0'] * 2 * np.pi / const.c  # Radar wavenumber
 # If 'plasma' == True, might as well set f_min ≈ 1e6
 f = np.linspace(1.e6, I_P['F_MAX'], int(F_N_POINTS))
