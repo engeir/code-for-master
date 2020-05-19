@@ -36,9 +36,10 @@ def integrate(m, T, nu, y, function, kappa=None):
     func = partial(parallel, y, f)
     pool = mp.Pool(processes=96)
     # tqdm give a neat progress bar for the iterative process
-    with tqdm(total=len(cf.w)) as pbar:
-        for _ in pool.map(func, idx):
-            pass
+    # with tqdm(total=len(cf.w)) as pbar:
+    #     for _ in pool.map(func, idx):
+    #         pass
+    pool.map(func, idx)
             # pbar.set_description("Calculating spectrum")
             # pbar.update(1)
     pool.close()

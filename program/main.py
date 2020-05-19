@@ -27,7 +27,7 @@ from utils import hello_kitty as hk
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
-    # 'font.family': 'Ovo',
+    'font.family': 'DejaVu Sans',
     'axes.unicode_minus': False,
     'pgf.texsystem': 'pdflatex'
 })
@@ -395,7 +395,7 @@ class Simulation:
                     ridge.append(s)
                 self.data.append(ridge)
 
-            # For a nicer legend, it is added after
+            # For a nicer legend, it is added manually
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
         """
@@ -407,40 +407,45 @@ class Simulation:
         # the_time = [8 + (int(j.split('-')[-1].split('.')[0]) + 1) / 2 for j in cf.I_P['mat_file']]
         # ridge_txt = [f"ToD: {int(j):02d}:{int(j * 60 % 60):02d} UT" for j in the_time]
 
-        ridge = []
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
+        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e12, 'NU_E': 1000, 'NU_I': 100, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
+        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # Ridge 1
+        ridge = []
         # self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         # ridge.append(s)
         # self.meta_data.append(meta_data)
         # self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
         # ridge.append(s)
         # self.meta_data.append(meta_data)
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        # sys_set['THETA'] = 30 * np.pi / 180
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        sys_set['NE'] = 5e13
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        sys_set['THETA'] = 60 * np.pi / 180
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        sys_set['NE'] = 3e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        sys_set['NE'] = 5e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        sys_set['NE'] = 7e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        sys_set['NE'] = 9e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        sys_set['NE'] = 2e12
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
+        
+        # sys_set['NE'] = 7e11
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        # sys_set['NE'] = 9e11
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
+        # sys_set['NE'] = 2e12
+        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        # ridge.append(s)
+        # self.meta_data.append(meta_data)
 
         self.data.append(ridge)
         # self.legend_txt.append('Maxwell')

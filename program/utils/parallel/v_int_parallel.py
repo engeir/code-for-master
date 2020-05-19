@@ -29,9 +29,10 @@ def integrand(y, params, v, f):
     func = partial(parallel, params, v, f)
     pool = mp.Pool(processes=96)
     # tqdm give a neat progress bar for the iterative process
-    with tqdm(total=len(y)) as pbar:
-        for _ in pool.map(func, idx):
-            pass
+    # with tqdm(total=len(y)) as pbar:
+    #     for _ in pool.map(func, idx):
+    #         pass
+    pool.map(func, idx)
             # pbar.set_description("Calculating velocity integral")
             # pbar.update(1)
     pool.close()

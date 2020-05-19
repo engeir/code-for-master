@@ -132,13 +132,13 @@ class F_GAUSS_SHELL(VDF):
         self.normalize()
 
     def normalize(self):
-        func = np.exp(- (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m']))
+        func = np.exp(- 2 * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m']))
         f = func * self.v**2 * 4 * np.pi
         self.A = 1 / si.simps(f, self.v)
         print(f'Gauss shell at v = {round(self.r / self.vth, 3)} v_th')
 
     def f_0(self):
-        func = self.A * np.exp(- (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + 10 * self.f_M.f_0()
+        func = self.A * np.exp(- 2 * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + 10 * self.f_M.f_0()
 
         return func / 11
 

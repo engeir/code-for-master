@@ -8,7 +8,8 @@ import scipy.constants as const
 import matplotlib
 import matplotlib.pyplot as plt
 
-from inputs import config as cf
+if __name__ != '__main__':
+    from inputs import config as cf
 
 # Customize matplotlib
 matplotlib.rcParams.update({
@@ -74,9 +75,10 @@ def view_mat_file():
     path = 'Arecibo-photo-electrons/'
     x = loadmat(path + 'fe_zmuE-01.mat')
     data = x['fe_zmuE']
+    data = np.einsum('ijk->ik', data) / 18
 
     plt.figure()
-    plt.plot(data[2, 2, :])
+    plt.plot(data[400, :].T)
     plt.show()
 
 
@@ -120,4 +122,5 @@ if __name__ == '__main__':
     # Arecibo is 4 hours behind UT, [9, 16] UT = [5, 12] local time
     # x = loadmat('Arecibo-photo-electrons/' + 'fe_zmuE-15.mat')
     # data = x['fe_zmuE']
-    dat_file = read_dat_file('SzeN.dat')
+    view_mat_file()
+    # dat_file = read_dat_file('SzeN.dat')
