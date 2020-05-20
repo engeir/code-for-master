@@ -77,9 +77,11 @@ def view_mat_file():
     x = loadmat(path + 'fe_zmuE-01.mat')
     data = x['fe_zmuE']
     data = np.einsum('ijk->ik', data) / 18
+    data = data[-1, :]
+    E = np.linspace(1, 110, len(data))
 
     plt.figure()
-    plt.plot(data[400, :].T)
+    plt.plot(E, data.T)
     plt.show()
 
 
