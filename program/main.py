@@ -406,7 +406,7 @@ class Simulation:
         # Message for ToD
         # the_time = [8 + (int(j.split('-')[-1].split('.')[0]) + 1) / 2 for j in cf.I_P['mat_file']]
         # ridge_txt = [f"ToD: {int(j):02d}:{int(j * 60 % 60):02d} UT" for j in the_time]
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 3e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # Ridge 1
@@ -428,7 +428,7 @@ class Simulation:
         # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         # ridge.append(s)
         # self.meta_data.append(meta_data)
-        sys_set['THETA'] = 60 * np.pi / 180
+        sys_set['THETA'] = 35 * np.pi / 180
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
