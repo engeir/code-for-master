@@ -19,6 +19,7 @@ from matplotlib.backends.backend_pdf import PdfPages  # pylint: disable=C0413
 import numpy as np  # pylint: disable=C0413
 import scipy.signal as signal  # pylint: disable=C0413
 import si_prefix as sip  # pylint: disable=C0413
+import scipy.integrate as si  # pylint: disable=C0413
 
 from inputs import config as cf  # pylint: disable=C0413
 from utils import spectrum_calculation as isr  # pylint: disable=C0413
@@ -406,7 +407,7 @@ class Simulation:
         # Message for ToD
         # the_time = [8 + (int(j.split('-')[-1].split('.')[0]) + 1) / 2 for j in cf.I_P['mat_file']]
         # ridge_txt = [f"ToD: {int(j):02d}:{int(j * 60 % 60):02d} UT" for j in the_time]
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 3e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # Ridge 1
@@ -417,18 +418,23 @@ class Simulation:
         # self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
         # ridge.append(s)
         # self.meta_data.append(meta_data)
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        # sys_set['THETA'] = 40 * np.pi / 180
+        sys_set['NE'] = 6e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        self.data.append(ridge)
+        ridge = []
+        sys_set['THETA'] = 30 * np.pi / 180
+        sys_set['NE'] = 2e10
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        sys_set['NE'] = 6e11
         # sys_set['THETA'] = 30 * np.pi / 180
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-        # sys_set['NE'] = 2e12
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-        sys_set['THETA'] = 35 * np.pi / 180
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
@@ -451,13 +457,14 @@ class Simulation:
         # self.legend_txt.append('Kappa')
         # self.legend_txt.append('ToD: $09:00$')
         # self.legend_txt.append('ToD: $14:30$')
-        self.legend_txt.append('NE=1e11')
-        # self.legend_txt.append('NE=3e11')
-        # self.legend_txt.append('NE=5e11')
-        # self.legend_txt.append('NE=7e11')
+        self.legend_txt.append('NE=2e10')
+        self.legend_txt.append('NE=6e11')
+        # self.legend_txt.append('NE=2e12')
+        # self.legend_txt.append('NE=2e12')
         # self.legend_txt.append('NE=9e11')
         # self.legend_txt.append('NE=2e12')
-        self.ridge_txt.append('NE')
+        self.ridge_txt.append('60')
+        self.ridge_txt.append('30')
         # self.ridge_txt.append('Kappa')
 
             # self.ridge_txt.append(f'${H}$ km')
@@ -485,11 +492,11 @@ class Simulation:
             self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
             self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         """
-        self.plot.plot_normal(self.f, self.data[0], 'plot', self.legend_txt)
-        self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
+        # self.plot.plot_normal(self.f, self.data[0], 'plot', self.legend_txt)
+        # self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
         # self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
         # self.plot.plasma = True
-        # self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
+        self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         # self.plot.plot_ridge(self.f, self.data, 'loglog', self.legend_txt, self.ridge_txt)
 
     def save_handle(self, mode):

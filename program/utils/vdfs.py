@@ -128,19 +128,20 @@ class F_GAUSS_SHELL(VDF):
         self.params = params
         self.vth = np.sqrt(self.params['T'] * const.k / self.params['m'])
         self.r = (self.params['T_ES'] * const.k / self.params['m'])**.5
+        self.steep = 10
         self.f_M = F_MAXWELL(self.v, self.params)
         self.normalize()
 
     def normalize(self):
-        func = np.exp(- 2 * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m']))
+        func = np.exp(- self.steep * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m']))
         f = func * self.v**2 * 4 * np.pi
         self.A = 1 / si.simps(f, self.v)
         print(f'Gauss shell at v = {round(self.r / self.vth, 3)} v_th')
 
     def f_0(self):
-        func = self.A * np.exp(- 2 * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + 10 * self.f_M.f_0()
+        func = self.A * np.exp(- self.steep * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + 100 * self.f_M.f_0()
 
-        return func / 11
+        return func / 101
 
 
 class F_REAL_DATA(VDF):

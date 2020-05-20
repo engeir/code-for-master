@@ -36,8 +36,8 @@ matplotlib.rcParams.update({
 class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
-        self.Z = np.linspace(1e11, 2e12, 30)
-        self.A = 45 + 15 * np.cos(np.linspace(0, 2 * np.pi, int(5e1)))
+        self.Z = np.linspace(2e10, 6e11, 50)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 25))
         # print(len(self.Z) * len(self.A))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.create_data()
@@ -45,11 +45,11 @@ class HelloKitty:
 
     def create_data(self):
         # Seems to be close to working with gauss_shell, f_0 = 933e6, NE ≈ [1e11, 2e12], 1e3, 5e4, 2e4
-        # sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
+        # sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 1000, 'T_ES': 90000,
         #            'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
-        # Seems to be close to working with real_data, f_0 = 430e6, NE = [], 1e4, 2e5, 2e4
-        sys_set = {'B': 5e-4, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+        # Seems to be close to working with real_data, f_0 = 430e6, NE = [2e10, 6e11], 1e4, 4e5, 1e4
+        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # c = 0
@@ -77,7 +77,9 @@ class HelloKitty:
             # plt.show()
 
     def plot_data(self):
-        # Hello kitty figure
+        # Hello kitty figure duplication
+        self.g = np.c_[self.g, self.g[:, ::-1], self.g, self.g[:, ::-1]]
+        self.A = np.r_[self.A, self.A[::-1], self.A, self.A[::-1]]
         # Z, A = np.meshgrid(self.Z, self.A)
         f = plt.figure(figsize=(6, 6))
         # f, (ax1, ax2) = plt.subplots(2, 1, sharex='col', figsize=(6, 6))
@@ -101,8 +103,8 @@ class HelloKitty:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        plt.savefig('hello_kitty_7.pdf', bbox_inches='tight', dpi=200)
-        plt.savefig('hello_kitty_7.pgf', bbox_inches='tight')
+        # plt.savefig('hello_kitty.pdf', bbox_inches='tight', dpi=200)
+        # plt.savefig('hello_kitty.pgf', bbox_inches='tight')
 
         # Plot of each angle
         # plt.figure()
