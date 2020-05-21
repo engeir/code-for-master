@@ -36,8 +36,8 @@ matplotlib.rcParams.update({
 class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
-        self.Z = np.linspace(2e10, 6e11, 50)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 25))
+        self.Z = np.linspace(2e10, 6e11, 70)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))  # 25))
         # print(len(self.Z) * len(self.A))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.create_data()
@@ -103,8 +103,8 @@ class HelloKitty:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        # plt.savefig('hello_kitty.pdf', bbox_inches='tight', dpi=200)
-        # plt.savefig('hello_kitty.pgf', bbox_inches='tight')
+        plt.savefig('hello_kitty_big_one.pdf', bbox_inches='tight', dpi=200)
+        plt.savefig('hello_kitty_big_one.pgf', bbox_inches='tight')
 
         # Plot of each angle
         # plt.figure()
