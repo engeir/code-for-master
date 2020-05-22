@@ -428,12 +428,12 @@ class Simulation:
         self.meta_data.append(meta_data)
         self.data.append(ridge)
         ridge = []
-        sys_set['THETA'] = 30 * np.pi / 180
-        sys_set['NE'] = 2e10
+        sys_set['THETA'] = 35 * np.pi / 180
+        sys_set['NE'] = 2e11
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        sys_set['NE'] = 6e11
+        sys_set['NE'] = 3e11
         # sys_set['THETA'] = 30 * np.pi / 180
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)

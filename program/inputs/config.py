@@ -20,7 +20,7 @@ if os.path.basename(os.path.realpath(sys.argv[0])) != 'main.py':
     Y_N_POINTS = 1e1
     V_N_POINTS = 1e1
 else:
-    F_N_POINTS = 5e4  # Number of sample points in frequency
+    F_N_POINTS = 1e4  # Number of sample points in frequency
     Y_N_POINTS = 4e4  # Number of sample points in integral variable
     V_N_POINTS = 1e4  # Number of sample points in velocity integral variable
 # Adds one sample to get an even number of bins, which in

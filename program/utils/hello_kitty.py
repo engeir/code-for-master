@@ -103,8 +103,8 @@ class HelloKitty:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        plt.savefig('hello_kitty_big_one.pdf', bbox_inches='tight', dpi=200)
-        plt.savefig('hello_kitty_big_one.pgf', bbox_inches='tight')
+        #plt.savefig('hello_kitty_big_one.pdf', bbox_inches='tight', dpi=200)
+        #plt.savefig('hello_kitty_big_one.pgf', bbox_inches='tight')
 
         # Plot of each angle
         # plt.figure()
