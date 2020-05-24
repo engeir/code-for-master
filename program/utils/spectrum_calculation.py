@@ -60,6 +60,8 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
 
     Xp_i = np.sqrt(
         1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * cf.K_RADAR**2))
+    # Xp_e = np.sqrt(
+    #     1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * cf.K_RADAR**2))
     if func.the_type == 'a_vdf':
         Xp_e = np.sqrt(
             1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * cf.K_RADAR**2))

@@ -76,8 +76,9 @@ def view_mat_file():
     path = 'Arecibo-photo-electrons/'
     x = loadmat(path + 'fe_zmuE-01.mat')
     data = x['fe_zmuE']
-    data = np.einsum('ijk->ik', data) / 18
-    data = data[-1, :]
+    data = data[:, :10, :]
+    data = np.einsum('ijk->ik', data) / 10
+    data = data[499, :]
     E = np.linspace(1, 110, len(data))
 
     plt.figure()
