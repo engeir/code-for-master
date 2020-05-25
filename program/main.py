@@ -129,10 +129,9 @@ class PlotClass:
             mask = self.find_p_line(freq * 10**exp, Is)
             freq = freq[mask]
         if func_type == 'semilogy':
-            # Rescale the y-axis to a dB scale.
             plt.xlabel(f'Frequency [{p}Hz]')
-            plt.ylabel(
-                '10*log10(Power) [dB]')
+            # plt.ylabel(r'$\times$')
+            plt.ylabel(r'10$\times$log10(Power) [dB]')
             for i, _ in enumerate(Is):
                 Is[i] = 10 * np.log10(Is[i])
         else:
@@ -424,24 +423,24 @@ class Simulation:
         # self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
         # ridge.append(s)
         # self.meta_data.append(meta_data)
-        self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
         sys_set['THETA'] = 40 * np.pi / 180
         sys_set['NE'] = 2e11
-        self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
         self.data.append(ridge)
         ridge = []
         sys_set['THETA'] = 30 * np.pi / 180
         sys_set['NE'] = 1e10
-        self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
         sys_set['NE'] = 2e11
         # sys_set['THETA'] = 30 * np.pi / 180
-        self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
 
@@ -519,8 +518,8 @@ class Simulation:
         self.save_handle('setUp')
         self.plot_data()
         self.save_handle('tearDown')
-# 
 
+ 
 if __name__ == '__main__':
     # Simulation().run()
     hk.HelloKitty()

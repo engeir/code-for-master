@@ -20,7 +20,7 @@ if os.path.basename(os.path.realpath(sys.argv[0])) != 'main.py':
     Y_N_POINTS = 1e1
     V_N_POINTS = 1e1
 else:
-    F_N_POINTS = 1e3  # Number of sample points in frequency
+    F_N_POINTS = 1e4  # Number of sample points in frequency
     Y_N_POINTS = 6e4  # Number of sample points in integral variable
     V_N_POINTS = 1e4  # Number of sample points in velocity integral variable
 # Adds one sample to get an even number of bins, which in
@@ -38,6 +38,6 @@ ORDER = 3
 I_P = {'F0': 430e6, 'F_MAX': 7.5e6}
 K_RADAR = - 2 * I_P['F0'] * 2 * np.pi / const.c  # Radar wavenumber
 # If 'plasma' == True, might as well set f_min ≈ 1e6
-f = np.linspace(- 2e6, I_P['F_MAX'], int(F_N_POINTS))
+f = np.linspace(1e6, I_P['F_MAX'], int(F_N_POINTS))
 f = (f / I_P['F_MAX'])**3 * I_P['F_MAX']
 w = 2 * np.pi * f  # Angular frequency

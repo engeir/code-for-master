@@ -57,7 +57,7 @@ class HelloKitty:
         #            'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # With real_data, f_0 = 430e6, NE = [2e10, 6e11], 1e4, 4e5, 1e4
-        sys_set = {'B': 3e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 0, 'T_E': 1500, 'T_I': 1000, 'T_ES': 90000,
+        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 0, 'T_E': 1500, 'T_I': 1000, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
@@ -91,6 +91,7 @@ class HelloKitty:
         return bool(9 < E_plasma < 10 or 17 < E_plasma < 18)
 
     def plot_data(self):
+        # New comment
         # Hello kitty figure duplication
         self.g = np.c_[self.g, self.g[:, ::-1], self.g, self.g[:, ::-1]]
         self.A = np.r_[self.A, self.A[::-1], self.A, self.A[::-1]]
@@ -105,8 +106,8 @@ class HelloKitty:
         ax0 = plt.subplot(gs[0])
         im = ax0.imshow(self.g, extent=[0, len(self.A) - 1, np.min(self.Z), np.max(self.Z)],
                         origin='lower', aspect='auto', cmap='gist_heat')
-        plt.scatter(dots_x, dots_y, s=6)
-        plt.ylabel('Height')
+        plt.scatter(dots_x, dots_y, s=3)
+        plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
         ax1 = plt.subplot(gs[1])
@@ -121,24 +122,26 @@ class HelloKitty:
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
 
-        save_path = '../../../report/master-thesis/figures'
-        if not os.path.exists(save_path):
-            save_path = '../figures'
-            os.makedirs(save_path, exist_ok=True)
-        tt = time.localtime()
-        the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
-        save_path = f'{save_path}/hello_kitty_{the_time}'
-        
-        pdffig = PdfPages(str(save_path) + '.pdf')
-        metadata = pdffig.infodict()
-        metadata['Title'] = f'Hello Kitty plot'
-        metadata['Author'] = 'Eirik R. Enger'
-        metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
-        metadata['Keywords'] = f'{self.meta}'
-        metadata['ModDate'] = datetime.datetime.today()
-        plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
-        pdffig.close()
-        plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
+        if True:
+            save_path = '../../../report/master-thesis/figures'
+            if not os.path.exists(save_path):
+                save_path = '../figures'
+                os.makedirs(save_path, exist_ok=True)
+            tt = time.localtime()
+            the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
+            save_path = f'{save_path}/hello_kitty_{the_time}'
+            
+            pdffig = PdfPages(str(save_path) + '.pdf')
+            metadata = pdffig.infodict()
+            metadata['Title'] = f'Hello Kitty plot'
+            metadata['Author'] = 'Eirik R. Enger'
+            metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
+            metadata['Keywords'] = f'{self.meta}'
+            metadata['ModDate'] = datetime.datetime.today()
+            pdffig.attach_note('using 10 pitch, 10percent power')
+            plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
+            pdffig.close()
+            plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
 
         # Plot of each angle
         # plt.figure()
