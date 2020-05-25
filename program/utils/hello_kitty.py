@@ -2,7 +2,7 @@
 """
 
 import sys, os
-from contextlib import contextmanager
+import time
 
 import numpy as np
 import matplotlib
@@ -40,8 +40,8 @@ class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
         # self.Z = np.linspace(2e10, 6e11, 70)
-        self.Z = np.linspace(2e10, 6e11, 40)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 20))  # 25))
+        self.Z = np.linspace(2e10, 6e11, 2)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 2))  # 25))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.create_data()
@@ -115,8 +115,15 @@ class HelloKitty:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        plt.savefig('hello_kitty_big_one_with_dots.pdf', bbox_inches='tight', dpi=200)
-        plt.savefig('hello_kitty_big_one_with_dots.pgf', bbox_inches='tight')
+
+        save_path = '../../../report/master-thesis/figures'
+        if not os.path.exists(save_path):
+            save_path = '../figures'
+            os.makedirs(save_path, exist_ok=True)
+        tt = time.localtime()
+        the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
+        plt.savefig(f'{save_path}/hello_kitty_{the_time}.pdf', bbox_inches='tight', dpi=200)
+        plt.savefig(f'{save_path}/hello_kitty_{the_time}.pgf', bbox_inches='tight')
 
         # Plot of each angle
         # plt.figure()
