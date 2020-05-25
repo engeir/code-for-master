@@ -14,13 +14,10 @@ if __name__ != '__main__':
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
-    # 'font.family': 'Ovo',
-    # 'font.serif': 'Ovo',
-    # 'mathtext.fontset': 'cm',
-    # Use ASCII minus
+    'font.family': 'DejaVu Sans',
     'axes.unicode_minus': False,
+    'pgf.texsystem': 'pdflatex'
 })
-matplotlib.rcParams.update({"pgf.texsystem": "pdflatex"})
 
 
 def f_0_maxwell(v, params):
@@ -61,13 +58,13 @@ def interpolate_data(v, params):
     # plt.loglog(v, new_f0f1, '--')
     # plt.loglog(v, f_0, '-.')
     # plt.loglog(velocities, f_1, linestyle=(0, (3, 5, 1, 5, 1, 5)))
-    # plt.legend([r'$f_0 + f_1$', 'np.maximum(' + r'$f_0, f_1$' + ')', r'$f_0$', r'$f_1$'])
-    # # plt.ylim([1e-17, 1e-5])
+    # plt.legend([r'$f_{0,\mathrm{M}} + f_{0,\mathrm{S}}$', 'np.maximum(' + r'$f_{0,\mathrm{M}}, f_{0,\mathrm{S}}$' + ')', r'$f_{0,\mathrm{M}}$', r'$f_{0,\mathrm{S}}$'])
     # plt.xlim([5.8e5, 8e5])
     # plt.ylim([5e-13, 3e-11])
     # plt.xlabel('Velocity [m/s]')
-    # plt.ylabel('VDF, ' + r'$f$')
-    # plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data.pgf', bbox_inches='tight')
+    # plt.ylabel('VDF, ' + r'$f_0$')
+    # # plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data.pgf', bbox_inches='tight')
+    # # plt.savefig(f'../../figures/interp_real_data.pgf', bbox_inches='tight')
     # plt.show()
 
     return f0_f1
@@ -120,7 +117,7 @@ def read_dat_file(file):
 
 if __name__ == '__main__':
     # x = np.linspace(0, 6e6, 1000)
-    # param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-15.mat'}
+    # param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-15.mat', 'Z': 499}
     # interpolate_data(x, param)
     # theta_lims, E4fe, SzeN, timeOfDayUT, z4fe
     # Arecibo is 4 hours behind UT, [9, 16] UT = [5, 12] local time
