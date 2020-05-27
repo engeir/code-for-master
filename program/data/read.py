@@ -70,11 +70,13 @@ def interpolate_data(v, params):
     return f0_f1
 
 def view_mat_file():
-    path = 'Arecibo-photo-electrons/'
+    # path = 'Arecibo-photo-electrons/'
+    path = 'arecibo2/'
     x = loadmat(path + 'fe_zmuE-01.mat')
     data = x['fe_zmuE']
-    data = data[:, :10, :]
-    data = np.einsum('ijk->ik', data) / 10
+    print(data.shape)
+    # data = data[:, :10, :]
+    data = np.einsum('ijk->ik', data) / 18
     data = data[499, :]
     E = np.linspace(1, 110, len(data))
 
@@ -123,6 +125,6 @@ if __name__ == '__main__':
     # Arecibo is 4 hours behind UT, [9, 16] UT = [5, 12] local time
     # x = loadmat('Arecibo-photo-electrons/' + 'fe_zmuE-15.mat')
     # data = x['fe_zmuE']
-    # view_mat_file()
-    dat_file = read_dat_file('SzeN.dat')
-    print(dat_file)
+    view_mat_file()
+    # dat_file = read_dat_file('SzeN.dat')
+    # print(dat_file)
