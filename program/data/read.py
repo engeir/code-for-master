@@ -38,8 +38,9 @@ def interpolate_data(v, params):
             path = 'data/Arecibo-photo-electrons/'
         x = loadmat(path + params['mat_file'])
         data = x['fe_zmuE']
-        sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
-        sum_over_pitch = np.einsum('ijk->ik', data) / 10 * 3  # removes j-dimansion through dot-product
+        # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
+        sum_over_pitch = data[:, 10:, :]  # removes j-dimansion through dot-product
+        sum_over_pitch = np.einsum('ijk->ik', data) / 8  # removes j-dimansion through dot-product
         # count = np.argmax(sum_over_pitch, 0)
         # IDX = np.argmax(np.bincount(count))
         # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
@@ -70,9 +71,11 @@ def interpolate_data(v, params):
     return f0_f1
 
 def view_mat_file():
-    path = 'Arecibo-photo-electrons/'
+    # path = 'Arecibo-photo-electrons/'
+    path = 'arecibo2/'
     x = loadmat(path + 'fe_zmuE-01.mat')
     data = x['fe_zmuE']
+    print(data.shape)
     data = data[:, :10, :]
     data = np.einsum('ijk->ik', data) / 10
     data = data[499, :]
@@ -99,7 +102,8 @@ def read_dat_file(file):
     """
     l = np.array([])
     if __name__ == '__main__':
-        path = 'Arecibo-photo-electrons/'
+        #path = 'Arecibo-photo-electrons/'
+        path = 'arecibo2'
     else:
         path = 'data/Arecibo-photo-electrons/'
     with open(path + file) as f:
@@ -123,6 +127,6 @@ if __name__ == '__main__':
     # Arecibo is 4 hours behind UT, [9, 16] UT = [5, 12] local time
     # x = loadmat('Arecibo-photo-electrons/' + 'fe_zmuE-15.mat')
     # data = x['fe_zmuE']
-    # view_mat_file()
-    dat_file = read_dat_file('SzeN.dat')
-    print(dat_file)
+    view_mat_file()
+    #dat_file = read_dat_file('SzeN.dat')
+    #print(dat_file)

@@ -42,8 +42,8 @@ class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
         # self.Z = np.linspace(2e10, 6e11, 70)
-        self.Z = np.linspace(2e10, 6e11, 80)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 40))  # 25))
+        self.Z = np.linspace(2e10, 6e11, 40)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 20))  # 25))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
@@ -93,7 +93,7 @@ class HelloKitty:
         # print(freq)
         l = const.c / cf.I_P['F0']
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
-        return bool(9 < E_plasma < 10 or 17 < E_plasma < 18)
+        return bool(12.4 < E_plasma < 14.2 or 17.4 < E_plasma < 18.4 or 20 < E_plasma < 22)
 
     def plot_data(self):
         # Hello kitty figure duplication
@@ -145,7 +145,7 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('using 10 pitch, 300percent power')
+            pdffig.attach_note('using 10: pitch, 100percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
