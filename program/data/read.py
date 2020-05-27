@@ -116,7 +116,7 @@ def plot_interp(v, params):
     plt.ylim([5e-14, 3e-12])
     plt.xlabel(r'Energy, $E$ [eV]')
     plt.ylabel('VDF, ' + r'$f_0$')
-    plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data_energyscale.pgf', bbox_inches='tight')
+    # plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data_energyscale.pgf', bbox_inches='tight')
     # plt.savefig(f'../../figures/interp_real_data.pgf', bbox_inches='tight')
     plt.show()
 
