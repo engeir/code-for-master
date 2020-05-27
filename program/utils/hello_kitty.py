@@ -47,6 +47,11 @@ class HelloKitty:
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
+        save = input('Press "y/yes" to save plot, any other key to dismiss.\t').lower()
+        if save in ['y', 'yes']:
+            self.save = True
+        else:
+            self.save = False
 
         self.create_data()
         self.plot_data()
@@ -91,7 +96,6 @@ class HelloKitty:
         return bool(9 < E_plasma < 10 or 17 < E_plasma < 18)
 
     def plot_data(self):
-        # New comment
         # Hello kitty figure duplication
         self.g = np.c_[self.g, self.g[:, ::-1], self.g, self.g[:, ::-1]]
         self.A = np.r_[self.A, self.A[::-1], self.A, self.A[::-1]]
@@ -99,10 +103,11 @@ class HelloKitty:
         dots_y = []
         for i, d in enumerate(self.dots[0]):
             arg = np.argwhere(self.A == self.A[d])
-            dots_x = np.r_[dots_x, arg[:, 0]]
-            dots_y = np.r_[dots_y, np.ones(len(arg[:, 0])) * self.dots[1][i]]
-        f = plt.figure(figsize=(6, 6))
-        gs = gridspec.GridSpec(2, 1, height_ratios=[3, 1])
+            dots_x = np.r_[dots_x, arg[:2, 0]]
+            dots_y = np.r_[dots_y, np.ones(len(arg[:2, 0])) * self.dots[1][i]]
+        
+        f = plt.figure(figsize=(6, 4))
+        gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         ax0 = plt.subplot(gs[0])
         im = ax0.imshow(self.g, extent=[0, len(self.A) - 1, np.min(self.Z), np.max(self.Z)],
                         origin='lower', aspect='auto', cmap='gist_heat')
@@ -118,11 +123,11 @@ class HelloKitty:
         axs += [ax0]
         axs += [ax1]
         gs.update(hspace=0.05)
-        f.colorbar(im, ax=axs).ax.set_ylabel('Echo Power')
+        f.colorbar(im, ax=axs).ax.set_ylabel('Echo power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
 
-        if True:
+        if self.save:
             save_path = '../../../report/master-thesis/figures'
             if not os.path.exists(save_path):
                 save_path = '../figures'
@@ -130,6 +135,8 @@ class HelloKitty:
             tt = time.localtime()
             the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
             save_path = f'{save_path}/hello_kitty_{the_time}'
+            self.meta.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'], 'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
+                                 'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
             
             pdffig = PdfPages(str(save_path) + '.pdf')
             metadata = pdffig.infodict()
@@ -138,7 +145,7 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('using 10 pitch, 50percent power')
+            pdffig.attach_note('using 10 pitch, 300percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
