@@ -35,12 +35,13 @@ def interpolate_data(v, params):
         if __name__ == '__main__':
             path = 'Arecibo-photo-electrons/'
         else:
-            path = 'data/Arecibo-photo-electrons/'
+            # path = 'data/Arecibo-photo-electrons/'
+            path = 'data/arecibo2/'
         x = loadmat(path + params['mat_file'])
         data = x['fe_zmuE']
         # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
-        sum_over_pitch = data[:, 10:, :]  # removes j-dimansion through dot-product
-        sum_over_pitch = np.einsum('ijk->ik', data) / 8  # removes j-dimansion through dot-product
+        sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
+        sum_over_pitch = np.einsum('ijk->ik', data) / 20  # removes j-dimansion through dot-product
         # count = np.argmax(sum_over_pitch, 0)
         # IDX = np.argmax(np.bincount(count))
         # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
@@ -53,6 +54,10 @@ def interpolate_data(v, params):
     f_0 = f_0_maxwell(v, params)
     f0_f1 = f_0 + new_f1
     # new_f0f1 = np.maximum(f_0, new_f1)
+
+    # Might want to scale v to get energy instead
+    # E = 1 / 2 * const.m_e * v**2 / const.eV
+    # v = E
 
     # plt.figure(figsize=(6, 3))
     # plt.loglog(v, f0_f1, '-')
@@ -70,26 +75,65 @@ def interpolate_data(v, params):
 
     return f0_f1
 
+def plot_interp(v, params):
+    if __name__ == '__main__':
+        # path = 'Arecibo-photo-electrons/'
+        path = 'arecibo2/'
+    else:
+        # path = 'data/Arecibo-photo-electrons/'
+        path = 'data/arecibo2/'
+    x = loadmat(path + params['mat_file'])
+    data = x['fe_zmuE']
+    # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
+    sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
+    sum_over_pitch = np.einsum('ijk->ik', data) / 10  # removes j-dimansion through dot-product
+    # count = np.argmax(sum_over_pitch, 0)
+    # IDX = np.argmax(np.bincount(count))
+    # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
+    idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
+    f_1 = sum_over_pitch[idx, :]
+    energies = read_dat_file('E4fe.dat')
+    
+    velocities = (2 * energies * const.eV / params['m'])**.5
+    new_f1 = np.interp(v, velocities, f_1)
+    f_0 = f_0_maxwell(v, params)
+    f0_f1 = f_0 + new_f1
+    new_f0f1 = np.maximum(f_0, new_f1)
+
+    # Might want to scale v to get energy instead
+    v = 1 / 2 * const.m_e * v**2 / const.eV
+    velocities = energies  # 1 / 2 * const.m_e * velocities**2 / const.eV
+
+    plt.figure(figsize=(6, 3))
+    plt.semilogy(v, f0_f1, '-')
+    plt.semilogy(v, new_f0f1, '--')
+    plt.semilogy(v, f_0, '-.')
+    plt.semilogy(velocities, f_1, linestyle=(0, (3, 5, 1, 5, 1, 5)))
+    plt.legend([r'$f_{0,\mathrm{M}} + f_{0,\mathrm{S}}$', 'np.maximum(' + r'$f_{0,\mathrm{M}}, f_{0,\mathrm{S}}$' + ')', r'$f_{0,\mathrm{M}}$', r'$f_{0,\mathrm{S}}$'])
+    # plt.xlim([5.8e5, 8e5])
+    plt.xlim([1.2, 1.9])
+    # plt.ylim([5e-13, 3e-11])
+    plt.ylim([5e-14, 3e-12])
+    plt.xlabel(r'Energy, $E$ [eV]')
+    plt.ylabel('VDF, ' + r'$f_0$')
+    plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data_energyscale.pgf', bbox_inches='tight')
+    # plt.savefig(f'../../figures/interp_real_data.pgf', bbox_inches='tight')
+    plt.show()
+
 def view_mat_file():
-    path = 'Arecibo-photo-electrons/'
-    # path = 'arecibo2/'
+    # path = 'Arecibo-photo-electrons/'
+    path = 'arecibo2/'
     x = loadmat(path + 'fe_zmuE-07.mat')
     data = x['fe_zmuE']
     print(data.shape)
-    data = data[:, 10:, :]
-    data = np.einsum('ijk->ik', data) / 10
+    data = data[:, :10, :]
+    data = np.einsum('ijk->ik', data) / 18
     data = data[499, :]
     E = np.linspace(1, 110, len(data))
 
     plt.figure()
     plt.plot(E, data.T)
     plt.show()
-
-
-# def moving_average(data_set, periods=3):
-#     weights = np.ones(periods) / periods
-#     return np.convolve(data_set, weights, mode='valid')
-
 
 def read_dat_file(file):
     """Return the contents of a .dat file as a single numpy row vector.
@@ -102,8 +146,7 @@ def read_dat_file(file):
     """
     l = np.array([])
     if __name__ == '__main__':
-        #path = 'Arecibo-photo-electrons/'
-        path = 'arecibo2'
+        path = 'Arecibo-photo-electrons/'
     else:
         path = 'data/Arecibo-photo-electrons/'
     with open(path + file) as f:
@@ -120,13 +163,14 @@ def read_dat_file(file):
     return np.array(e)
 
 if __name__ == '__main__':
-    # x = np.linspace(0, 6e6, 1000)
-    # param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-15.mat', 'Z': 499}
+    x = np.linspace(0, 6e6, 1000)
+    param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-01.mat', 'Z': 499}
+    plot_interp(x, param)
     # interpolate_data(x, param)
     # theta_lims, E4fe, SzeN, timeOfDayUT, z4fe
     # Arecibo is 4 hours behind UT, [9, 16] UT = [5, 12] local time
     # x = loadmat('Arecibo-photo-electrons/' + 'fe_zmuE-15.mat')
     # data = x['fe_zmuE']
-    view_mat_file()
+    # view_mat_file()
     # dat_file = read_dat_file('SzeN.dat')
     # print(dat_file)

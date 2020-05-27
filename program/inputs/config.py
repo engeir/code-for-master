@@ -39,5 +39,5 @@ I_P = {'F0': 430e6, 'F_MAX': 7.5e6}
 K_RADAR = - 2 * I_P['F0'] * 2 * np.pi / const.c  # Radar wavenumber
 # If 'plasma' == True, might as well set f_min ≈ 1e6
 f = np.linspace(1e6, I_P['F_MAX'], int(F_N_POINTS))
-f = (f / I_P['F_MAX'])**3 * I_P['F_MAX']
+f = (f / I_P['F_MAX'])**1 * I_P['F_MAX']
 w = 2 * np.pi * f  # Angular frequency
