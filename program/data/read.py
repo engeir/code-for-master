@@ -70,13 +70,13 @@ def interpolate_data(v, params):
     return f0_f1
 
 def view_mat_file():
-    # path = 'Arecibo-photo-electrons/'
-    path = 'arecibo2/'
-    x = loadmat(path + 'fe_zmuE-01.mat')
+    path = 'Arecibo-photo-electrons/'
+    # path = 'arecibo2/'
+    x = loadmat(path + 'fe_zmuE-07.mat')
     data = x['fe_zmuE']
     print(data.shape)
-    # data = data[:, :10, :]
-    data = np.einsum('ijk->ik', data) / 18
+    data = data[:, 10:, :]
+    data = np.einsum('ijk->ik', data) / 10
     data = data[499, :]
     E = np.linspace(1, 110, len(data))
 
