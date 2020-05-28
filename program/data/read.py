@@ -93,7 +93,7 @@ def plot_interp(v, params):
     idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
     f_1 = sum_over_pitch[idx, :]
     energies = read_dat_file('E4fe.dat')
-    
+
     velocities = (2 * energies * const.eV / params['m'])**.5
     new_f1 = np.interp(v, velocities, f_1)
     f_0 = f_0_maxwell(v, params)
@@ -163,14 +163,14 @@ def read_dat_file(file):
     return np.array(e)
 
 if __name__ == '__main__':
-    x = np.linspace(0, 6e6, 1000)
-    param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-01.mat', 'Z': 499}
-    plot_interp(x, param)
+    # x = np.linspace(0, 6e6, 1000)
+    # param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-01.mat', 'Z': 499}
+    # plot_interp(x, param)
     # interpolate_data(x, param)
     # theta_lims, E4fe, SzeN, timeOfDayUT, z4fe
     # Arecibo is 4 hours behind UT, [9, 16] UT = [5, 12] local time
     # x = loadmat('Arecibo-photo-electrons/' + 'fe_zmuE-15.mat')
     # data = x['fe_zmuE']
-    # view_mat_file()
+    view_mat_file()
     # dat_file = read_dat_file('SzeN.dat')
     # print(dat_file)

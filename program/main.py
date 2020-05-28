@@ -84,7 +84,7 @@ class PlotClass:
                     version += f'_{d["version"][0]}'
                 else:
                     version += f'{d["version"][0]}'
-        params.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'], 'V:MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
+        params.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'], 'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
                           'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
         tt = time.localtime()
         the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
@@ -412,7 +412,7 @@ class Simulation:
         # sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 1e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 1500, 'T_I': 1000, 'T_ES': 90000,
         #            'THETA': 40 * np.pi / 180, 'Z': 200, 'mat_file': 'fe_zmuE-07.mat'}
         # params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
-        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 0, 'T_E': 1500, 'T_I': 1000, 'T_ES': 90000,
+        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # Ridge 1
@@ -426,19 +426,18 @@ class Simulation:
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        sys_set['THETA'] = 40 * np.pi / 180
-        sys_set['NE'] = 2e11
+        sys_set['NE'] = 1e12
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
         self.data.append(ridge)
         ridge = []
         sys_set['THETA'] = 30 * np.pi / 180
-        sys_set['NE'] = 1e10
+        sys_set['NE'] = 2e10
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        sys_set['NE'] = 2e11
+        sys_set['NE'] = 1e12
         # sys_set['THETA'] = 30 * np.pi / 180
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
@@ -463,13 +462,13 @@ class Simulation:
         # self.legend_txt.append('ToD: $09:00$')
         # self.legend_txt.append('ToD: $14:30$')
         self.legend_txt.append('NE=2e10')
-        self.legend_txt.append('NE=6e11')
+        self.legend_txt.append('NE=1e12')
         # self.legend_txt.append('NE=2e12')
         # self.legend_txt.append('NE=2e12')
         # self.legend_txt.append('NE=9e11')
         # self.legend_txt.append('NE=2e12')
         self.ridge_txt.append('60')
-        # self.ridge_txt.append('30')
+        self.ridge_txt.append('30')
         # self.ridge_txt.append('Kappa')
 
             # self.ridge_txt.append(f'${H}$ km')
@@ -519,7 +518,7 @@ class Simulation:
         self.plot_data()
         self.save_handle('tearDown')
 
- 
+
 if __name__ == '__main__':
     # Simulation().run()
     hk.HelloKitty()

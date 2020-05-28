@@ -93,7 +93,7 @@ class HelloKitty:
         # print(freq)
         l = const.c / cf.I_P['F0']
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
-        return bool(18.4 < E_plasma < 19.4 or 24 < E_plasma < 24.9)
+        return bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
 
     def plot_data(self):
         # Hello kitty figure duplication
@@ -105,7 +105,7 @@ class HelloKitty:
             arg = np.argwhere(self.A == self.A[d])
             dots_x = np.r_[dots_x, arg[:2, 0]]
             dots_y = np.r_[dots_y, np.ones(len(arg[:2, 0])) * self.dots[1][i]]
-        
+
         f = plt.figure(figsize=(6, 4))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         ax0 = plt.subplot(gs[0])
@@ -137,7 +137,7 @@ class HelloKitty:
             save_path = f'{save_path}/hello_kitty_{the_time}'
             self.meta.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'], 'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
                                  'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
-            
+
             pdffig = PdfPages(str(save_path) + '.pdf')
             metadata = pdffig.infodict()
             metadata['Title'] = f'Hello Kitty plot'
