@@ -145,7 +145,7 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('using :10 pitch, 1000percent power')
+            pdffig.attach_note('using :10 pitch, 50percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
