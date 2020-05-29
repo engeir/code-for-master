@@ -41,7 +41,7 @@ def interpolate_data(v, params):
         data = x['fe_zmuE']
         # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
         sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
-        sum_over_pitch = np.einsum('ijk->ik', data) / 20  # removes j-dimansion through dot-product
+        sum_over_pitch = np.einsum('ijk->ik', data) / 1  # removes j-dimansion through dot-product
         # count = np.argmax(sum_over_pitch, 0)
         # IDX = np.argmax(np.bincount(count))
         # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
@@ -127,8 +127,8 @@ def view_mat_file():
     data = x['fe_zmuE']
     print(data.shape)
     data = data[:, :10, :]
-    data = np.einsum('ijk->ik', data) / 18
-    data = data[499, :]
+    data = np.einsum('ijk->ik', data) / 10
+    data = data[-1, :]
     E = np.linspace(1, 110, len(data))
 
     plt.figure()
@@ -164,7 +164,7 @@ def read_dat_file(file):
 
 if __name__ == '__main__':
     # x = np.linspace(0, 6e6, 1000)
-    # param = {'T': 1000, 'm': const.m_e, 'mat_file': 'fe_zmuE-01.mat', 'Z': 499}
+    # param = {'T': 2000, 'm': const.m_e, 'mat_file': 'fe_zmuE-07.mat', 'Z': 599}
     # plot_interp(x, param)
     # interpolate_data(x, param)
     # theta_lims, E4fe, SzeN, timeOfDayUT, z4fe

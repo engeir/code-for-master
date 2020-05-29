@@ -38,17 +38,15 @@ def integrate(m, T, nu, y, function, kappa=None):
     # tqdm give a neat progress bar for the iterative process
     # with tqdm(total=len(cf.w)) as pbar:
     #     for _ in pool.map(func, idx):
-    #         pass
-            # pbar.set_description("Calculating spectrum")
+    #         pbar.set_description("Calculating spectrum")
             # pbar.update(1)
     pool.map(func, idx)
     pool.close()
     if function.the_type == 'kappa':
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))
     elif function.the_type == 'a_vdf':
-        # Kappa characteristic velocity scaling, kappa = 3
+        # Kappa characteristic velocity scaling
         # a = 4 * np.pi * T * const.k * array / m * (kappa - 3 / 2) / (kappa - 1 / 2)
-        # a = 4 * np.pi * T * const.k * array / m * (8 - 3 / 2) / (8 - 1 / 2)
         # Maxwellian characteristic velocity scaling
         # a = 4 * np.pi * T * const.k * array / m
         # General for any VDF

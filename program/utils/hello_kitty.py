@@ -62,7 +62,7 @@ class HelloKitty:
         #            'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # With real_data, f_0 = 430e6, NE = [2e10, 6e11], 1e4, 4e5, 1e4
-        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+        sys_set = {'B': 2 * 50000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
@@ -79,10 +79,10 @@ class HelloKitty:
                     if self.check_energy(f, s, a):
                         self.dots[0].append(j)
                         self.dots[1].append(z)
-                    res = si.simps(s, f)
+                    # res = si.simps(s, f)
                     # s = np.random.uniform(0, 200)
-                    self.g[i, j] = res
-                    # self.g[i, j] = np.max(s)
+                    # self.g[i, j] = res
+                    self.g[i, j] = np.max(s)
                     pbar.update(1)
         self.meta.append(meta_data)
 
@@ -145,7 +145,7 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('using :10 pitch, 50percent power')
+            pdffig.attach_note('max(s), using :10 pitch, 1000percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
