@@ -415,28 +415,31 @@ class Simulation:
         b0 = 50000e-9
         bc = [1, .5, 1, 4, 6]
         sys_set = {'B': b0 * bc[0], 'MI': 16, 'NE': 1.6e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 240000,
-                   'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # Ridge 1
         ridge = []
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        # sys_set['NE'] = 1.44e11
+        sys_set['NE'] = 2e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
         # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         # ridge.append(s)
         # self.meta_data.append(meta_data)
-        # sys_set['NE'] = 1e11
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
+        sys_set['NE'] = 2.5e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
         # self.data.append(ridge)
         # ridge = []
         # sys_set['THETA'] = 30 * np.pi / 180
-        # sys_set['NE'] = 6e11
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
+        sys_set['NE'] = 4e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
         # sys_set['NE'] = 6.5e11
         # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         # ridge.append(s)
@@ -450,9 +453,9 @@ class Simulation:
 
         self.legend_txt.append('NE=0')
         # self.legend_txt.append('NE=0, maxwell')
-        # self.legend_txt.append('NE=.8e11')
-        # self.legend_txt.append('NE=7e11')
-        # self.legend_txt.append('B=6b0')
+        self.legend_txt.append('NE=.8e11')
+        self.legend_txt.append('NE=7e11')
+        self.legend_txt.append('B=6b0')
 
         # self.ridge_txt.append('60')
         self.ridge_txt.append('30')

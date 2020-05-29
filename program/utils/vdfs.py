@@ -142,9 +142,9 @@ class F_GAUSS_SHELL(VDF):
 
     def f_0(self):
         func = self.A * np.exp(- self.steep * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + \
-               100 * self.f_M.f_0()
+               1e4 * self.f_M.f_0()
 
-        return func / 101
+        return func / (1e4 + 1)
 
 
 class F_REAL_DATA(VDF):
