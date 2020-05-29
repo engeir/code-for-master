@@ -82,7 +82,7 @@ class HelloKitty:
                     # res = si.simps(s, f)
                     # s = np.random.uniform(0, 200)
                     # self.g[i, j] = res
-                    self.g[i, j] = np.max(s)
+                    self.g[i, j] = 10 * np.log10(np.max(s))
                     pbar.update(1)
         self.meta.append(meta_data)
 
@@ -123,7 +123,7 @@ class HelloKitty:
         axs += [ax0]
         axs += [ax1]
         gs.update(hspace=0.05)
-        f.colorbar(im, ax=axs).ax.set_ylabel('Echo power')
+        f.colorbar(im, ax=axs).ax.set_ylabel('Echo power [dB]')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
 
