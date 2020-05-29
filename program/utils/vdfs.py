@@ -128,7 +128,7 @@ class F_GAUSS_SHELL(VDF):
         self.params = params
         self.vth = np.sqrt(self.params['T'] * const.k / self.params['m'])
         self.r = (self.params['T_ES'] * const.k / self.params['m'])**.5
-        self.steep = 10
+        self.steep = 5
         self.f_M = F_MAXWELL(self.v, self.params)
         self.normalize()
 
@@ -136,10 +136,13 @@ class F_GAUSS_SHELL(VDF):
         func = np.exp(- self.steep * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m']))
         f = func * self.v**2 * 4 * np.pi
         self.A = 1 / si.simps(f, self.v)
-        print(f'Gauss shell at v = {round(self.r / self.vth, 3)} v_th')
+        ev = .5 * const.m_e * self.r**2 / const.eV
+        # print(f'Gauss shell at v = {round(self.r / self.vth, 3)} v_th')
+        print(f'Gauss shell at E = {round(ev, 2)} eV')
 
     def f_0(self):
-        func = self.A * np.exp(- self.steep * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + 100 * self.f_M.f_0()
+        func = self.A * np.exp(- self.steep * (abs(self.v) - self.r)**2 / (2 * self.params['T'] * const.k / self.params['m'])) + \
+               100 * self.f_M.f_0()
 
         return func / 101
 
