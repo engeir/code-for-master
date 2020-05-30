@@ -41,7 +41,7 @@ def interpolate_data(v, params):
         data = x['fe_zmuE']
         # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
         sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
-        sum_over_pitch = np.einsum('ijk->ik', data) / 1  # removes j-dimansion through dot-product
+        sum_over_pitch = np.einsum('ijk->ik', data) / 10  # removes j-dimansion through dot-product
         # count = np.argmax(sum_over_pitch, 0)
         # IDX = np.argmax(np.bincount(count))
         # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))

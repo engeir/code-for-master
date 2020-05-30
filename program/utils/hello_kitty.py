@@ -42,8 +42,8 @@ class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
         # self.Z = np.linspace(2e10, 6e11, 70)
-        self.Z = np.linspace(8e10, 8e11, 40)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 20))  # 25))
+        self.Z = np.linspace(8e10, 8e11, 80)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 40))  # 25))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
@@ -62,7 +62,7 @@ class HelloKitty:
         #            'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # With real_data, f_0 = 430e6, NE = [2e10, 6e11], 1e4, 4e5, 1e4
-        sys_set = {'B': 2 * 50000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
@@ -82,7 +82,8 @@ class HelloKitty:
                     # res = si.simps(s, f)
                     # s = np.random.uniform(0, 200)
                     # self.g[i, j] = res
-                    self.g[i, j] = 10 * np.log10(np.max(s))
+                    self.g[i, j] = np.max(s)
+                    # self.g[i, j] = 10 * np.log10(np.max(s))
                     pbar.update(1)
         self.meta.append(meta_data)
 
@@ -123,7 +124,7 @@ class HelloKitty:
         axs += [ax0]
         axs += [ax1]
         gs.update(hspace=0.05)
-        f.colorbar(im, ax=axs).ax.set_ylabel('Echo power [dB]')
+        f.colorbar(im, ax=axs).ax.set_ylabel('Echo power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
 
@@ -145,7 +146,7 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('max(s), using :10 pitch, 1000percent power')
+            pdffig.attach_note('max(s), using :10 pitch, 100percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
