@@ -42,8 +42,8 @@ class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
         # self.Z = np.linspace(2e10, 6e11, 70)
-        self.Z = np.linspace(8e10, 8e11, 80)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 40))  # 25))
+        self.Z = np.linspace(8e10, 8e11, 40)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 20))  # 25))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
