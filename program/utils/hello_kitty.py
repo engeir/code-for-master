@@ -42,8 +42,8 @@ class HelloKitty:
     def __init__(self):
         # self.Z = np.arange(100, 350, 50)
         # self.Z = np.linspace(2e10, 6e11, 70)
-        self.Z = np.linspace(8e10, 8e11, 40)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 20))  # 25))
+        self.Z = np.linspace(2e11, 1e12, 60)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))  # 25))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
@@ -120,6 +120,7 @@ class HelloKitty:
         ax1 = plt.subplot(gs[1])
         ax1.plot(self.A)
         plt.xlim([0, len(self.A) - 1])
+        # TODO: try to define a ylim so that "30" is also included in the yticks
         plt.ylabel('Aspect angle')
         axs = []
         axs += [ax0]
