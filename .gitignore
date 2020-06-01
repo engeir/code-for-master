@@ -1,0 +1,7 @@
+__pycache__
+**/.pytest_cache/**
+.vscode
+.mypy_cache
+**/.mypy_cache/*
+.DS_Store
+.DS_Store?
