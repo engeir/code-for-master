@@ -40,8 +40,8 @@ def interpolate_data(v, params):
         x = loadmat(path + params['mat_file'])
         data = x['fe_zmuE']
         # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
-        sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
-        sum_over_pitch = np.einsum('ijk->ik', data) / 10  # removes j-dimansion through dot-product
+        # sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
+        sum_over_pitch = np.einsum('ijk->ik', data) / 18  # removes j-dimansion through dot-product
         # count = np.argmax(sum_over_pitch, 0)
         # IDX = np.argmax(np.bincount(count))
         # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
@@ -85,8 +85,8 @@ def plot_interp(v, params):
     x = loadmat(path + params['mat_file'])
     data = x['fe_zmuE']
     # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
-    sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
-    sum_over_pitch = np.einsum('ijk->ik', data) / 10  # removes j-dimansion through dot-product
+    # sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
+    sum_over_pitch = np.einsum('ijk->ik', data) / 18  # removes j-dimansion through dot-product
     # count = np.argmax(sum_over_pitch, 0)
     # IDX = np.argmax(np.bincount(count))
     # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
@@ -125,10 +125,10 @@ def view_mat_file():
     path = 'arecibo2/'
     x = loadmat(path + 'fe_zmuE-07.mat')
     data = x['fe_zmuE']
-    print(data.shape)
-    data = data[:, :10, :]
-    data = np.einsum('ijk->ik', data) / 10
-    data = data[-1, :]
+    # print(data.shape)
+    # data = data[:, :10, :]
+    data = np.einsum('ijk->ik', data) / 18
+    data = data[200, :]
     E = np.linspace(1, 110, len(data))
 
     plt.figure()

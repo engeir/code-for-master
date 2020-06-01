@@ -63,7 +63,7 @@ class HelloKitty:
         # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
         # With real_data, f_0 = 430e6, NE = [2e10, 6e11], 1e4, 4e5, 1e4
         sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                   'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 60 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
             for i, z in enumerate(self.Z):
@@ -94,7 +94,8 @@ class HelloKitty:
         # print(freq)
         l = const.c / cf.I_P['F0']
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
-        return bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
+        return bool(21.7 < E_plasma < 22.3 or 23.5 < E_plasma < 24.1 or 26.5 < E_plasma < 27.2)
+        # return bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
 
     def plot_data(self):
         # Hello kitty figure duplication
@@ -146,7 +147,7 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('max(s), using :10 pitch, 100percent power')
+            pdffig.attach_note('max(s), using : pitch, 100percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
