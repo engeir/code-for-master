@@ -7,6 +7,8 @@ from scipy.io import loadmat
 import scipy.constants as const
 import matplotlib
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 
 if __name__ != '__main__':
     from inputs import config as cf
@@ -126,13 +128,27 @@ def view_mat_file():
     x = loadmat(path + 'fe_zmuE-07.mat')
     data = x['fe_zmuE']
     # print(data.shape)
-    # data = data[:, :10, :]
-    data = np.einsum('ijk->ik', data) / 18
-    data = data[200, :]
+    data = data[:, :10, :]
+    data = np.einsum('ijk->ik', data) / 10
+    data = data[-1, :]
     E = np.linspace(1, 110, len(data))
 
-    plt.figure()
-    plt.plot(E, data.T)
+    _, ax = plt.subplots(figsize=(6, 3))  # create a new figure with a default 111 subplot
+    ax.plot(E, data.T, 'g')
+    plt.xlabel(r'Energy, $E$ [eV]')
+    plt.ylabel('VDF, ' + r'$f_{0,\mathrm{S}}$')
+    axins = inset_axes(ax, 3.1, 1.5, loc='upper right')
+    axins.plot(E, data.T, 'g')
+    x1, x2, y1, y2 = 13, 27, 1e-15, 5.57e-14
+    axins.set_xlim(x1, x2)
+    axins.set_ylim(y1, y2)
+    # plt.yticks(visible=False)
+    plt.gca().axes.yaxis.set_ticklabels([])
+    # axins.ticklabel_format(useOffset=False)
+    # plt.tick_params(axis='y', which='both', left=False,
+    #                 right=False, labelleft=False)
+    mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
+    # plt.savefig(f'../../../../report/master-thesis/figures/hello_kitty_1.pgf', bbox_inches='tight')
     plt.show()
 
 def read_dat_file(file):
