@@ -89,9 +89,11 @@ class HelloKitty:
 
     @staticmethod
     def check_energy(f, s, deg):
-        p = signal.find_peaks(s, height=10)[0][-1]
+        try:
+            p = signal.find_peaks(s, height=10)[0][-1]
+        except Exception:
+            return False
         freq = f[p]
-        # print(freq)
         l = const.c / cf.I_P['F0']
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
         return bool(21.7 < E_plasma < 22.3 or 23.5 < E_plasma < 24.1 or 26.5 < E_plasma < 27.2)
