@@ -82,8 +82,7 @@ class HelloKitty:
                     pbar.update(1)
         self.meta.append(meta_data)
 
-    @staticmethod
-    def check_energy(f, s, deg):
+    def check_energy(self, f, s, deg):
         try:
             p = signal.find_peaks(s, height=10)[0][-1]
         except Exception:
@@ -152,5 +151,5 @@ class HelloKitty:
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
-        
+
         plt.show()
