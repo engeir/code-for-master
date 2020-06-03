@@ -55,25 +55,6 @@ def interpolate_data(v, params):
     new_f1 = np.interp(v, velocities, f_1)
     f_0 = f_0_maxwell(v, params)
     f0_f1 = f_0 + new_f1
-    # new_f0f1 = np.maximum(f_0, new_f1)
-
-    # Might want to scale v to get energy instead
-    # E = 1 / 2 * const.m_e * v**2 / const.eV
-    # v = E
-
-    # plt.figure(figsize=(6, 3))
-    # plt.loglog(v, f0_f1, '-')
-    # plt.loglog(v, new_f0f1, '--')
-    # plt.loglog(v, f_0, '-.')
-    # plt.loglog(velocities, f_1, linestyle=(0, (3, 5, 1, 5, 1, 5)))
-    # plt.legend([r'$f_{0,\mathrm{M}} + f_{0,\mathrm{S}}$', 'np.maximum(' + r'$f_{0,\mathrm{M}}, f_{0,\mathrm{S}}$' + ')', r'$f_{0,\mathrm{M}}$', r'$f_{0,\mathrm{S}}$'])
-    # plt.xlim([5.8e5, 8e5])
-    # plt.ylim([5e-13, 3e-11])
-    # plt.xlabel('Velocity [m/s]')
-    # plt.ylabel('VDF, ' + r'$f_0$')
-    # # plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data.pgf', bbox_inches='tight')
-    # # plt.savefig(f'../../figures/interp_real_data.pgf', bbox_inches='tight')
-    # plt.show()
 
     return f0_f1
 
@@ -130,7 +111,9 @@ def view_mat_file():
     # print(data.shape)
     data = data[:, :10, :]
     data = np.einsum('ijk->ik', data) / 10
-    data = data[-1, :]
+    idx = int(np.argwhere(read_dat_file('z4fe.dat') == 599))
+    # idx = int(np.argwhere(read_dat_file('z4fe.dat') == 300))
+    data = data[idx, :]
     E = np.linspace(1, 110, len(data))
 
     _, ax = plt.subplots(figsize=(6, 3))  # create a new figure with a default 111 subplot
@@ -140,15 +123,26 @@ def view_mat_file():
     axins = inset_axes(ax, 3.1, 1.5, loc='upper right')
     axins.plot(E, data.T, 'g')
     x1, x2, y1, y2 = 13, 27, 1e-15, 5.57e-14
+    # x1, x2, y1, y2 = 18, 30, 0, 5e-13
     axins.set_xlim(x1, x2)
     axins.set_ylim(y1, y2)
+    x00, x01, x10, x11 = 17.8, 19.2, 23.3, 24.7
+    # x00, x01, x10, x11, x20, x21 = 21.7, 22.3, 23.5, 24.1, 26.5, 27.2
+    axins.axvspan(x00, x01, alpha=0.5, color='g')
+    axins.axvspan(x10, x11, alpha=0.5, color='g')
+    # axins.axvspan(x20, x21, alpha=0.5, color='g')
+    y = 5e-15
+    # y = 4e-13
+    axins.text(18.5, y, '1', fontsize=13, horizontalalignment='center')
+    axins.text(24, y, '2', fontsize=13, horizontalalignment='center')
+    # axins.text(26.8, y, '3', fontsize=13, horizontalalignment='center')
     # plt.yticks(visible=False)
     plt.gca().axes.yaxis.set_ticklabels([])
     # axins.ticklabel_format(useOffset=False)
     # plt.tick_params(axis='y', which='both', left=False,
     #                 right=False, labelleft=False)
     mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
-    # plt.savefig(f'../../../../report/master-thesis/figures/hello_kitty_1.pgf', bbox_inches='tight')
+    # plt.savefig(f'../../../../report/master-thesis/figures/in_use/hello_kitty_1.pgf', bbox_inches='tight')
     plt.show()
 
 def read_dat_file(file):
