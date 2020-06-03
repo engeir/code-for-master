@@ -27,7 +27,8 @@ def integrand(y, params, v, f):
     """
     idx = set(enumerate(y))
     func = partial(parallel, params, v, f)
-    pool = mp.Pool(processes=96)
+    processes = 96
+    pool = mp.Pool(processes=processes)
     # tqdm give a neat progress bar for the iterative process
     # with tqdm(total=len(y)) as pbar:
     #     for _ in pool.map(func, idx):

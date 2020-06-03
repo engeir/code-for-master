@@ -24,6 +24,7 @@ import scipy.integrate as si  # pylint: disable=C0413
 from inputs import config as cf  # pylint: disable=C0413
 from utils import spectrum_calculation as isr  # pylint: disable=C0413
 from utils import hello_kitty as hk  # pylint: disable=C0413
+from data import reproduce
 
 # Customize matplotlib
 matplotlib.rcParams.update({
@@ -130,8 +131,8 @@ class PlotClass:
             freq = freq[mask]
         if func_type == 'semilogy':
             plt.xlabel(f'Frequency [{p}Hz]')
-            # plt.ylabel(r'$\times$')
-            plt.ylabel(r'10$\times$log10(Power) [dB]')
+            plt.ylabel('Power [dB]')
+            # plt.ylabel(r'$10\times\log_{10}$(Power) [dB]')
             for i, _ in enumerate(Is):
                 Is[i] = 10 * np.log10(Is[i])
         else:
@@ -142,11 +143,12 @@ class PlotClass:
                 s = s[mask]
             if func_type == 'semilogy':
                 plt.plot(freq, s, 'r', linestyle=st,
-                         linewidth=.8, label=lab)
+                        linewidth=.8, label=lab)
             else:
                 plot_object = getattr(plt, func_type)
                 plot_object(freq, s, 'r', linestyle=st,
                             linewidth=.8, label=lab)
+
         plt.legend()
         plt.minorticks_on()
         plt.grid(True, which="both", ls="-", alpha=0.4)
@@ -350,6 +352,11 @@ class Simulation:
         self.legend_txt = []
         self.ridge_txt = []
         self.plot = PlotClass()
+        # self.r = reproduce.Plot1(self.plot)
+        # self.r = reproduce.Plot2(self.plot)
+        # self.r = reproduce.Plot3(self.plot)
+        # self.r = reproduce.Plot4(self.plot)
+        self.r = reproduce.Plot5(self.plot)
 
     def create_data(self):
         """Create IS spectra.
@@ -402,69 +409,8 @@ class Simulation:
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
         """
-        # Message for temperature
-        # ridge_txt = [r'$T_e = {}$'.format(j) + ' K' for j in cf.I_P['T_E']]
-        # Message for height
-        # ridge_txt = [r'${}$'.format(j) + ' km' for j in cf.I_P['Z']]
-        # Message for ToD
-        # the_time = [8 + (int(j.split('-')[-1].split('.')[0]) + 1) / 2 for j in cf.I_P['mat_file']]
-        # ridge_txt = [f"ToD: {int(j):02d}:{int(j * 60 % 60):02d} UT" for j in the_time]
-        # sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 1e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 1500, 'T_I': 1000, 'T_ES': 90000,
-        #            'THETA': 40 * np.pi / 180, 'Z': 200, 'mat_file': 'fe_zmuE-07.mat'}
-        # params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
-
-        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 8e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                   'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
-        # Ridge 1
-        ridge = []
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        sys_set['NE'] = 8e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-        self.data.append(ridge)
-        ridge = []
-        sys_set['NE'] = 8e10
-        sys_set['THETA'] = 30 * np.pi / 180
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        sys_set['NE'] = 8e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        # sys_set['NE'] = 6.5e11
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-        # sys_set['NE'] = 5.7e11
-        # self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        # ridge.append(s)
-        # self.meta_data.append(meta_data)
-
-        self.data.append(ridge)
-
-        # self.legend_txt.append('NE=0')
-        # self.legend_txt.append('NE=0, maxwell')
-        self.legend_txt.append('NE=.8e11')
-        self.legend_txt.append('NE=8e11')
-        # self.legend_txt.append('B=6b0')
-
-        self.ridge_txt.append('60')
-        self.ridge_txt.append('30')
-        # self.ridge_txt.append('Kappa')
-
-            # self.ridge_txt.append(f'${H}$ km')
-            # for m in ToD:
-            #     sys_set['mat_file'] = m
-            #     ridge.append(s)
-            #     the_time = 8 + (int(m.split('-')[-1].split('.')[0]) + 1) / 2
+        self.r.create_it()
+        self.meta_data = self.r.meta_data
 
     def plot_data(self):
         """Plot the created data from self.data.
@@ -485,12 +431,7 @@ class Simulation:
             self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
             self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         """
-        self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
-        self.plot.plot_normal(self.f, self.data[1], 'semilogy', self.legend_txt)
-        # self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
-        # self.plot.plasma = True
-        self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
-        # self.plot.plot_ridge(self.f, self.data, 'loglog', self.legend_txt, self.ridge_txt)
+        self.r.plot_it()
 
     def save_handle(self, mode):
         if mode == 'setUp':

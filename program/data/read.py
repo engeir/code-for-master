@@ -41,9 +41,13 @@ def interpolate_data(v, params):
             path = 'data/arecibo2/'
         x = loadmat(path + params['mat_file'])
         data = x['fe_zmuE']
-        # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
-        # sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
-        sum_over_pitch = np.einsum('ijk->ik', data) / 18  # removes j-dimansion through dot-product
+        if isinstance(params['pitch_angle'], list):
+            if all(isinstance(x, int) for x in params['pitch_angle']):
+                sum_over_pitch = data[:, params['pitch_angle'], :]
+                norm = len(params['pitch_angle'])
+        else:
+            norm = 18
+        sum_over_pitch = np.einsum('ijk->ik', data) / norm  # removes j-dimansion through dot-product
         # count = np.argmax(sum_over_pitch, 0)
         # IDX = np.argmax(np.bincount(count))
         # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))

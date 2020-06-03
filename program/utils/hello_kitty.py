@@ -15,35 +15,26 @@ import scipy.constants as const
 import scipy.signal as signal
 from tqdm import tqdm
 
-# from inputs import config as cf  # pylint: disable=C0413
 from utils import spectrum_calculation as isr
 from inputs import config as cf
 
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
-    # 'font.family': 'Ovo',
     'axes.unicode_minus': False,
     'pgf.texsystem': 'pdflatex'
 })
 
-# @contextmanager
-# def suppress_stdout():
-#     with open(os.devnull, "w") as devnull:
-#         old_stdout = sys.stdout
-#         sys.stdout = devnull
-#         try:
-#             yield
-#         finally:
-#             sys.stdout = old_stdout
-
 
 class HelloKitty:
     def __init__(self):
-        # self.Z = np.arange(100, 350, 50)
-        # self.Z = np.linspace(2e10, 6e11, 70)
-        self.Z = np.linspace(2e11, 1e12, 60)
-        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))  # 25))
+        # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
+        self.vol = 1
+        if self.vol == 1:
+            self.Z = np.linspace(2e10, 6e11, 60)
+        else:
+            self.Z = np.linspace(2e11, 1e12, 60)
+        self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
@@ -57,13 +48,18 @@ class HelloKitty:
         self.plot_data()
 
     def create_data(self):
-        # With gauss_shell, f_0 = 933e6, NE ≈ [1e11, 2e12], 1e3, 5e4, 2e4
-        # sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 0, 'T_E': 5000, 'T_I': 1000, 'T_ES': 90000,
-        #            'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        # params = {'kappa': 8, 'vdf': 'gauss_shell', 'area': False}
-        # With real_data, f_0 = 430e6, NE = [2e10, 6e11], 1e4, 4e5, 1e4
-        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                   'THETA': 60 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat'}
+        # In config, set F0 = 430e6, F_MIN=2e6, F_MAX=9e6
+        # Also, using
+        #     F_N_POINTS = 5e4
+        #     Y_N_POINTS = 8e4
+        #     V_N_POINTS = 1e4
+        # is sufficient.
+        if self.vol == 1:
+            sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': list(range(10))}
+        else:
+            sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+                    'THETA': 60 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
             for i, z in enumerate(self.Z):
@@ -83,7 +79,6 @@ class HelloKitty:
                     # s = np.random.uniform(0, 200)
                     # self.g[i, j] = res
                     self.g[i, j] = np.max(s)
-                    # self.g[i, j] = 10 * np.log10(np.max(s))
                     pbar.update(1)
         self.meta.append(meta_data)
 
@@ -96,8 +91,11 @@ class HelloKitty:
         freq = f[p]
         l = const.c / cf.I_P['F0']
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
-        return bool(21.7 < E_plasma < 22.3 or 23.5 < E_plasma < 24.1 or 26.5 < E_plasma < 27.2)
-        # return bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
+        if self.vol == 1:
+            res = bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
+        else:
+            res = bool(21.7 < E_plasma < 22.3 or 23.5 < E_plasma < 24.1 or 26.5 < E_plasma < 27.2)
+        return res
 
     def plot_data(self):
         # Hello kitty figure duplication
@@ -122,7 +120,7 @@ class HelloKitty:
         ax1 = plt.subplot(gs[1])
         ax1.plot(self.A)
         plt.xlim([0, len(self.A) - 1])
-        # TODO: try to define a ylim so that "30" is also included in the yticks
+        plt.yticks([30, 45, 60])
         plt.ylabel('Aspect angle')
         axs = []
         axs += [ax0]
@@ -150,13 +148,9 @@ class HelloKitty:
             metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
-            pdffig.attach_note('max(s), using : pitch, 100percent power')
+            pdffig.attach_note('max(s), 100percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
-
-        # Plot of each angle
-        # plt.figure()
-        # for i in range(self.g.shape[1]):
-        #     plt.plot(self.g[:, i])
+        
         plt.show()

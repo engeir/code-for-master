@@ -129,6 +129,7 @@ class INT_LONG(INTEGRAND):
         # res_max = para_int.integrand(self.y, self.params, v, vdfs.F_MAXWELL(v, self.params).f_0())
         # sint_max = si.simps(res_max, self.y)
         res = para_int.integrand(self.y, self.params, v, f.f_0())
+        print(res)
         sint_res = si.simps(res, self.y)
         sint_maxwellian = 3.5436498998618917e-14
         # The scaling of the factor describing the characteristic velocity
