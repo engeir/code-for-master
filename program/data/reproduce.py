@@ -93,7 +93,7 @@ class Plot3(ReproduceS):
         self.p = p
 
     def create_it(self):
-        # In config, set F0=430e6, F_MIN=-3e3 and F_MAX = 3e3
+        # In config, set 'F0': 430e6, 'F_MIN': - 3e3, 'F_MAX': 3e3
         # Also, using
         #     F_N_POINTS = 1e3
         #     Y_N_POINTS = 6e4
@@ -106,12 +106,12 @@ class Plot3(ReproduceS):
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
-        self.meta_data.append(meta_data)
         for k in kappa:
             params['kappa'] = k
             self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
             self.data.append(s)
-            self.meta_data.append(meta_data)
+        meta_data['version'] = 'both'
+        self.meta_data.append(meta_data)
 
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
@@ -128,7 +128,7 @@ class Plot4(ReproduceS):
         self.p = p
 
     def create_it(self):
-        # In config, set F0=933e6, F_MIN=3.5e6 and F_MAX = 7e6
+        # In config, set 'F0': 933e6, 'F_MIN': 3.5e6, 'F_MAX': 7e6
         # Also, using
         #     F_N_POINTS = 1e3
         #     Y_N_POINTS = 6e4
@@ -141,12 +141,12 @@ class Plot4(ReproduceS):
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
-        self.meta_data.append(meta_data)
         for k in kappa:
             params['kappa'] = k
             self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
             self.data.append(s)
-            self.meta_data.append(meta_data)
+        meta_data['version'] = 'both'
+        self.meta_data.append(meta_data)
 
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
