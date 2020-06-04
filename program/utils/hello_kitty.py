@@ -31,7 +31,7 @@ class HelloKitty:
         # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
         self.vol = 1
         if self.vol == 1:
-            self.Z = np.linspace(2e10, 6e11, 60)
+            self.Z = np.linspace(2e10, 8e11, 60)
         else:
             self.Z = np.linspace(2e11, 1e12, 60)
         self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))

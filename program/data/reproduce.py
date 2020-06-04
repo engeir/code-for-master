@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 
 import numpy as np
 
@@ -42,12 +42,12 @@ class Plot1(ReproduceS):
         # is sufficient.
         self.legend_txt = ['Maxwellian']
         sys_set = {'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
-                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
         self.meta_data.append(meta_data)
-    
+
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
@@ -72,12 +72,12 @@ class Plot2(ReproduceS):
         # Change the value of kappa in params (and in legend_txt) to obtain plots of different kappa value.
         self.legend_txt = [r'$\kappa = 20$']
         sys_set = {'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
-                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
         self.data.append(s)
         self.meta_data.append(meta_data)
-    
+
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
@@ -102,7 +102,7 @@ class Plot3(ReproduceS):
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 8$', r'$\kappa = 20$']
         kappa = [3, 5, 8, 20]
         sys_set = {'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
-                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
@@ -111,7 +111,7 @@ class Plot3(ReproduceS):
             self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
             self.data.append(s)
         self.meta_data.append(meta_data)
-    
+
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
 
@@ -136,7 +136,7 @@ class Plot4(ReproduceS):
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 8$', r'$\kappa = 20$']
         kappa = [3, 5, 8, 20]
         sys_set = {'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
@@ -145,7 +145,7 @@ class Plot4(ReproduceS):
             self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
             self.data.append(s)
         self.meta_data.append(meta_data)
-    
+
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
 
@@ -171,7 +171,7 @@ class Plot5(ReproduceS):
         self.ridge_txt = [r'$T_e = {}$'.format(j) + ' K' for j in T]
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 20$']
         sys_set = {'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 2000, 'T_I': 2000, 'T_ES': 90000,
-                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
+                   'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         kappa = [3, 20]
         for t in T:
@@ -185,6 +185,6 @@ class Plot5(ReproduceS):
                 ridge.append(s)
             self.data.append(ridge)
         self.meta_data.append(meta_data)
-    
+
     def plot_it(self):
         self.p.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
