@@ -70,10 +70,10 @@ class Plot2(ReproduceS):
         #     V_N_POINTS = 1e5
         # is sufficient.
         # Change the value of kappa in params (and in legend_txt) to obtain plots of different kappa value.
-        self.legend_txt = [r'$\kappa = 20$']
+        self.legend_txt = [r'$\kappa = 3$']
         sys_set = {'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
+        params = {'kappa': 3, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
         self.data.append(s)
         self.meta_data.append(meta_data)
