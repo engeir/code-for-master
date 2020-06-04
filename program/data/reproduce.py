@@ -106,11 +106,12 @@ class Plot3(ReproduceS):
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
+        self.meta_data.append(meta_data)
         for k in kappa:
             params['kappa'] = k
             self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
             self.data.append(s)
-        self.meta_data.append(meta_data)
+            self.meta_data.append(meta_data)
 
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
@@ -140,11 +141,12 @@ class Plot4(ReproduceS):
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         self.data.append(s)
+        self.meta_data.append(meta_data)
         for k in kappa:
             params['kappa'] = k
             self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
             self.data.append(s)
-        self.meta_data.append(meta_data)
+            self.meta_data.append(meta_data)
 
     def plot_it(self):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)

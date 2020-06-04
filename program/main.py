@@ -355,8 +355,8 @@ class Simulation:
         # self.r = reproduce.Plot1(self.plot)
         # self.r = reproduce.Plot2(self.plot)
         # self.r = reproduce.Plot3(self.plot)
-        # self.r = reproduce.Plot4(self.plot)
-        self.r = reproduce.Plot5(self.plot)
+        self.r = reproduce.Plot4(self.plot)
+        # self.r = reproduce.Plot5(self.plot)
 
     def create_data(self):
         """Create IS spectra.
