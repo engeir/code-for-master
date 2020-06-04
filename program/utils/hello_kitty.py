@@ -13,6 +13,7 @@ from matplotlib import gridspec
 import scipy.integrate as si
 import scipy.constants as const
 import scipy.signal as signal
+from lmfit.models import LorentzianModel
 from tqdm import tqdm
 
 from utils import spectrum_calculation as isr
@@ -48,7 +49,7 @@ class HelloKitty:
         self.plot_data()
 
     def create_data(self):
-        # In config, set F0 = 430e6, F_MIN=2e6, F_MAX=9e6
+        # In config, set 'F0': 430e6, 'F_MIN': 2e6, 'F_MAX': 9e6
         # Also, using
         #     F_N_POINTS = 5e4
         #     Y_N_POINTS = 8e4
@@ -65,6 +66,11 @@ class HelloKitty:
             for i, z in enumerate(self.Z):
                 # sys_set['Z'] = z
                 sys_set['NE'] = z
+                plasma_freq = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
+                cf.I_P['F_MIN'] = plasma_freq - 1e5
+                cf.I_P['F_MAX'] = plasma_freq + 5e5
+                cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+                cf.w = 2 * np.pi * cf.f  # Angular frequency
                 for j, a in enumerate(self.A):
                     sys_set['THETA'] = a * np.pi / 180
                     old_stdout = sys.stdout
@@ -72,29 +78,41 @@ class HelloKitty:
                     sys.stdout = f
                     f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
                     sys.stdout = old_stdout
-                    if self.check_energy(f, s, a):
+                    plasma_power, energy_interval = self.check_energy(f, s, a)
+                    if energy_interval:
                         self.dots[0].append(j)
                         self.dots[1].append(z)
                     # res = si.simps(s, f)
                     # s = np.random.uniform(0, 200)
-                    # self.g[i, j] = res
-                    self.g[i, j] = np.max(s)
+                    self.g[i, j] = plasma_power
+                    # self.g[i, j] = np.max(s)
                     pbar.update(1)
         self.meta.append(meta_data)
 
     def check_energy(self, f, s, deg):
-        try:
-            p = signal.find_peaks(s, height=10)[0][-1]
-        except Exception:
-            return False
+        # TODO: implement a Lorentzian curve fit to the peak, ±.5 kHz (1 kHz integration)
+        # try:
+        #     p = signal.find_peaks(s, height=height)[0][-1]
+        # except Exception:
+        #     return False
+        p = int(np.argwhere(s==np.max(s)))
         freq = f[p]
+        f_mask = (freq - 1e3 < f) & (f < freq + 1e3)
+        x = f[f_mask]
+        y = s[f_mask]
+        mod = LorentzianModel()
+        pars = mod.guess(y, x=x)
+        out = mod.fit(y, pars, x=x)
+        power = si.simps(x, out.best_fit)
+
         l = const.c / cf.I_P['F0']
+        # Calculate corresponding energy with formula: E = .5 * m_e * (f_r * \lambda / (2 * cos(theta)))
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
         if self.vol == 1:
             res = bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
         else:
             res = bool(21.7 < E_plasma < 22.3 or 23.5 < E_plasma < 24.1 or 26.5 < E_plasma < 27.2)
-        return res
+        return power, res
 
     def plot_data(self):
         # Hello kitty figure duplication

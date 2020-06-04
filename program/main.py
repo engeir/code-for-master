@@ -20,6 +20,7 @@ import numpy as np  # pylint: disable=C0413
 import scipy.signal as signal  # pylint: disable=C0413
 import si_prefix as sip  # pylint: disable=C0413
 import scipy.integrate as si  # pylint: disable=C0413
+import scipy.constants as const  # pylint: disable=C0413
 
 from inputs import config as cf  # pylint: disable=C0413
 from utils import spectrum_calculation as isr  # pylint: disable=C0413
@@ -352,11 +353,12 @@ class Simulation:
         self.legend_txt = []
         self.ridge_txt = []
         self.plot = PlotClass()
-        # self.r = reproduce.Plot1(self.plot)
-        # self.r = reproduce.Plot2(self.plot)
-        # self.r = reproduce.Plot3(self.plot)
-        self.r = reproduce.Plot4(self.plot)
-        # self.r = reproduce.Plot5(self.plot)
+        # self.r = reproduce.PlotTestDebye(self.plot)
+        # self.r = reproduce.PlotMaxwell(self.plot)
+        self.r = reproduce.PlotKappa(self.plot)
+        # self.r = reproduce.PlotIonLine(self.plot)
+        # self.r = reproduce.PlotPlasmaLine(self.plot)
+        # self.r = reproduce.PlotTemperature(self.plot)
 
     def create_data(self):
         """Create IS spectra.
@@ -409,8 +411,42 @@ class Simulation:
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
         """
-        self.r.create_it()
-        self.meta_data = self.r.meta_data
+        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': list(range(10))}
+        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
+        ridge = []
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
+        print(f)
+        sys_set['NE'] = 1e12
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.data.append(ridge)
+        self.meta_data.append(meta_data)
+        ridge = []
+        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
+        print(f)
+        sys_set['THETA'] = 60 * np.pi / 180
+        sys_set['NE'] = 1e11
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.meta_data.append(meta_data)
+        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
+        print(f)
+        sys_set['NE'] = 1e12
+        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s)
+        self.data.append(ridge)
+        self.meta_data.append(meta_data)
+        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
+        print(f)
+        
+        self.legend_txt = ['2e10', '2e11']
+        self.ridge_txt = ['30', '60']
+        # self.r.create_it()
+        # self.meta_data = self.r.meta_data
 
     def plot_data(self):
         """Plot the created data from self.data.
@@ -431,7 +467,8 @@ class Simulation:
             self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
             self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
         """
-        self.r.plot_it()
+        self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
+        # self.r.plot_it()
 
     def save_handle(self, mode):
         if mode == 'setUp':
@@ -450,5 +487,5 @@ class Simulation:
 
 
 if __name__ == '__main__':
-    Simulation().run()
-    # hk.HelloKitty()
+    # Simulation().run()
+    hk.HelloKitty()
