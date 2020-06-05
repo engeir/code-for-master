@@ -84,4 +84,4 @@ def shared_array(shape):
     return shared_arr
 
 
-array = shared_array((len(cf.w),))
+array = shared_array((int(cf.F_N_POINTS),))

@@ -52,25 +52,10 @@ def v_int_integrand(y, params, v, f):
 
 
 def p(y, params):
-    k_perp = cf.K_RADAR * np.sin(params['THETA'])
-    k_par = cf.K_RADAR * np.cos(params['THETA'])
+    k_perp = params['K_RADAR'] * np.sin(params['THETA'])
+    k_par = params['K_RADAR'] * np.cos(params['THETA'])
     return (2 * k_perp**2 / params['w_c']**2 * (1 - np.cos(y * params['w_c'])) + k_par**2 * y**2)**.5
 
-
-# def shared_array(shape):
-#     """
-#     Form a shared memory numpy array.
-
-#     http://stackoverflow.com/questions/5549190/is-shared-readonly-data-copied-to-different-processes-for-python-multiprocessing
-#     """
-
-#     shared_array_base = mp.Array(ctypes.c_double, 2 * shape[0])
-#     shared_arr = np.ctypeslib.as_array(shared_array_base.get_obj())
-#     shared_arr = shared_arr.view(np.complex128).reshape(*shape)
-#     return shared_arr
-
-
-# array = shared_array((int(cf.Y_N_POINTS),))
 
 def shared_array(shape):
     """

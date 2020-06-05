@@ -30,7 +30,7 @@ class TestISR(unittest.TestCase):
 
     def setUp(self):
         self.sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                        'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat'}
+                        'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat', 'pitch_angle': 'all'}
         self.params = {'kappa': 3, 'vdf': 'gauss_shell', 'area': False}
 
     def tearDown(self):
@@ -105,37 +105,6 @@ class TestVDF(unittest.TestCase):
 
     def test_vdf_real_data(self):
         self.f = vdfs.F_REAL_DATA(self.v, self.params)
-
-
-class TestNumeric(unittest.TestCase):
-    """Class which test if the semi-analytical and the numerical implementations give similar results.
-
-    Arguments:
-        unittest.TestCase {class} -- inherits from unittest to make it a TestCase
-    """
-
-    @classmethod
-    def setUpClass(cls):
-        cls.sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                       'THETA': 60 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
-        cls.params = {'kappa': 3, 'vdf': 'maxwell', 'area': False}
-        cls.f = None
-        cls.s1 = None
-        cls.s2 = None
-
-    def tearDown(self):
-        d = self.s1 - self.s2
-        self.assertAlmostEqual(d, 1, places=3)
-        self.assertLess(d, 1e-7)
-
-    def test_vdf_maxwell(self):
-        self.f, self.s1, _ = isr.isr_spectrum('maxwell', self.sys_set, **self.params)
-        self.f, self.s2, _ = isr.isr_spectrum('a_vdf', self.sys_set, **self.params)
-
-    def test_vdf_kappa(self):
-        self.params['vdf'] = 'kappa'
-        self.f, self.s1, _ = isr.isr_spectrum('kappa', self.sys_set, **self.params)
-        self.f, self.s2, _ = isr.isr_spectrum('a_vdf', self.sys_set, **self.params)
 
 
 if __name__ == '__main__':

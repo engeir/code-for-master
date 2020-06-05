@@ -5,10 +5,13 @@ import os
 import time
 import datetime
 import itertools
-# The start method of the multiprocessing module was changed from python3.7 to python3.8.
+# The start method of the multiprocessing module was changed from python3.7
+# to python3.8.
 # Instead of using 'fork', 'spawn' is the new default. To be able to use global
 # variables across all parallel processes, the start method must be reset to 'fork'.
-# See https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods for more info.
+# See 
+# https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods 
+# for more info.
 import multiprocessing as mp
 mp.set_start_method('fork')
 
@@ -66,10 +69,10 @@ class PlotClass:
         try:
             if not isinstance(self.plasma, bool):
                 self.plasma = False
-            if self.plasma:
-                if self.find_p_line(None, None, check=True):
-                    print(f"F_MAX (= {cf.I_P['F_MAX']}) is not high enough to look at the plasma line. Overrides option.")
-                    self.plasma = False
+            # if self.plasma:
+            #     if self.find_p_line(None, None, check=True):
+            #         print(f"F_MAX (= {cf.I_P['F_MAX']}) is not high enough to look at the plasma line. Overrides option.")
+            #         self.plasma = False
         except Exception:
             pass
 
@@ -295,12 +298,16 @@ class PlotClass:
         spec = spectrum[0]
         # This assumes that scipy's find_peaks() from the signal module is able to
         # find the peak, and that it is the rightmost peak (highest frequency).
-        p = signal.find_peaks(spec, height=10)[0][-1]
+        try:
+            p = signal.find_peaks(spec, height=10)[0][-1]
+        except Exception:
+            print('Warning: did not find any plasma line')
+            return freq < np.inf
         f = freq[p]
 
-        if check:
-            upper = f + 1e6
-            return bool(upper > cf.I_P['F_MAX'])
+        # if check:
+        #     upper = f + 1e6
+        #     return bool(upper > cf.I_P['F_MAX'])
         lower, upper = f - 1e6, f + 1e6
 
         # Don't want the ion line to ruin the scaling of the y axis
@@ -353,26 +360,32 @@ class Simulation:
         self.legend_txt = []
         self.ridge_txt = []
         self.plot = PlotClass()
+        # self.r = reproduce.PlotTestNumerical(self.plot)
         # self.r = reproduce.PlotTestDebye(self.plot)
         # self.r = reproduce.PlotMaxwell(self.plot)
-        self.r = reproduce.PlotKappa(self.plot)
+        # self.r = reproduce.PlotSpectra(self.plot)
+        # self.r = reproduce.PlotKappa(self.plot)
         # self.r = reproduce.PlotIonLine(self.plot)
         # self.r = reproduce.PlotPlasmaLine(self.plot)
         # self.r = reproduce.PlotTemperature(self.plot)
+        self.r = reproduce.PlotHKExtremes(self.plot)
 
     def create_data(self):
         """Create IS spectra.
 
-        The spectra should be appended to the self.data list, giving a list of spectra that are themselves np.ndarrays,
-        or into a list of such lists as the aforementioned.
+        The spectra should be appended to the self.data list, giving a list of
+        spectra that are themselves np.ndarrays, or into a list of such lists
+        as the aforementioned.
 
-        A list of spectra can be plotted in 'plot_normal', while a list of lists can be plotted by plot_ridge.
-        When using plot_ridge, it is assumed that all the lists in the outer list is of equal length.
+        A list of spectra can be plotted in 'plot_normal', while a list of lists
+        can be plotted by plot_ridge. When using plot_ridge, it is assumed that
+        all the lists in the outer list is of equal length.
 
-        The list self.ridge_txt should be the same length as the length of the outer list when plotting with
-        plt_ridge, since this text will go on the left of every ridge.
-        The list self.legend_txt should be the same length as the length of the inner lists, and will give
-        the legend for the spectra given in the inner lists.
+        The list self.ridge_txt should be the same length as the length of the
+        outer list when plotting with plt_ridge, since this text will go on the
+        left of every ridge. The list self.legend_txt should be the same length
+        as the length of the inner lists, and will give the legend for the spectra
+        given in the inner lists.
 
         Notes:
         Possible items in the sys_set dictionary include:
@@ -394,8 +407,9 @@ class Simulation:
         ::
             TEMPS = [2000, 5000]
             methods = ['maxwell', 'kappa']
-            sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                    'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat'}
+            sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0,
+                       'T_E': 5000, 'T_I': 2000, 'T_ES': 90000, 'THETA': 40 * np.pi / 180,
+                       'Z': 599, 'mat_file': 'fe_zmuE-01.mat'}
             params = {'kappa': 3, 'vdf': 'kappa', 'area': False}
             for T in TEMPS:
                 ridge = []
@@ -411,42 +425,8 @@ class Simulation:
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
         """
-        sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': list(range(10))}
-        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
-        ridge = []
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        print(f)
-        sys_set['NE'] = 1e12
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.data.append(ridge)
-        self.meta_data.append(meta_data)
-        ridge = []
-        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        print(f)
-        sys_set['THETA'] = 60 * np.pi / 180
-        sys_set['NE'] = 1e11
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.meta_data.append(meta_data)
-        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        print(f)
-        sys_set['NE'] = 1e12
-        self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
-        ridge.append(s)
-        self.data.append(ridge)
-        self.meta_data.append(meta_data)
-        f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        print(f)
-
-        self.legend_txt = ['2e10', '2e11']
-        self.ridge_txt = ['30', '60']
-        # self.r.create_it()
-        # self.meta_data = self.r.meta_data
+        self.r.create_it()
+        self.meta_data = self.r.meta_data
 
     def plot_data(self):
         """Plot the created data from self.data.
@@ -462,13 +442,16 @@ class Simulation:
         ::
             # Given the example in self.create_data()
             # self.plot.plasma = True
-            self.plot.plot_normal(self.f, self.data[0], 'plot', self.legend_txt)
-            self.plot.plot_normal(self.f, self.data[0], 'semilogy', self.legend_txt)
-            self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
-            self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
+            self.plot.plot_normal(self.f, self.data[0], 'plot',
+                                  self.legend_txt)
+            self.plot.plot_normal(self.f, self.data[0], 'semilogy',
+                                  self.legend_txt)
+            self.plot.plot_ridge(self.f, self.data, 'plot', self.legend_txt,
+                                 self.ridge_txt)
+            self.plot.plot_ridge(self.f, self.data, 'semilogy',
+                                 self.legend_txt, self.ridge_txt)
         """
-        self.plot.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
-        # self.r.plot_it()
+        self.r.plot_it()
 
     def save_handle(self, mode):
         if mode == 'setUp':
@@ -488,5 +471,4 @@ class Simulation:
 
 if __name__ == '__main__':
     # Simulation().run()
-    # hk.HelloKitty()
-    reproduce.PlotTestNumerical().run()
+    hk.HelloKitty()

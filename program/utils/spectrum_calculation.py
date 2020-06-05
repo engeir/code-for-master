@@ -19,7 +19,7 @@ from utils import integrand_functions as intf
 from utils.parallel import parallelization as para
 
 
-def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
+def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=None):
     """Calculate an ISR spectrum using the theory presented by Hagfors [1961] and Mace [2003].
 
     Arguments:
@@ -44,14 +44,14 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
     W_c = w_ion_gyro(np.linalg.norm([sys_set['B']], 2), M_i)
 
     # Ions
-    params = {'THETA': sys_set['THETA'], 'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'], 'w_c': W_c}
+    params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'], 'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'], 'w_c': W_c}
     y = np.linspace(0, cf.Y_MAX_i**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     f_ion = intf.INT_MAXWELL()
     f_ion.initialize(y, params)
     Fi = para.integrate(M_i, sys_set['T_I'], sys_set['NU_I'], y, function=f_ion, kappa=kappa)
 
     # Electrons
-    params = {'THETA': sys_set['THETA'], 'nu': sys_set['NU_E'], 'm': const.m_e, 'T': sys_set['T_E'], 'T_ES': sys_set['T_ES'],
+    params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'], 'nu': sys_set['NU_E'], 'm': const.m_e, 'T': sys_set['T_E'], 'T_ES': sys_set['T_ES'],
               'w_c': w_c, 'kappa': kappa, 'vdf': vdf, 'Z': sys_set['Z'], 'mat_file': sys_set['mat_file'], 'pitch_angle': sys_set['pitch_angle']}
     y = np.linspace(0, cf.Y_MAX_e**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     func.initialize(y, params)
@@ -59,18 +59,17 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False):
         const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
 
     Xp_i = np.sqrt(
-        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * cf.K_RADAR**2))
-    if func.the_type == 'a_vdf':
+        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * sys_set['K_RADAR']**2))
+    if func.the_type == 'maxwell' or debye == 'maxwell':
         Xp_e = np.sqrt(
-            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * cf.K_RADAR**2))
+            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'])**2 * sys_set['K_RADAR']**2))
     elif func.the_type == 'kappa':
         Xp_e = np.sqrt(
-            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * cf.K_RADAR**2))
-    else:
+            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * sys_set['K_RADAR']**2))
+    elif func.the_type == 'a_vdf':
         Xp_e = np.sqrt(
-            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'])**2 * cf.K_RADAR**2))
+            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * sys_set['K_RADAR']**2))
 
-    # f_scaled = cf.f
     # In case we have \omega = 0 in our frequency array, we just ignore this warning message
     with np.errstate(divide='ignore', invalid='ignore'):
         Is = sys_set['NE'] / (np.pi * cf.w) * (np.imag(- Fe) * abs(1 + 2 * Xp_i**2 * Fi)**2 + (
@@ -216,8 +215,8 @@ def kappa_check(kappa, sys_set):
             raise SystemError
     except SystemError:
         sys.exit(print('You forgot to send in the kappa parameter.'))
-    if sys_set['NU_E'] != 0 or sys_set['NU_I'] != 0:
-        text = f'''\
-                Warning: the kappa function is defined for a collisionless plasma.
-                You are using: nu_i = {sys_set['NU_I']} and nu_e = {sys_set['NU_E']}.'''
-        print(txt.fill(txt.dedent(text), width=300))
+    # if sys_set['NU_E'] != 0 or sys_set['NU_I'] != 0:
+    #     text = f'''\
+    #             Warning: the kappa function is defined for a collisionless plasma.
+    #             You are using: nu_i = {sys_set['NU_I']} and nu_e = {sys_set['NU_E']}.'''
+    #     print(txt.fill(txt.dedent(text), width=300))

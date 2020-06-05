@@ -32,13 +32,15 @@ class HelloKitty:
         # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
         self.vol = 1
         if self.vol == 1:
-            self.Z = np.linspace(2e10, 8e11, 60)
+            self.Z = np.linspace(1e11, 8e11, 60)
         else:
             self.Z = np.linspace(2e11, 1e12, 60)
         self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], []]
         self.meta = []
+        self.F0 = 430e6
+        self.K_RADAR = - 2 * self.F0 * 2 * np.pi / const.c  # Radar wavenumber
         save = input('Press "y/yes" to save plot, any other key to dismiss.\t').lower()
         if save in ['y', 'yes']:
             self.save = True
@@ -49,17 +51,15 @@ class HelloKitty:
         self.plot_data()
 
     def create_data(self):
-        # In config, set 'F0': 430e6, 'F_MIN': 2e6, 'F_MAX': 9e6
+        # In config, set 'F_MIN': 2.5e6, 'F_MAX': 9.5e6
         # Also, using
-        #     F_N_POINTS = 5e4
-        #     Y_N_POINTS = 8e4
-        #     V_N_POINTS = 1e4
+        #     F_N_POINTS = 1e4
         # is sufficient.
         if self.vol == 1:
-            sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+            sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                     'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': list(range(10))}
         else:
-            sys_set = {'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+            sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                     'THETA': 60 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
@@ -67,8 +67,8 @@ class HelloKitty:
                 # sys_set['Z'] = z
                 sys_set['NE'] = z
                 plasma_freq = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-                cf.I_P['F_MIN'] = plasma_freq - 1e5
-                cf.I_P['F_MAX'] = plasma_freq + 5e5
+                cf.I_P['F_MIN'] = plasma_freq
+                cf.I_P['F_MAX'] = plasma_freq + 4e5
                 cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
                 cf.w = 2 * np.pi * cf.f  # Angular frequency
                 for j, a in enumerate(self.A):
@@ -82,8 +82,6 @@ class HelloKitty:
                     if energy_interval:
                         self.dots[0].append(j)
                         self.dots[1].append(z)
-                    # res = si.simps(s, f)
-                    # s = np.random.uniform(0, 200)
                     self.g[i, j] = plasma_power
                     # self.g[i, j] = np.max(s)
                     pbar.update(1)
@@ -97,15 +95,16 @@ class HelloKitty:
         #     return False
         p = int(np.argwhere(s==np.max(s)))
         freq = f[p]
-        f_mask = (freq - 1e3 < f) & (f < freq + 1e3)
+        f_mask = (freq - 5e2 < f) & (f < freq + 5e2)
         x = f[f_mask]
         y = s[f_mask]
         mod = LorentzianModel()
         pars = mod.guess(y, x=x)
         out = mod.fit(y, pars, x=x)
         power = si.simps(x, out.best_fit)
+        power = np.max(s)
 
-        l = const.c / cf.I_P['F0']
+        l = const.c / self.F0
         # Calculate corresponding energy with formula: E = .5 * m_e * (f_r * \lambda / (2 * cos(theta)))
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
         if self.vol == 1:
