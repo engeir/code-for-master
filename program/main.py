@@ -442,7 +442,7 @@ class Simulation:
         self.meta_data.append(meta_data)
         f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
         print(f)
-        
+
         self.legend_txt = ['2e10', '2e11']
         self.ridge_txt = ['30', '60']
         # self.r.create_it()
@@ -488,4 +488,5 @@ class Simulation:
 
 if __name__ == '__main__':
     # Simulation().run()
-    hk.HelloKitty()
+    # hk.HelloKitty()
+    reproduce.PlotTestNumerical().run()
