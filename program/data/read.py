@@ -48,9 +48,6 @@ def interpolate_data(v, params):
         else:
             norm = 18
         sum_over_pitch = np.einsum('ijk->ik', data) / norm  # removes j-dimansion through dot-product
-        # count = np.argmax(sum_over_pitch, 0)
-        # IDX = np.argmax(np.bincount(count))
-        # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
         idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
         f_1 = sum_over_pitch[idx, :]
         energies = read_dat_file('E4fe.dat')
@@ -71,12 +68,8 @@ def plot_interp(v, params):
         path = 'data/arecibo2/'
     x = loadmat(path + params['mat_file'])
     data = x['fe_zmuE']
-    # sum_over_pitch = data[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], :]  # removes j-dimansion through dot-product
     # sum_over_pitch = data[:, :10, :]  # removes j-dimansion through dot-product
     sum_over_pitch = np.einsum('ijk->ik', data) / 18  # removes j-dimansion through dot-product
-    # count = np.argmax(sum_over_pitch, 0)
-    # IDX = np.argmax(np.bincount(count))
-    # idx = int(np.argwhere(read_dat_file('z4fe.dat')==400))
     idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
     f_1 = sum_over_pitch[idx, :]
     energies = read_dat_file('E4fe.dat')
@@ -87,23 +80,27 @@ def plot_interp(v, params):
     f0_f1 = f_0 + new_f1
     new_f0f1 = np.maximum(f_0, new_f1)
 
-    # Might want to scale v to get energy instead
+    # Scale v to get energy instead
     v = 1 / 2 * const.m_e * v**2 / const.eV
-    velocities = energies  # 1 / 2 * const.m_e * velocities**2 / const.eV
+    velocities = energies
 
     plt.figure(figsize=(6, 3))
     plt.semilogy(v, f0_f1, '-')
     plt.semilogy(v, new_f0f1, '--')
     plt.semilogy(v, f_0, '-.')
     plt.semilogy(velocities, f_1, linestyle=(0, (3, 5, 1, 5, 1, 5)))
-    plt.legend([r'$f_{0,\mathrm{M}} + f_{0,\mathrm{S}}$', 'np.maximum(' + r'$f_{0,\mathrm{M}}, f_{0,\mathrm{S}}$' + ')', r'$f_{0,\mathrm{M}}$', r'$f_{0,\mathrm{S}}$'])
+    plt.legend([r'$f_{0,\mathrm{M}} + f_{0,\mathrm{S}}$',
+                'np.maximum(' + r'$f_{0,\mathrm{M}}, f_{0,\mathrm{S}}$' + ')',
+                r'$f_{0,\mathrm{M}}$',
+                r'$f_{0,\mathrm{S}}$'])
     # plt.xlim([5.8e5, 8e5])
     plt.xlim([1.2, 1.9])
     # plt.ylim([5e-13, 3e-11])
     plt.ylim([5e-14, 3e-12])
     plt.xlabel(r'Energy, $E$ [eV]')
     plt.ylabel('VDF, ' + r'$f_0$')
-    # plt.savefig(f'../../../../report/master-thesis/figures/interp_real_data_energyscale.pgf', bbox_inches='tight')
+    # plt.savefig('../../../../report/master-thesis/figures/' + \
+    #             'interp_real_data_energyscale.pgf', bbox_inches='tight')
     # plt.savefig(f'../../figures/interp_real_data.pgf', bbox_inches='tight')
     plt.show()
 
@@ -112,7 +109,6 @@ def view_mat_file():
     path = 'arecibo2/'
     x = loadmat(path + 'fe_zmuE-07.mat')
     data = x['fe_zmuE']
-    # print(data.shape)
     data = data[:, :10, :]
     data = np.einsum('ijk->ik', data) / 10
     idx = int(np.argwhere(read_dat_file('z4fe.dat') == 599))
@@ -120,7 +116,7 @@ def view_mat_file():
     data = data[idx, :]
     E = np.linspace(1, 110, len(data))
 
-    _, ax = plt.subplots(figsize=(6, 3))  # create a new figure with a default 111 subplot
+    _, ax = plt.subplots(figsize=(6, 3))
     ax.plot(E, data.T, 'g')
     plt.xlabel(r'Energy, $E$ [eV]')
     plt.ylabel('VDF, ' + r'$f_{0,\mathrm{S}}$')
@@ -146,7 +142,8 @@ def view_mat_file():
     # plt.tick_params(axis='y', which='both', left=False,
     #                 right=False, labelleft=False)
     mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
-    # plt.savefig(f'../../../../report/master-thesis/figures/in_use/hello_kitty_1.pgf', bbox_inches='tight')
+    # plt.savefig('../../../../report/master-thesis/figures/' + \
+    #             'in_use/hello_kitty_1.pgf', bbox_inches='tight')
     plt.show()
 
 def read_dat_file(file):

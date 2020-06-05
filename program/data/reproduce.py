@@ -5,14 +5,13 @@ import numpy as np
 import scipy.constants as const
 
 from utils import spectrum_calculation as isr
-from inputs import config as cf
 
 
 class ReproduceS(ABC):
-    """Abstract base class for reproducible figures.
+    """Abstract base class to reproduce figures.
 
     Arguments:
-        ABC {class} -- make it an abstract base class that all VDF objects should inherit from
+        ABC {class} -- abstract base class
     """
 
     @abstractmethod
@@ -89,13 +88,13 @@ class PlotTestNumerical(ReproduceS):
 
     def create_it(self):
         self.setUpClass()
-    
+
     def plot_it(self):
         self.test_numerical_maxwell()
         self.tearDown()
         self.test_numerical_kappa()
         self.tearDown()
-    
+
     def run(self):
         self.setUpClass()
         self.test_numerical_maxwell()
@@ -108,7 +107,6 @@ class PlotTestNumerical(ReproduceS):
 class PlotTestDebye(ReproduceS):
     """Reproduce figure with ridge plot over different temperatures."""
     def __init__(self, p):
-        # cf.I_P = {'F_MIN': - 2e6, 'F_MAX': 2e6}
         self.f = np.ndarray([])
         self.data = []
         self.meta_data = []
@@ -117,7 +115,7 @@ class PlotTestDebye(ReproduceS):
         self.p = p
 
     def create_it(self):
-        # In config, set 'F0': 430e6, 'F_MIN': - 2e6, 'F_MAX': 2e6
+        # In config, set 'F_MIN': - 2e6, 'F_MAX': 2e6
         # Also, using
         #     F_N_POINTS = 5e5
         # is sufficient.
@@ -335,15 +333,18 @@ class PlotTemperature(ReproduceS):
                 ridge.append(s)
             self.data.append(ridge)
         self.meta_data.append(meta_data)
-        
+
         for r in self.data:
-            self.f_list[0].append(self.f[int(np.argwhere(r[0]==np.max(r[0])))])
-            self.f_list[1].append(self.f[int(np.argwhere(r[1]==np.max(r[1])))])
-            self.f_list[2].append(self.f[int(np.argwhere(r[2]==np.max(r[2])))])
+            peak = int(np.argwhere(r[0] == np.max(r[0])))
+            self.f_list[0].append(self.f[peak])
+            peak = int(np.argwhere(r[1] == np.max(r[1])))
+            self.f_list[1].append(self.f[peak])
+            peak = int(np.argwhere(r[2] == np.max(r[2])))
+            self.f_list[2].append(self.f[peak])
 
     def plot_it(self):
         self.p.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
-        
+
         T = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
         plt.figure()
         plt.plot(T, self.f_list[0], 'k', label='Maxwellian')

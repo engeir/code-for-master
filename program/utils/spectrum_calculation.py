@@ -1,14 +1,10 @@
-"""Script containing the calculation of the power density function and other plasma parameters.
-
-Raises:
-    SystemError: if no known version of particle distribution is given
-    SystemError: if, with the a_vdf version, no known VDF is given
-    SystemError: if, given a kappa particle distribution, no kappa index is given
+"""Script containing the calculation of the power density function
+and other plasma parameters.
 """
 
 import os
 import sys
-import textwrap as txt
+# import textwrap as txt
 
 import numpy as np
 import scipy.constants as const
@@ -20,25 +16,33 @@ from utils.parallel import parallelization as para
 
 
 def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=None):
-    """Calculate an ISR spectrum using the theory presented by Hagfors [1961] and Mace [2003].
+    """Calculate an ISR spectrum using the theory
+    presented by Hagfors [1961] and Mace [2003].
 
     Arguments:
-        version {str} -- decide which integral to use when calculating ISR spectrum
-        system_set {dict} -- all plasma parameters and other parameters needed in the different calculation methods
+        version {str} -- decide which integral to use when
+        calculating ISR spectrum
+        system_set {dict} -- all plasma parameters and other parameters
+        needed in the different calculation methods
 
     Keyword Arguments:
-        kappa {int} -- kappa index used in any kappa distribution (default: {None})
-        vdf {str} -- gives the VDF used in the a_vdf calculation (default: {None})
-        area {bool} -- if True, calculates the area under the ion line (default: {False})
+        kappa {int} -- kappa index used in any kappa distribution
+        (default: {None})
+        vdf {str} -- gives the VDF used in the a_vdf calculation
+        (default: {None})
+        area {bool} -- if True, calculates the area under the ion line
+        (default: {False})
 
     Returns:
         f {np.ndarray} -- 1D array giving the frequency axis
-        Is {np.ndarray} -- 1D array giving the spectrum at the sampled frequencies
-        meta_data {dict} -- all parameters used to calculate the returned spectrum
+        Is {np.ndarray} -- 1D array giving the spectrum at
+        the sampled frequencies
+        meta_data {dict} -- all parameters used to calculate
+        the returned spectrum
     """
     sys_set, p = correct_inputs(version, system_set.copy(), {'kappa': kappa, 'vdf': vdf})
     kappa, vdf = p['kappa'], p['vdf']
-    func = version_check(version, vdf, kappa, sys_set)
+    func = version_check(version, vdf, kappa)
     w_c = w_e_gyro(np.linalg.norm([sys_set['B']], 2))
     M_i = sys_set['MI'] * (const.m_p + const.m_n) / 2
     W_c = w_ion_gyro(np.linalg.norm([sys_set['B']], 2), M_i)
@@ -70,7 +74,7 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=No
         Xp_e = np.sqrt(
             1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * sys_set['K_RADAR']**2))
 
-    # In case we have \omega = 0 in our frequency array, we just ignore this warning message
+    # In case we have $ \omega = 0 $ in our frequency array, we just ignore this warning message
     with np.errstate(divide='ignore', invalid='ignore'):
         Is = sys_set['NE'] / (np.pi * cf.w) * (np.imag(- Fe) * abs(1 + 2 * Xp_i**2 * Fi)**2 + (
             4 * Xp_e**4 * np.imag(- Fi) * abs(Fe)**2)) / abs(1 + 2 * Xp_e**2 * Fe + 2 * Xp_i**2 * Fi)**2
@@ -129,7 +133,8 @@ def L_Debye(*args, kappa=None, char_vel=None):
 
 
 def w_ion_gyro(B, m_ion):
-    """Ion gyro frequency as a function of magnetic field strength and ion mass.
+    """Ion gyro frequency as a function of
+    magnetic field strength and ion mass.
 
     Arguments:
         B {float} -- magnetic field strength
@@ -158,7 +163,8 @@ def w_e_gyro(B):
 
 
 def correct_inputs(version, sys_set, params):
-    """Extra check suppressing the parameters that was given but is not necessary.
+    """Extra check suppressing the parameters
+    that was given but is not necessary.
     """
     if version != 'kappa' and not (version == 'a_vdf' and params['vdf'] in ['kappa', 'kappa_vol2']):
         params['kappa'] = None
@@ -173,7 +179,7 @@ def correct_inputs(version, sys_set, params):
     return sys_set, params
 
 
-def version_check(version, vdf, kappa, sys_set):
+def version_check(version, vdf, kappa):
     versions = ['kappa', 'maxwell', 'a_vdf']
     try:
         if not version in versions:
@@ -184,7 +190,7 @@ def version_check(version, vdf, kappa, sys_set):
     if version == 'maxwell':
         func = intf.INT_MAXWELL()
     elif version == 'kappa':
-        kappa_check(kappa, sys_set)
+        kappa_check(kappa)
         func = intf.INT_KAPPA()
     elif version == 'a_vdf':
         vdfs = ['maxwell', 'kappa', 'kappa_vol2', 'gauss_shell', 'real_data']
@@ -195,9 +201,7 @@ def version_check(version, vdf, kappa, sys_set):
         except Exception:
             sys.exit(version_error(vdf, vdfs, element='VDF'))
         if vdf in ['kappa', 'kappa_vol2']:
-            kappa_check(kappa, sys_set)
-            if isinstance(kappa, list):
-                sys.exit(print('kappa as a list is not accepted for the a_vdf version.'))
+            kappa_check(kappa)
         func = intf.INT_LONG()
     return func
 
@@ -209,14 +213,8 @@ def version_error(version, versions, element='version'):
     print(f'The {element} is wrong: "{version}" not found in {versions}')
 
 
-def kappa_check(kappa, sys_set):
+def kappa_check(kappa):
     try:
-        if kappa is None:
-            raise SystemError
+        kappa = int(kappa)
     except SystemError:
-        sys.exit(print('You forgot to send in the kappa parameter.'))
-    # if sys_set['NU_E'] != 0 or sys_set['NU_I'] != 0:
-    #     text = f'''\
-    #             Warning: the kappa function is defined for a collisionless plasma.
-    #             You are using: nu_i = {sys_set['NU_I']} and nu_e = {sys_set['NU_E']}.'''
-    #     print(txt.fill(txt.dedent(text), width=300))
+        sys.exit(print('You did not send in a valid kappa index.'))

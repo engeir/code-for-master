@@ -1,14 +1,11 @@
 """Constants used system wide.
-
-The physical properties of the plasma is changed here, described below 'Input parameters'.
-Only one dictionary containing plasma parameters should be uncommented at any instance in time.
 """
 
 import os
 import sys
 
 import numpy as np
-import scipy.constants as const
+# import scipy.constants as const
 
 
 # Check if a test is running. Potential paths are

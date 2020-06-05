@@ -40,10 +40,11 @@ class INTEGRAND(ABC):
 
 
 class INT_KAPPA(INTEGRAND):
-    """Integrand for the Gordeyev implementation of the kappa distribution from Mace (2003).
+    """Integrand for the Gordeyev implementation
+    of the kappa distribution from Mace (2003).
 
     Arguments:
-        INTEGRAND {abstract base class} -- base class used to create integrand objects
+        INTEGRAND {ABC} -- base class used to create integrand objects
     """
     the_type = 'kappa'
 
@@ -74,10 +75,11 @@ class INT_KAPPA(INTEGRAND):
 
 
 class INT_MAXWELL(INTEGRAND):
-    """Intregrand for the Gordeyev implementation of the Maxwellian distribution from e.g. Hagfors (1961) or Mace (2003).
+    """Intregrand for the Gordeyev implementation of the Maxwellian
+    distribution from e.g. Hagfors (1961) or Mace (2003).
 
     Arguments:
-        INTEGRAND {abstract base class} -- base class used to create integrand objects
+        INTEGRAND {ABC} -- base class used to create integrand objects
     """
     the_type = 'maxwell'
 
@@ -99,6 +101,12 @@ class INT_MAXWELL(INTEGRAND):
 
 
 class INT_LONG(INTEGRAND):
+    """Intregrand for the Gordeyev implementation
+    of the isotropic distribution from Mace (2003).
+
+    Arguments:
+        INTEGRAND {ABC} -- base class used to create integrand objects
+    """
     the_type = 'a_vdf'
 
     def __init__(self):
@@ -137,13 +145,13 @@ class INT_LONG(INTEGRAND):
         return res
 
     def p_d(self):
-        # At y=0 we get 0/0, but in the limit as y tends to zero,
-        # we get p_d = |k| * |w_c| / np.sqrt(w_c**2) (from above, opposite sign from below)
+        # At $ y=0 $ we get $ 0/0 $, so we use
+        # $ \lim_{y\rightarrow 0^+}\mathrm{d}p/\mathrm{d}y = |k| |w_c| / \sqrt(w_c^2) $ (from above, opposite sign from below)
         cos_t = np.cos(self.params['THETA'])
         sin_t = np.sin(self.params['THETA'])
         w_c = self.params['w_c']
-        num = abs(self.params['K_RADAR']) * abs(w_c) * (cos_t**2 *
-                                            w_c * self.y + sin_t**2 * np.sin(w_c * self.y))
+        num = abs(self.params['K_RADAR']) * abs(w_c) * \
+                  (cos_t**2 * w_c * self.y + sin_t**2 * np.sin(w_c * self.y))
         den = w_c * (cos_t**2 * w_c**2 * self.y**2 - 2 * sin_t **
                      2 * np.cos(w_c * self.y) + 2 * sin_t**2)**.5
         # np.sign(y[-1]) takes care of weather the limit should be considered taken from above or below,

@@ -1,6 +1,8 @@
-"""Velocity distribution function used in the version a_vdf, one of the integrands available for use in the Gordeyev integral.
+"""Velocity distribution function used in the version a_vdf,
+one of the integrands available for use in the Gordeyev integral.
 
-Any new VDF must be added as an option in the a_vdf function in integrand_functions.py.
+Any new VDF must be added as an option in
+the a_vdf function in integrand_functions.py.
 """
 
 from abc import ABC, abstractmethod
@@ -10,15 +12,14 @@ import scipy.constants as const
 import scipy.special as sps
 import scipy.integrate as si
 
-from inputs import config as cf
 from data import read
 
 
 class VDF(ABC):
-    """All VDF classes must have a method that returns a distribution function.
+    """Base class for a VDF object.
 
     Arguments:
-        ABC {class} -- make it an abstract base class that all VDF objects should inherit from
+        ABC {class} -- abstract base class that all VDF objects inherit from
     """
     @abstractmethod
     def normalize(self):
@@ -32,10 +33,10 @@ class VDF(ABC):
 
 
 class F_MAXWELL(VDF):
-    """Create an object to make Maxwellian distribution functions.
+    """Create an object that make Maxwellian distribution functions.
 
     Arguments:
-        VDF {ABC} -- abstract base class to make sure crucial methods are included
+        VDF {ABC} -- abstract base class to make VDF objects
     """
     def __init__(self, v, params):
         self.v = v
@@ -52,10 +53,10 @@ class F_MAXWELL(VDF):
 
 
 class F_KAPPA(VDF):
-    """Create an object to make kappa distribution functions.
+    """Create an object that make kappa distribution functions.
 
     Arguments:
-        VDF {ABC} -- abstract base class to make sure crucial methods are included
+        VDF {ABC} -- abstract base class to make VDF objects
     """
     def __init__(self, v, params):
         """Initialize VDF parameters.
@@ -87,10 +88,10 @@ class F_KAPPA(VDF):
 
 
 class F_KAPPA_2(VDF):
-    """Create an object to make kappa vol. 2 distribution functions.
+    """Create an object that make kappa vol. 2 distribution functions.
 
     Arguments:
-        VDF {ABC} -- abstract base class for VDF object
+        VDF {ABC} -- abstract base class to make VDF objects
     """
     def __init__(self, v, params):
         """Initialize VDF parameters.
@@ -123,6 +124,11 @@ class F_KAPPA_2(VDF):
 
 
 class F_GAUSS_SHELL(VDF):
+    """Create an object that make Gauss shell distribution functions.
+
+    Arguments:
+        VDF {ABC} -- abstract base class to make VDF objects
+    """
     def __init__(self, v, params):
         self.v = v
         self.params = params
@@ -137,7 +143,6 @@ class F_GAUSS_SHELL(VDF):
         f = func * self.v**2 * 4 * np.pi
         self.A = 1 / si.simps(f, self.v)
         ev = .5 * const.m_e * self.r**2 / const.eV
-        # print(f'Gauss shell at v = {round(self.r / self.vth, 3)} v_th')
         print(f'Gauss shell at E = {round(ev, 2)} eV')
 
     def f_0(self):
@@ -148,6 +153,12 @@ class F_GAUSS_SHELL(VDF):
 
 
 class F_REAL_DATA(VDF):
+    """Create an object that make distribution functions from
+    a 1D array.
+
+    Arguments:
+        VDF {ABC} -- abstract base class to make VDF objects
+    """
     def __init__(self, v, params):
         self.v = v
         self.params = params

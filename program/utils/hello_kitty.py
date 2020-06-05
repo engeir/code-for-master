@@ -1,4 +1,5 @@
-"""Script for calculating the peak power of the plasma line at different pitch angles, height and ToD.
+"""Script for calculating the peak power of the plasma line
+at different pitch angles, height and time of day.
 """
 
 import sys, os
@@ -41,7 +42,8 @@ class HelloKitty:
         self.meta = []
         self.F0 = 430e6
         self.K_RADAR = - 2 * self.F0 * 2 * np.pi / const.c  # Radar wavenumber
-        save = input('Press "y/yes" to save plot, any other key to dismiss.\t').lower()
+        save = input('Press "y/yes" to save plot, ' + \
+                     'any other key to dismiss.\t').lower()
         if save in ['y', 'yes']:
             self.save = True
         else:
@@ -52,21 +54,27 @@ class HelloKitty:
 
     def create_data(self):
         # In config, set 'F_MIN': 2.5e6, 'F_MAX': 9.5e6
-        # Also, using
-        #     F_N_POINTS = 1e4
-        # is sufficient.
+        # Also, using F_N_POINTS = 1e4 is sufficient.
         if self.vol == 1:
-            sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                    'THETA': 60 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': list(range(10))}
+            sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16,
+                       'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000,
+                       'T_I': 1500, 'T_ES': 90000,
+                       'THETA': 60 * np.pi / 180, 'Z': 599,
+                       'mat_file': 'fe_zmuE-07.mat',
+                       'pitch_angle': list(range(10))}
         else:
-            sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                    'THETA': 60 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
+            sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16,
+                       'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000,
+                       'T_I': 1500, 'T_ES': 90000,
+                       'THETA': 60 * np.pi / 180, 'Z': 300,
+                       'mat_file': 'fe_zmuE-07.mat',
+                       'pitch_angle': 'all'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         with tqdm(total=len(self.Z) * len(self.A)) as pbar:
             for i, z in enumerate(self.Z):
-                # sys_set['Z'] = z
                 sys_set['NE'] = z
-                plasma_freq = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
+                plasma_freq = (sys_set['NE'] * const.elementary_charge**2 /
+                               (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
                 cf.I_P['F_MIN'] = plasma_freq
                 cf.I_P['F_MAX'] = plasma_freq + 4e5
                 cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
@@ -101,11 +109,11 @@ class HelloKitty:
         mod = LorentzianModel()
         pars = mod.guess(y, x=x)
         out = mod.fit(y, pars, x=x)
-        power = si.simps(x, out.best_fit)
+        # power = si.simps(x, out.best_fit)
         power = np.max(s)
 
         l = const.c / self.F0
-        # Calculate corresponding energy with formula: E = .5 * m_e * (f_r * \lambda / (2 * cos(theta)))
+        # Calculate corresponding energy with formula: $ E = 0.5 m_{\mathrm{e}} [f_{\mathrm{r}} \lambda_\Re / (2 \cos\theta)]^2 $
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
         if self.vol == 1:
             res = bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
@@ -127,7 +135,8 @@ class HelloKitty:
         f = plt.figure(figsize=(6, 4))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         ax0 = plt.subplot(gs[0])
-        im = ax0.imshow(self.g, extent=[0, len(self.A) - 1, np.min(self.Z), np.max(self.Z)],
+        im = ax0.imshow(self.g, extent=[0, len(self.A) - 1,
+                                        np.min(self.Z), np.max(self.Z)],
                         origin='lower', aspect='auto', cmap='gist_heat')
         plt.scatter(dots_x, dots_y, s=3)
         plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
@@ -154,14 +163,16 @@ class HelloKitty:
             tt = time.localtime()
             the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
             save_path = f'{save_path}/hello_kitty_{the_time}'
-            self.meta.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'], 'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
-                                 'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
+            self.meta.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'V_MAX': cf.V_MAX,
+                                 'F_N_POINTS': cf.F_N_POINTS, 'Y_N_POINTS': cf.Y_N_POINTS,
+                                 'V_N_POINTS': cf.V_N_POINTS})
 
             pdffig = PdfPages(str(save_path) + '.pdf')
             metadata = pdffig.infodict()
             metadata['Title'] = f'Hello Kitty plot'
             metadata['Author'] = 'Eirik R. Enger'
-            metadata['Subject'] = f"Plasma line power as a function of electron number density and aspect angle."
+            metadata['Subject'] = f"Plasma line power as a function of ' + \
+                                  'electron number density and aspect angle."
             metadata['Keywords'] = f'{self.meta}'
             metadata['ModDate'] = datetime.datetime.today()
             pdffig.attach_note('max(s), 100percent power')
