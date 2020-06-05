@@ -10,6 +10,7 @@ mp.set_start_method('fork')
 import unittest  # pylint: disable=C0413
 import numpy as np  # pylint: disable=C0413
 import scipy.integrate as si  # pylint: disable=C0413
+import scipy.constants as const  # pylint: disable=C0413
 
 from utils import spectrum_calculation as isr  # pylint: disable=C0413
 from utils import vdfs  # pylint: disable=C0413
@@ -29,7 +30,9 @@ class TestISR(unittest.TestCase):
         cls.a, cls.b = None, None
 
     def setUp(self):
-        self.sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
+        F0 = 430e6
+        K_RADAR = - 2 * F0 * 2 * np.pi / const.c
+        self.sys_set = {'K_RADAR': K_RADAR, 'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                         'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat', 'pitch_angle': 'all'}
         self.params = {'kappa': 3, 'vdf': 'gauss_shell', 'area': False}
 
