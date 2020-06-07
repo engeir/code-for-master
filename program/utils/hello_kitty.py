@@ -109,8 +109,12 @@ class HelloKitty:
         mod = LorentzianModel()
         pars = mod.guess(y, x=x)
         out = mod.fit(y, pars, x=x)
-        # power = si.simps(x, out.best_fit)
-        power = np.max(s)
+        power = si.simps(out.best_fit, x)
+        #plt.figure()
+        #plt.plot(f, s)
+        #plt.plot(x, out.best_fit)
+        #plt.show()
+        # power = np.max(s)
 
         l = const.c / self.F0
         # Calculate corresponding energy with formula: $ E = 0.5 m_{\mathrm{e}} [f_{\mathrm{r}} \lambda_\Re / (2 \cos\theta)]^2 $
