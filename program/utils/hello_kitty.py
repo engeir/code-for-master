@@ -31,7 +31,7 @@ matplotlib.rcParams.update({
 class HelloKitty:
     def __init__(self):
         # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
-        self.vol = 1
+        self.vol = 2
         if self.vol == 1:
             self.Z = np.linspace(1e11, 8e11, 60)
         else:
