@@ -414,34 +414,41 @@ class PlotHKExtremes(ReproduceS):
 class PlotHK:
     """Reproduce the Hello Kitty figures from saved data."""
     def __init__(self):
-        path = '../../figures/hello_kitty_2020_6_8_17--32--39.npz'
+        # path = '../../figures/hello_kitty_2020_6_8_17--32--39.npz'
+        path = '../../figures/hello_kitty_2020_6_8_22--1--51.npz'
         self.file = np.load(path)
         sorted(self.file)
 
-    def plot_it(self):
+    def shade(self):
         dots_x = []
         dots_y = []
-        for i, d in enumerate(self.file['dots'][0]):
+        for i, d in enumerate(self.file['dots'][1]):
             arg = np.argwhere(self.file['angle'] == self.file['angle'][int(d)])
             dots_x = np.r_[dots_x, arg[:1, 0]]
-            dots_y = np.r_[dots_y, np.ones(len(arg[:1, 0])) * self.file['dots'][1][i]]
+            dots_y = np.r_[dots_y, np.ones(len(arg[:1, 0])) * self.file['dots'][2][i]]
 
-        y_min = []
-        y_max = []
-        for x in range(30):
-            arg = np.argwhere(dots_x == x)
-            y_min.append(np.min(dots_y[arg]))
-            y_max.append(np.max(dots_y[arg]))
+        s = set(self.file['dots'][0])
+        for i in s:
+            mask = np.argwhere(self.file['dots'][0]==i)
+            xs = []
+            y_min = []
+            y_max = []
+            for x in range(30):
+                arg = np.argwhere(dots_x[mask].flatten() == x)
+                if bool(arg.any()):
+                    xs.append(x)
+                    y_min.append(np.min(dots_y[mask][arg]))
+                    y_max.append(np.max(dots_y[mask][arg]))
+            plt.fill_between(xs, y_min, y_max, color='g', alpha=.8)
+
+    def plot_it(self):
         f = plt.figure(figsize=(6, 4))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         ax0 = plt.subplot(gs[0])
         im = ax0.imshow(self.file['power'], extent=[0, len(self.file['angle']) - 1,
                                         np.min(self.file['density']), np.max(self.file['density'])],
                         origin='lower', aspect='auto', cmap='gist_heat')
-        # plt.scatter(dots_x, dots_y, s=3)
-        # plt.plot(np.arange(30), y_min)
-        # plt.plot(np.arange(30), y_max)
-        plt.fill_between(np.arange(30), y_min, y_max, color='g', alpha=.8)
+        self.shade()
         plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
