@@ -111,8 +111,8 @@ def view_mat_file():
     data = x['fe_zmuE']
     data = data[:, :10, :]
     data = np.einsum('ijk->ik', data) / 10
-    idx = int(np.argwhere(read_dat_file('z4fe.dat') == 599))
-    # idx = int(np.argwhere(read_dat_file('z4fe.dat') == 300))
+    # idx = int(np.argwhere(read_dat_file('z4fe.dat') == 599))
+    idx = int(np.argwhere(read_dat_file('z4fe.dat') == 300))
     data = data[idx, :]
     E = np.linspace(1, 110, len(data))
 
@@ -122,20 +122,20 @@ def view_mat_file():
     plt.ylabel('VDF, ' + r'$f_{0,\mathrm{S}}$')
     axins = inset_axes(ax, 3.1, 1.5, loc='upper right')
     axins.plot(E, data.T, 'g')
-    x1, x2, y1, y2 = 13, 27, 1e-15, 5.57e-14
-    # x1, x2, y1, y2 = 18, 30, 0, 5e-13
+    # x1, x2, y1, y2 = 13, 27, 1e-15, 5.57e-14
+    x1, x2, y1, y2 = 18, 30, 0, 5e-13
     axins.set_xlim(x1, x2)
     axins.set_ylim(y1, y2)
-    x00, x01, x10, x11 = 17.8, 19.2, 23.3, 24.7
-    # x00, x01, x10, x11, x20, x21 = 21.7, 22.3, 23.5, 24.1, 26.5, 27.2
+    # x00, x01, x10, x11 = 15.58, 18.42, 22.47, 23.75
+    x00, x01, x10, x11, x20, x21 = 20.29, 22.05, 22.45, 23.87, 25.38, 27.14
     axins.axvspan(x00, x01, alpha=0.5, color='g')
     axins.axvspan(x10, x11, alpha=0.5, color='g')
-    # axins.axvspan(x20, x21, alpha=0.5, color='g')
-    y = 5e-15
-    # y = 4e-13
-    axins.text(18.5, y, '1', fontsize=13, horizontalalignment='center')
-    axins.text(24, y, '2', fontsize=13, horizontalalignment='center')
-    # axins.text(26.8, y, '3', fontsize=13, horizontalalignment='center')
+    axins.axvspan(x20, x21, alpha=0.5, color='g')
+    # y = 5e-15
+    y = 4e-13
+    axins.text((x00 + x01) / 2, y, '1', fontsize=13, horizontalalignment='center')
+    axins.text((x10 + x11) / 2, y, '2', fontsize=13, horizontalalignment='center')
+    axins.text((x20 + x21) / 2, y, '3', fontsize=13, horizontalalignment='center')
     # plt.yticks(visible=False)
     plt.gca().axes.yaxis.set_ticklabels([])
     # axins.ticklabel_format(useOffset=False)

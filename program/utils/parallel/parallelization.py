@@ -37,22 +37,13 @@ def integrate(m, T, nu, y, function, kappa=None):
     idx = set(enumerate(cf.w))
     f = function.integrand()
     func = partial(parallel, y, f)
-    pool = mp.Pool(processes=96)
-    # tqdm give a neat progress bar for the iterative process
-    # with tqdm(total=len(cf.w)) as pbar:
-    #     for _ in pool.map(func, idx):
-    #         pbar.set_description("Calculating spectrum")
-            # pbar.update(1)
+    pool = mp.Pool()
     pool.map(func, idx)
     pool.close()
     if function.the_type == 'kappa':
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))
     elif function.the_type == 'a_vdf':
-        # Kappa characteristic velocity scaling
-        # a = 4 * np.pi * T * const.k * array / m * (kappa - 3 / 2) / (kappa - 1 / 2)
-        # Maxwellian characteristic velocity scaling
-        # a = 4 * np.pi * T * const.k * array / m
-        # General for any VDF
+        # Characteristic velocity scaling
         a = 4 * np.pi * T * const.k * array / m * function.char_vel
     else:
         a = array

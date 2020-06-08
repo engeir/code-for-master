@@ -38,7 +38,7 @@ class HelloKitty:
             self.Z = np.linspace(2e11, 1e12, 60)
         self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))
         self.g = np.zeros((len(self.Z), len(self.A)))
-        self.dots = [[], []]
+        self.dots = [[], [], []]
         self.meta = []
         self.F0 = 430e6
         self.K_RADAR = - 2 * self.F0 * 2 * np.pi / const.c  # Radar wavenumber
@@ -48,9 +48,6 @@ class HelloKitty:
             self.save = True
         else:
             self.save = False
-
-        self.create_data()
-        self.plot_data()
 
     def create_data(self):
         # In config, set 'F_MIN': 2.5e6, 'F_MAX': 9.5e6
@@ -87,20 +84,15 @@ class HelloKitty:
                     f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
                     sys.stdout = old_stdout
                     plasma_power, energy_interval = self.check_energy(f, s, a)
-                    if energy_interval:
-                        self.dots[0].append(j)
-                        self.dots[1].append(z)
+                    if energy_interval != 0:
+                        self.dots[0].append(energy_interval)
+                        self.dots[1].append(j)
+                        self.dots[2].append(z)
                     self.g[i, j] = plasma_power
-                    # self.g[i, j] = np.max(s)
                     pbar.update(1)
         self.meta.append(meta_data)
 
     def check_energy(self, f, s, deg):
-        # TODO: implement a Lorentzian curve fit to the peak, ±.5 kHz (1 kHz integration)
-        # try:
-        #     p = signal.find_peaks(s, height=height)[0][-1]
-        # except Exception:
-        #     return False
         p = int(np.argwhere(s==np.max(s)))
         freq = f[p]
         f_mask = (freq - 5e2 < f) & (f < freq + 5e2)
@@ -110,19 +102,23 @@ class HelloKitty:
         pars = mod.guess(y, x=x)
         out = mod.fit(y, pars, x=x)
         power = si.simps(out.best_fit, x)
-        #plt.figure()
-        #plt.plot(f, s)
-        #plt.plot(x, out.best_fit)
-        #plt.show()
-        # power = np.max(s)
 
         l = const.c / self.F0
         # Calculate corresponding energy with formula: $ E = 0.5 m_{\mathrm{e}} [f_{\mathrm{r}} \lambda_\Re / (2 \cos\theta)]^2 $
         E_plasma = .5 * const.m_e * (freq * l / (2 * np.cos(deg * np.pi / 180)))**2 / const.eV
+        res = 0
         if self.vol == 1:
-            res = bool(17.8 < E_plasma < 19.2 or 23.3 < E_plasma < 24.7)
+            if bool(15.58 < E_plasma < 18.42):
+                res = 1
+            elif bool(22.47 < E_plasma < 23.75):
+                res = 2
         else:
-            res = bool(21.7 < E_plasma < 22.3 or 23.5 < E_plasma < 24.1 or 26.5 < E_plasma < 27.2)
+            if bool(20.29 < E_plasma < 22.05):
+                res = 1
+            elif bool(22.45 < E_plasma < 23.87):
+                res = 2
+            elif bool(25.38 < E_plasma < 27.14):
+                res = 3
         return power, res
 
     def plot_data(self):
@@ -131,10 +127,10 @@ class HelloKitty:
         self.A = np.r_[self.A, self.A[::-1], self.A, self.A[::-1]]
         dots_x = []
         dots_y = []
-        for i, d in enumerate(self.dots[0]):
+        for i, d in enumerate(self.dots[1]):
             arg = np.argwhere(self.A == self.A[d])
             dots_x = np.r_[dots_x, arg[:2, 0]]
-            dots_y = np.r_[dots_y, np.ones(len(arg[:2, 0])) * self.dots[1][i]]
+            dots_y = np.r_[dots_y, np.ones(len(arg[:2, 0])) * self.dots[2][i]]
 
         f = plt.figure(figsize=(6, 4))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
@@ -183,5 +179,10 @@ class HelloKitty:
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
+            np.savez(f'{save_path}', angle=self.A, density=self.Z, power=self.g, dots=self.dots)
 
         plt.show()
+
+    def run(self):
+        self.create_data()
+        self.plot_data()

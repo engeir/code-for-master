@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 import numpy as np
 import scipy.constants as const
 
-from utils import spectrum_calculation as isr
+if __name__ != '__main__':
+    from utils import spectrum_calculation as isr
 
 
 class ReproduceS(ABC):
@@ -409,5 +411,55 @@ class PlotHKExtremes(ReproduceS):
         self.p.plot_ridge(self.f, self.data, 'semilogy', self.legend_txt, self.ridge_txt)
 
 
-# if __name__ == '__main__':
-#     PlotTestNumerical().run()
+class PlotHK:
+    """Reproduce the Hello Kitty figures from saved data."""
+    def __init__(self):
+        path = '../../figures/hello_kitty_2020_6_8_17--32--39.npz'
+        self.file = np.load(path)
+        sorted(self.file)
+
+    def plot_it(self):
+        dots_x = []
+        dots_y = []
+        for i, d in enumerate(self.file['dots'][0]):
+            arg = np.argwhere(self.file['angle'] == self.file['angle'][int(d)])
+            dots_x = np.r_[dots_x, arg[:1, 0]]
+            dots_y = np.r_[dots_y, np.ones(len(arg[:1, 0])) * self.file['dots'][1][i]]
+
+        y_min = []
+        y_max = []
+        for x in range(30):
+            arg = np.argwhere(dots_x == x)
+            y_min.append(np.min(dots_y[arg]))
+            y_max.append(np.max(dots_y[arg]))
+        f = plt.figure(figsize=(6, 4))
+        gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
+        ax0 = plt.subplot(gs[0])
+        im = ax0.imshow(self.file['power'], extent=[0, len(self.file['angle']) - 1,
+                                        np.min(self.file['density']), np.max(self.file['density'])],
+                        origin='lower', aspect='auto', cmap='gist_heat')
+        # plt.scatter(dots_x, dots_y, s=3)
+        # plt.plot(np.arange(30), y_min)
+        # plt.plot(np.arange(30), y_max)
+        plt.fill_between(np.arange(30), y_min, y_max, color='g', alpha=.8)
+        plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
+        plt.tick_params(axis='x', which='both', bottom=False,
+                        top=False, labelbottom=False)
+        ax1 = plt.subplot(gs[1])
+        ax1.plot(self.file['angle'])
+        plt.xlim([0, len(self.file['angle']) - 1])
+        plt.yticks([30, 45, 60])
+        plt.ylabel('Aspect angle')
+        axs = []
+        axs += [ax0]
+        axs += [ax1]
+        gs.update(hspace=0.05)
+        f.colorbar(im, ax=axs).ax.set_ylabel('Echo power')
+        plt.tick_params(axis='x', which='both', bottom=False,
+                        top=False, labelbottom=False)
+
+        plt.show()
+
+
+if __name__ == '__main__':
+    PlotHK().plot_it()
