@@ -1,4 +1,5 @@
-"""This script implements test for the functions used throughout the program.
+"""This script implements tests for
+the functions used throughout the program.
 
 Run from directory `program` with command
 python -m unittest test.test_ISR -b
@@ -22,7 +23,8 @@ class TestISR(unittest.TestCase):
     Should return two numpy.ndarrays of equal shape.
 
     Arguments:
-        unittest.TestCase {class} -- inherits from unittest to make it a TestCase
+        unittest.TestCase {class} -- inherits from unittest
+        to make it a TestCase
     """
 
     @classmethod
@@ -79,7 +81,8 @@ class TestVDF(unittest.TestCase):
     """Class which test if the VDFs are normalized.
 
     Arguments:
-        unittest.TestCase {class} -- inherits from unittest to make it a TestCase
+        unittest.TestCase {class} -- inherits from unittest
+        to make it a TestCase
     """
 
     @classmethod

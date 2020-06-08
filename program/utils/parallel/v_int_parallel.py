@@ -1,4 +1,5 @@
-"""Implementation of parallel computation of the velocity integrals for the integral variable y.
+"""Implementation of parallel computation of
+the velocity integrals for the integral variable y.
 """
 
 import ctypes
@@ -13,8 +14,8 @@ from inputs import config as cf
 
 
 def integrand(y, params, v, f):
-    """Integrate from 0 to V_MAX with an integrand on the form e^{-iwt}f(t),
-    for every value in the np.ndarray w.
+    """Integrate from 0 to V_MAX with an integrand on
+    the form e^{-iwt}f(t), for every value in the np.ndarray w.
 
     Arguments:
         y {np.ndarray} -- sample points of integration variable
@@ -23,7 +24,8 @@ def integrand(y, params, v, f):
         f {np.ndarray} -- value of VDF at sample points
 
     Returns:
-        np.ndarray -- the value of the velocity integral at every sample of the integration variable
+        np.ndarray -- the value of the velocity integral at every
+        sample of the integration variable
     """
     idx = set(enumerate(y))
     func = partial(parallel, params, v, f)
@@ -61,7 +63,7 @@ def shared_array(shape):
     """
     Form a shared memory numpy array.
 
-    http://stackoverflow.com/questions/5549190/is-shared-readonly-data-copied-to-different-processes-for-python-multiprocessing
+    https://tinyurl.com/c9m75k2
     """
 
     shared_array_base = mp.Array(ctypes.c_double, shape[0])

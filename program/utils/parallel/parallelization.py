@@ -1,4 +1,5 @@
-"""Implementation of parallel computation of the integrals for the frequency spectrum.
+"""Implementation of parallel computation of
+the integrals for the frequency spectrum.
 """
 
 import ctypes
@@ -15,8 +16,8 @@ from inputs import config as cf
 
 
 def integrate(m, T, nu, y, function, kappa=None):
-    """Integrate from 0 to Y_MAX with an integrand on the form e^{-iwy}f(y),
-    for every value in the np.ndarray w.
+    """Integrate from 0 to Y_MAX with an integrand on the form
+    e^{-iwy}f(y), for every value in the np.ndarray w.
 
     Arguments:
         m {float} -- mass [kg]
@@ -26,10 +27,12 @@ def integrate(m, T, nu, y, function, kappa=None):
         function {class object} -- object from an integrand class
 
     Keyword Arguments:
-        kappa {int or float} -- index determining the order of the kappa VDFs (default: {None})
+        kappa {int or float} -- index determining the order of the
+        kappa VDFs (default: {None})
 
     Returns:
-        np.ndarray -- a scaled version of the result from the integration based on Hagfors [1968]
+        np.ndarray -- a scaled version of the result from the
+        integration based on Hagfors [1968]
     """
     idx = set(enumerate(cf.w))
     f = function.integrand()
@@ -75,7 +78,7 @@ def shared_array(shape):
     """
     Form a shared memory numpy array.
 
-    http://stackoverflow.com/questions/5549190/is-shared-readonly-data-copied-to-different-processes-for-python-multiprocessing
+    https://tinyurl.com/c9m75k2
     """
 
     shared_array_base = mp.Array(ctypes.c_double, 2 * shape[0])
