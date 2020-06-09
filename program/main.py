@@ -365,8 +365,8 @@ class Simulation:
         # self.r = reproduce.PlotKappa(self.plot)
         # self.r = reproduce.PlotIonLine(self.plot)
         # self.r = reproduce.PlotPlasmaLine(self.plot)
-        # self.r = reproduce.PlotTemperature(self.plot)
-        self.r = reproduce.PlotHKExtremes(self.plot)
+        self.r = reproduce.PlotTemperature(self.plot)
+        # self.r = reproduce.PlotHKExtremes(self.plot)
 
     def create_data(self):
         """Create IS spectra.
@@ -402,6 +402,8 @@ class Simulation:
             Z -- Height of real data [100, 599] [km]
             mat_file -- Important when using real data and decides
                         the time of day
+            pitch_angle -- list of integers that determine which slices
+                           of the pitch angles are used. 'all' uses all
 
         Examples:
         ::
@@ -426,8 +428,12 @@ class Simulation:
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
         """
-        # self.from_file = True
-        self.r.create_it()
+        self.from_file = True
+        self.r.create_it('../figures/2020_6_9_16--31--45_k.npz', from_file=self.from_file)
+        self.f = self.r.f
+        self.data = self.r.data
+        self.legend_txt = self.r.legend_txt
+        self.ridge_txt = self.r.ridge_txt
         self.meta_data = self.r.meta_data
 
     def plot_data(self):
@@ -458,7 +464,7 @@ class Simulation:
     def save_handle(self, mode):
         if mode == 'setUp':
             if self.plot.save in ['y', 'yes']:
-                self.plot.save_it(self.meta_data)
+                self.plot.save_it(self.f, self.data, self.legend_txt, self.ridge_txt, self.meta_data)
         elif mode == 'tearDown':
             if self.plot.save in ['y', 'yes']:
                 self.plot.pdffig.close()
@@ -472,5 +478,5 @@ class Simulation:
 
 
 if __name__ == '__main__':
-    # Simulation().run()
-    hk.HelloKitty(1).run()
+    Simulation().run()
+    # hk.HelloKitty(1).run()

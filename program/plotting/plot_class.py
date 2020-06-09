@@ -48,7 +48,7 @@ class PlotClass:
         except Exception:
             pass
 
-    def save_it(self, params):
+    def save_it(self, f, data, l_txt, r_txt, params):
         """Save the figure as a multi page pdf with all
         parameters saved in the meta data.
 
@@ -64,7 +64,7 @@ class PlotClass:
                     version += f'_{d["version"][0]}'
                 else:
                     version += f'{d["version"][0]}'
-        params.insert(0, {'F_MAX': cf.I_P['F_MAX'], 'F0': cf.I_P['F0'],
+        params.insert(0, {'F_MIN': cf.I_P['F_MIN'], 'F_MAX': cf.I_P['F_MAX'],
                           'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
                           'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
         tt = time.localtime()
@@ -74,7 +74,7 @@ class PlotClass:
             save_path = '../figures'
             os.makedirs(save_path, exist_ok=True)
         self.save_path = f'{save_path}/{the_time}_{version}'
-        # np.savez(f'{save_path}', frequency=f, spectra=data, legend_txt=l_txt, ridge_txt=r_txt, meta=params)
+        np.savez(f'{self.save_path}', frequency=f, spectra=data, legend_txt=l_txt, ridge_txt=r_txt, meta=params)
         self.pdffig = PdfPages(str(self.save_path) + '.pdf')
         metadata = self.pdffig.infodict()
         metadata['Title'] = f'ISR Spectrum w/ {version}'

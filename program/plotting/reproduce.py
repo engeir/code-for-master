@@ -28,7 +28,7 @@ class ReproduceS(ABC):
     """
 
     @abstractmethod
-    def create_it(self):
+    def create_it(self, *args, from_file=bool):
         """Method that create needed data.
         """
 
@@ -38,8 +38,15 @@ class ReproduceS(ABC):
         """
 
 
-class PlotTestNumerical(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+class PlotTestNumerical():
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 9e6
+    Also, using
+        F_N_POINTS = 1e3
+    is sufficient.
+    """
 
     def __init__(self, p):
         self.p = p
@@ -59,16 +66,12 @@ class PlotTestNumerical(ReproduceS):
         cls.meta_data = []
 
     def tearDown(self):
-        # In config, set 'F_MIN': - 2e6, 'F_MAX': 9e6
-        # Also, using
-        #     F_N_POINTS = 1e3
-        # is sufficient.
         plot = plt.loglog
         xlim = [1e3, self.f[-1]]
         d = self.s1 - self.s2
         rd = d / self.s1
-        plt.figure()
-        plt.subplot(1, 3, 1)
+        plt.figure(figsize=(8, 5))
+        plt.subplot(3, 1, 1)
         if self.maxwell == True:
             plt.title('Maxwell')
             self.maxwell = False
@@ -78,18 +81,26 @@ class PlotTestNumerical(ReproduceS):
         plot(self.f, self.s2, 'r--', label='Numerical (N)')
         plt.legend()
         plt.xlim(xlim)
-        plt.subplot(1, 3, 2)
+        plt.subplot(3, 1, 2)
         plt.title('Difference (SA - N)')
         plot(self.f, d, 'k', label='Positive')
         plot(self.f, - d, 'r', label='Negative')
         plt.legend()
         plt.xlim(xlim)
-        plt.subplot(1, 3, 3)
-        plt.title('Difference relative to semi-analytic ([SA - N] / SA)')
+        plt.subplot(3, 1, 3)
+        plt.title('Difference relative to semi-analytic [(SA - N) / SA]')
         plot(self.f, rd, 'k', label='Positive')
         plot(self.f, - rd, 'r', label='Negative')
         plt.legend()
         plt.xlim(xlim)
+        
+        plt.tight_layout()
+        
+        if self.p.save in ['y', 'yes']:
+            self.p.pdffig.attach_note('numerical presicion')
+            plt.savefig(self.p.pdffig, bbox_inches='tight', format='pdf', dpi=600)
+            plt.savefig(str(self.p.save_path) + f'_page_{self.p.page}.pgf', bbox_inches='tight')
+            self.p.page += 1
 
     def test_numerical_maxwell(self):
         self.f, self.s1, _ = isr.isr_spectrum('maxwell', self.sys_set, **self.params)
@@ -109,17 +120,16 @@ class PlotTestNumerical(ReproduceS):
         self.test_numerical_kappa()
         self.tearDown()
 
-    def run(self):
-        self.setUpClass()
-        self.test_numerical_maxwell()
-        self.tearDown()
-        self.test_numerical_kappa()
-        self.tearDown()
-        plt.show()
-
 
 class PlotTestDebye(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 5e5
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -129,10 +139,6 @@ class PlotTestDebye(ReproduceS):
         self.p = p
 
     def create_it(self):
-        # In config, set 'F_MIN': - 2e6, 'F_MAX': 2e6
-        # Also, using
-        #     F_N_POINTS = 5e5
-        # is sufficient.
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
         # Change the value of kappa in params (and in legend_txt) to obtain plots of different kappa value.
@@ -153,7 +159,14 @@ class PlotTestDebye(ReproduceS):
 
 
 class PlotMaxwell(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 5e5
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -182,7 +195,14 @@ class PlotMaxwell(ReproduceS):
 
 
 class PlotKappa(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 5e5
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -212,7 +232,14 @@ class PlotKappa(ReproduceS):
 
 
 class PlotSpectra(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 1e5
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -247,7 +274,14 @@ class PlotSpectra(ReproduceS):
 
 
 class PlotIonLine(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 3e3, 'F_MAX': 3e3
+    Also, using
+        F_N_POINTS = 1e3
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -282,7 +316,14 @@ class PlotIonLine(ReproduceS):
 
 
 class PlotPlasmaLine(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': 3.5e6, 'F_MAX': 7e6
+    Also, using
+        F_N_POINTS = 1e3
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -294,7 +335,7 @@ class PlotPlasmaLine(ReproduceS):
     def create_it(self):
         F0 = 933e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
-        # In config, set 'F0': 933e6, 'F_MIN': 3.5e6, 'F_MAX': 7e6
+        # In config, set 'F_MIN': 3.5e6, 'F_MAX': 7e6
         # Also, using
         #     F_N_POINTS = 1e3
         # is sufficient.
@@ -317,7 +358,14 @@ class PlotPlasmaLine(ReproduceS):
 
 
 class PlotTemperature(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': 3.5e6, 'F_MAX': 7.5e6
+    Also, using
+        F_N_POINTS = 5e3
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
@@ -327,61 +375,57 @@ class PlotTemperature(ReproduceS):
         self.f_list = [[], [], []]
         self.p = p
 
-    def create_it(self):
-        # if not from_file:
-        self.create_from_code()
-        # else:
-        #     self.create_from_file(args)
+    def create_it(self, *args, from_file=False):
+        if not from_file:
+            self.create_from_code()
+        else:
+            self.create_from_file(*args)
 
-    # def create_from_file(self, *args):
-    #     """Accepts zero, one or two arguments.
+    def create_from_file(self, *args):
+        """Accepts zero, one or two arguments.
 
-    #     If zero arguments are given, a default path is used to look for files.
-    #     If one argument is given, it should include
-    #         the full path (with or without file ending).
-    #     If two arguments are given, the first should be the path to
-    #         the directory where the file is located, and the second
-    #         argument must be the name of the file.
-    #     """
-    #     if len(args) != 0:
-    #         if len(args) == 1:
-    #             args = args[0]
-    #             parts = args.split('/')
-    #             path = '/'.join(parts[:-1]) + '/'
-    #             name = parts[-1]
-    #         elif len(args) == 2:
-    #             path = args[0]
-    #             name = args[1]
-    #     else:
-    #         path = '../../figures/'
-    #         name = 'hello_kitty_2020_6_9_2--28--4.npz'
-    #         # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
-    #     name = name.split('.')[0]
-    #     try:
-    #         f = np.load(path + name + '.npz')
-    #     except Exception:
-    #         sys.exit(print(f'Could not open file {path + name}'))
-    #     sorted(f)
-    #     self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['f'], f['data'], f['meta'], f['legend_txt'], f['ridge_txt']
+        If zero arguments are given, a default path is used to look for files.
+        If one argument is given, it should include
+            the full path (with or without file ending).
+        If two arguments are given, the first should be the path to
+            the directory where the file is located, and the second
+            argument must be the name of the file.
+        """
+        if len(args) != 0:
+            if len(args) == 1:
+                args = args[0]
+                parts = args.split('/')
+                path = '/'.join(parts[:-1]) + '/'
+                name = parts[-1]
+            elif len(args) == 2:
+                path = args[0]
+                name = args[1]
+        else:
+            path = '../../figures/'
+            name = 'hello_kitty_2020_6_9_2--28--4.npz'
+            # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+        name = name.split('.')[0]
+        try:
+            f = np.load(path + name + '.npz', allow_pickle=True)
+        except Exception:
+            sys.exit(print(f'Could not open file {path + name}.npz'))
+        sorted(f)
+        print(f)
+        self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['frequency'], f['spectra'], f['meta'], f['legend_txt'], f['ridge_txt']
 
-    #     for r in self.data:
-    #         peak = int(np.argwhere(r[0] == np.max(r[0])))
-    #         self.f_list[0].append(self.f[peak])
-    #         peak = int(np.argwhere(r[1] == np.max(r[1])))
-    #         self.f_list[1].append(self.f[peak])
-    #         peak = int(np.argwhere(r[2] == np.max(r[2])))
-    #         self.f_list[2].append(self.f[peak])
+        for r in self.data:
+            peak = int(np.argwhere(r[0] == np.max(r[0])))
+            self.f_list[0].append(self.f[peak])
+            peak = int(np.argwhere(r[1] == np.max(r[1])))
+            self.f_list[1].append(self.f[peak])
+            peak = int(np.argwhere(r[2] == np.max(r[2])))
+            self.f_list[2].append(self.f[peak])
 
     def create_from_code(self):
         F0 = 933e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
-        # In config, set 'F_MIN': 3.5e6, 'F_MAX': 7.5e6
-        # Also, using
-        #     F_N_POINTS = 5e3
-        # is sufficient.
         T = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
         self.ridge_txt = [r'$T_{\mathrm{e}} = %d \mathrm{K}$' % j for j in T]
-        print(self.ridge_txt[0])
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 20$']
         sys_set = {'K_RADAR': K_RADAR, 'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 2000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
@@ -416,10 +460,23 @@ class PlotTemperature(ReproduceS):
         plt.plot(T, self.f_list[1], 'k--', label=r'$\kappa = 3$')
         plt.plot(T, self.f_list[2], 'k:', label=r'$\kappa = 20$')
         plt.legend()
+        
+        if self.p.save in ['y', 'yes']:
+            self.p.pdffig.attach_note('freq change')
+            plt.savefig(self.p.pdffig, bbox_inches='tight', format='pdf', dpi=600)
+            plt.savefig(str(self.p.save_path) + f'_page_{self.p.page}.pgf', bbox_inches='tight')
+            self.p.page += 1
 
 
 class PlotHKExtremes(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures."""
+    """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': 2.5e6, 'F_MAX': 9.5e6
+    Also, using
+        F_N_POINTS = 1e4
+    is sufficient.
+    """
     def __init__(self, p):
         self.f = np.ndarray([])
         self.data = []
