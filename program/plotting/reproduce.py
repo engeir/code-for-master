@@ -27,10 +27,51 @@ class ReproduceS(ABC):
         ABC {class} -- abstract base class
     """
 
+    # @abstractmethod
+    # def create_it(self, *args, from_file=bool):
+    #     """Method that create needed data.
+    #     """
+
+    def create_it(self, *args, from_file=False):
+        if not from_file:
+            self.create_from_code()
+        else:
+            self.create_from_file(*args)
+            
     @abstractmethod
-    def create_it(self, *args, from_file=bool):
+    def create_from_code(self):
         """Method that create needed data.
         """
+
+    def create_from_file(self, *args):
+        """Accepts zero, one or two arguments.
+
+        If zero arguments are given, a default path is used to look for files.
+        If one argument is given, it should include
+            the full path (with or without file ending).
+        If two arguments are given, the first should be the path to
+            the directory where the file is located, and the second
+            argument must be the name of the file.
+        """
+        if len(args) != 0:
+            if len(args) == 1:
+                args = args[0]
+                parts = args.split('/')
+                path = '/'.join(parts[:-1]) + '/'
+                name = parts[-1]
+            elif len(args) == 2:
+                path = args[0]
+                name = args[1]
+        else:
+            path = '../../figures/'
+            name = 'hello_kitty_2020_6_9_2--28--4.npz'
+        name = name.split('.')[0]
+        try:
+            f = np.load(path + name + '.npz', allow_pickle=True)
+        except Exception:
+            sys.exit(print(f'Could not open file {path + name}.npz'))
+        sorted(f)
+        self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['frequency'], list(f['spectra']), list(f['meta']), list(f['legend_txt']), list(f['ridge_txt'])
 
     @abstractmethod
     def plot_it(self):
@@ -175,7 +216,7 @@ class PlotMaxwell(ReproduceS):
         self.ridge_txt = []
         self.p = p
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
         # In config, set 'F_MIN': - 2e6, 'F_MAX': 2e6
@@ -248,15 +289,11 @@ class PlotSpectra(ReproduceS):
         self.ridge_txt = []
         self.p = p
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        # In config, set 'F_MIN': - 2e6, 'F_MAX': 2e6
-        # Also, using
-        #     F_N_POINTS = 1e5
-        # is sufficient.
-        self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 20$']
-        kappa = [3, 5, 20]
+        self.legend_txt = ['Maxwellian', r'$\kappa = 20$', r'$\kappa = 8$', r'$\kappa = 3$']
+        kappa = [20, 8, 3]
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
@@ -290,15 +327,15 @@ class PlotIonLine(ReproduceS):
         self.ridge_txt = []
         self.p = p
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
         # In config, set 'F_MIN': - 3e3, 'F_MAX': 3e3
         # Also, using
         #     F_N_POINTS = 1e3
         # is sufficient.
-        self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 8$', r'$\kappa = 20$']
-        kappa = [3, 5, 8, 20]
+        self.legend_txt = ['Maxwellian', r'$\kappa = 20$', r'$\kappa = 8$', r'$\kappa = 3$']
+        kappa = [20, 8, 3]
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
@@ -332,15 +369,15 @@ class PlotPlasmaLine(ReproduceS):
         self.ridge_txt = []
         self.p = p
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 933e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
         # In config, set 'F_MIN': 3.5e6, 'F_MAX': 7e6
         # Also, using
         #     F_N_POINTS = 1e3
         # is sufficient.
-        self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 8$', r'$\kappa = 20$']
-        kappa = [3, 5, 8, 20]
+        self.legend_txt = ['Maxwellian', r'$\kappa = 20$', r'$\kappa = 8$', r'$\kappa = 3$']
+        kappa = [20, 8, 3]
         sys_set = {'K_RADAR': K_RADAR, 'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
@@ -375,12 +412,6 @@ class PlotTemperature(ReproduceS):
         self.f_list = [[], [], []]
         self.p = p
 
-    def create_it(self, *args, from_file=False):
-        if not from_file:
-            self.create_from_code()
-        else:
-            self.create_from_file(*args)
-
     def create_from_file(self, *args):
         """Accepts zero, one or two arguments.
 
@@ -403,15 +434,13 @@ class PlotTemperature(ReproduceS):
         else:
             path = '../../figures/'
             name = 'hello_kitty_2020_6_9_2--28--4.npz'
-            # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
         name = name.split('.')[0]
         try:
             f = np.load(path + name + '.npz', allow_pickle=True)
         except Exception:
             sys.exit(print(f'Could not open file {path + name}.npz'))
         sorted(f)
-        print(f)
-        self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['frequency'], f['spectra'], f['meta'], f['legend_txt'], f['ridge_txt']
+        self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['frequency'], list(f['spectra']), list(f['meta']), list(f['legend_txt']), list(f['ridge_txt'])
 
         for r in self.data:
             peak = int(np.argwhere(r[0] == np.max(r[0])))
@@ -426,11 +455,11 @@ class PlotTemperature(ReproduceS):
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
         T = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
         self.ridge_txt = [r'$T_{\mathrm{e}} = %d \mathrm{K}$' % j for j in T]
-        self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 20$']
+        self.legend_txt = ['Maxwellian', r'$\kappa = 20$', r'$\kappa = 3$']
         sys_set = {'K_RADAR': K_RADAR, 'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 2000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
-        kappa = [3, 20]
+        kappa = [20, 3]
         for t in T:
             ridge = []
             sys_set['T_E'] = t
@@ -457,8 +486,8 @@ class PlotTemperature(ReproduceS):
         T = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
         plt.figure()
         plt.plot(T, self.f_list[0], 'k', label='Maxwellian')
-        plt.plot(T, self.f_list[1], 'k--', label=r'$\kappa = 3$')
-        plt.plot(T, self.f_list[2], 'k:', label=r'$\kappa = 20$')
+        plt.plot(T, self.f_list[1], 'k--', label=r'$\kappa = 20$')
+        plt.plot(T, self.f_list[2], 'k:', label=r'$\kappa = 3$')
         plt.legend()
         
         if self.p.save in ['y', 'yes']:
@@ -485,13 +514,9 @@ class PlotHKExtremes(ReproduceS):
         self.ridge_txt = []
         self.p = p
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        # In config, set 'F_MIN': 2.5e6, 'F_MAX': 9.5e6
-        # Also, using
-        #     F_N_POINTS = 1e4
-        # is sufficient.
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 1e11,
                    'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
                    'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat',

@@ -365,8 +365,8 @@ class Simulation:
         # self.r = reproduce.PlotKappa(self.plot)
         # self.r = reproduce.PlotIonLine(self.plot)
         # self.r = reproduce.PlotPlasmaLine(self.plot)
-        self.r = reproduce.PlotTemperature(self.plot)
-        # self.r = reproduce.PlotHKExtremes(self.plot)
+        # self.r = reproduce.PlotTemperature(self.plot)
+        self.r = reproduce.PlotHKExtremes(self.plot)
 
     def create_data(self):
         """Create IS spectra.
@@ -429,7 +429,7 @@ class Simulation:
             self.legend_txt.append('Kappa')
         """
         self.from_file = True
-        self.r.create_it('../figures/2020_6_9_16--31--45_k.npz', from_file=self.from_file)
+        self.r.create_it('../figures/2020_6_9_18--4--17_a_a_a_a.npz', from_file=self.from_file)
         self.f = self.r.f
         self.data = self.r.data
         self.legend_txt = self.r.legend_txt

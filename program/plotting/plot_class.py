@@ -30,6 +30,7 @@ class PlotClass:
         self.pdffig = None
         self.save_path = str
         self.correct_inputs()
+        self.colors = ['darkred', 'darkblue', 'darkorange', 'seagreen', 'firebrick', 'red', 'magenta']
         self.line_styles = ['-', '--', ':', '-.',
                             (0, (3, 5, 1, 5, 1, 5)),
                             (0, (3, 1, 1, 1, 1, 1))]
@@ -123,15 +124,15 @@ class PlotClass:
         else:
             plt.xlabel(f'Frequency [{p}Hz]')
             plt.ylabel('Power')
-        for st, s, lab in zip(itertools.cycle(self.line_styles), Is, l_txt):
+        for clr, st, s, lab in zip(itertools.cycle(self.colors), itertools.cycle(self.line_styles), Is, l_txt):
             if self.plasma:
                 s = s[mask]
             if func_type == 'semilogy':
-                plt.plot(freq, s, 'r', linestyle=st,
+                plt.plot(freq, s, color=clr, linestyle=st,
                         linewidth=.8, label=lab)
             else:
                 plot_object = getattr(plt, func_type)
-                plot_object(freq, s, 'r', linestyle=st,
+                plot_object(freq, s, color=clr, linestyle=st,
                             linewidth=.8, label=lab)
 
         plt.legend()
