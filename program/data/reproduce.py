@@ -415,7 +415,8 @@ class PlotHK:
     """Reproduce the Hello Kitty figures from saved data."""
     def __init__(self):
         # path = '../../figures/hello_kitty_2020_6_8_17--32--39.npz'
-        path = '../../figures/hello_kitty_2020_6_8_22--1--51.npz'
+        # path = '../../figures/hello_kitty_2020_6_8_22--1--51.npz'
+        path = '../../figures/hello_kitty_2020_6_9_2--28--4.npz'
         self.file = np.load(path)
         sorted(self.file)
 
