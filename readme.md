@@ -61,28 +61,25 @@ The version that determine the calculation method is given in `main.py`, with ad
 ## File structure <a name = "structure"></a>
 ```
 isr_spectrum/
-├── extra/
-│   ├── simple_calculations.py
-│   └── simple_plots.py
+├── LICENSE
 ├── program/
 │   ├── data/
-│   │   ├── __init__.py
-│   │   ├── Arecibo-photo-electrons/
+│   │   ├── arecibo/
 │   │   │   ├── E4fe.dat
-│   │   │   ├── fe_zmuE-01.mat
-│   │   │   ├── fe_zmuE-01.mat-01.png
-│   │   │   ├── ...
-│   │   │   ├── fe_zmuE-15.mat
-│   │   │   ├── fe_zmuE-15.mat-01.png
+│   │   │   ├── fe_zmuE-07.mat
 │   │   │   ├── SzeN.dat
 │   │   │   ├── theta_lims.dat
 │   │   │   ├── timeOfDayUT.dat
 │   │   │   └── z4fe.dat
-│   │   └── read.py
 │   ├── inputs/
 │   │   ├── __init__.py
 │   │   └── config.py
 │   ├── main.py
+│   ├── plotting/
+│   │   ├── __init__.py
+│   │   ├── hello_kitty.py
+│   │   ├── plot_class.py
+│   │   └── reproduce.py
 │   ├── test/
 │   │   ├── __init__.py
 │   │   └── test_ISR.py
@@ -93,6 +90,7 @@ isr_spectrum/
 │       │   ├── __init__.py
 │       │   ├── parallelization.py
 │       │   └── v_int_parallel.py
+│       ├── read.py
 │       ├── spectrum_calculation.py
 │       └── vdfs.py
 ├── readme.md
