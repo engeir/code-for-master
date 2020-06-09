@@ -424,6 +424,15 @@ class PlotHKExtremes(ReproduceS):
 class PlotHK:
     """Reproduce the Hello Kitty figures from saved data."""
     def __init__(self, *args):
+        """Accepts zero, one or two arguments.
+
+        If zero arguments are given, a default path is used to look for files.
+        If one argument is given, it should include
+            the full path (with or without file ending).
+        If two arguments are given, the first should be the path to
+            the directory where the file is located, and the second
+            argument must be the name of the file.
+        """
         if len(args) != 0:
             if len(args) == 1:
                 args = args[0]

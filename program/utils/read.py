@@ -1,3 +1,6 @@
+import os
+import sys
+
 import ast
 import numpy as np
 from scipy.io import loadmat
@@ -12,19 +15,23 @@ def f_0_maxwell(v, params):
 
 
 def interpolate_data(v, params):
-    path = 'data/arecibo/'
-    x = loadmat(path + params['mat_file'])
-    data = x['fe_zmuE']
-    if isinstance(params['pitch_angle'], list):
-        if all(isinstance(x, int) for x in params['pitch_angle']):
-            sum_over_pitch = data[:, params['pitch_angle'], :]
-            norm = len(params['pitch_angle'])
+    if os.path.basename(os.path.realpath(sys.argv[0])) != 'main.py':
+        f_1 = np.linspace(1, 600, 600)
+        energies = np.linspace(1, 110, 600)  # electronvolt
     else:
-        norm = 18
-    sum_over_pitch = np.einsum('ijk->ik', data) / norm  # removes j-dimansion through dot-product
-    idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
-    f_1 = sum_over_pitch[idx, :]
-    energies = read_dat_file('E4fe.dat')
+        path = 'data/arecibo/'
+        x = loadmat(path + params['mat_file'])
+        data = x['fe_zmuE']
+        if isinstance(params['pitch_angle'], list):
+            if all(isinstance(x, int) for x in params['pitch_angle']):
+                sum_over_pitch = data[:, params['pitch_angle'], :]
+                norm = len(params['pitch_angle'])
+        else:
+            norm = 18
+        sum_over_pitch = np.einsum('ijk->ik', data) / norm  # removes j-dimansion through dot-product
+        idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
+        f_1 = sum_over_pitch[idx, :]
+        energies = read_dat_file('E4fe.dat')
 
     velocities = (2 * energies * const.eV / params['m'])**.5
     new_f1 = np.interp(v, velocities, f_1)

@@ -12,7 +12,7 @@ import scipy.constants as const
 import scipy.special as sps
 import scipy.integrate as si
 
-from data import read
+from utils import read
 
 
 class VDF(ABC):

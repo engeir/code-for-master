@@ -35,7 +35,7 @@ class TestISR(unittest.TestCase):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
         self.sys_set = {'K_RADAR': K_RADAR, 'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
-                        'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-01.mat', 'pitch_angle': 'all'}
+                        'THETA': 40 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
         self.params = {'kappa': 3, 'vdf': 'gauss_shell', 'area': False}
 
     def tearDown(self):
@@ -74,7 +74,7 @@ class TestISR(unittest.TestCase):
         self.assertEqual(meta_data['vdf'], 'real_data')
         self.assertEqual(meta_data['T_ES'], None)
         self.assertEqual(meta_data['Z'], 599)
-        self.assertEqual(meta_data['mat_file'], 'fe_zmuE-01.mat')
+        self.assertEqual(meta_data['mat_file'], 'fe_zmuE-07.mat')
 
 
 class TestVDF(unittest.TestCase):
@@ -88,7 +88,8 @@ class TestVDF(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.v = np.linspace(0, (6e6)**(1 / 3), int(1e7))**3
-        cls.params = {'m': 9.1093837015e-31, 'T': 1000, 'kappa': 3, 'T_ES': 90000}
+        cls.params = {'m': 9.1093837015e-31, 'T': 1000, 'kappa': 3, 'T_ES': 90000,
+                      'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
         cls.f = None
 
     def tearDown(self):

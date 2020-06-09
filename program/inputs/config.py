@@ -5,7 +5,6 @@ import os
 import sys
 
 import numpy as np
-# import scipy.constants as const
 
 
 # Check if a test is running. Potential paths are

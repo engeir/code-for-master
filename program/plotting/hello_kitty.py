@@ -2,7 +2,8 @@
 at different pitch angles, height and time of day.
 """
 
-import sys, os
+import os
+import sys
 import time
 import datetime
 
@@ -13,7 +14,6 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib import gridspec
 import scipy.integrate as si
 import scipy.constants as const
-import scipy.signal as signal
 from lmfit.models import LorentzianModel
 from tqdm import tqdm
 
@@ -31,8 +31,14 @@ matplotlib.rcParams.update({
 
 class HelloKitty:
     def __init__(self, vol):
+        """Create the data and plot a Hello Kitty figure.
+
+        Args:
+            vol {int or float} -- choose between two different input settings,
+            creating two different HK plots
+        """
         # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
-        self.vol = vol
+        self.vol = int(vol)
         if self.vol == 1:
             self.Z = np.linspace(1e11, 8e11, 60)
         else:

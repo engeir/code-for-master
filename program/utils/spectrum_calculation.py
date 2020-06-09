@@ -4,7 +4,6 @@ and other plasma parameters.
 
 import os
 import sys
-# import textwrap as txt
 
 import numpy as np
 import scipy.constants as const
