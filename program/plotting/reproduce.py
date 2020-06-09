@@ -48,8 +48,9 @@ class PlotTestNumerical(ReproduceS):
     def setUpClass(cls):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        cls.sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                       'THETA': 30 * np.pi / 180, 'Z': 300, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
+        cls.sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100,
+                       'T_E': 2000, 'T_I': 1500, 'T_ES': 90000, 'THETA': 30 * np.pi / 180, 'Z': 300,
+                       'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
         cls.params = {'kappa': 3, 'vdf': 'maxwell', 'area': False}
         cls.f = None
         cls.s1 = None
@@ -256,13 +257,15 @@ class PlotIonLine(ReproduceS):
         self.p = p
 
     def create_it(self):
-        # In config, set 'F0': 430e6, 'F_MIN': - 3e3, 'F_MAX': 3e3
+        F0 = 430e6
+        K_RADAR = - 2 * F0 * 2 * np.pi / const.c
+        # In config, set 'F_MIN': - 3e3, 'F_MAX': 3e3
         # Also, using
         #     F_N_POINTS = 1e3
         # is sufficient.
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 8$', r'$\kappa = 20$']
         kappa = [3, 5, 8, 20]
-        sys_set = {'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
+        sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
@@ -289,13 +292,15 @@ class PlotPlasmaLine(ReproduceS):
         self.p = p
 
     def create_it(self):
+        F0 = 933e6
+        K_RADAR = - 2 * F0 * 2 * np.pi / const.c
         # In config, set 'F0': 933e6, 'F_MIN': 3.5e6, 'F_MAX': 7e6
         # Also, using
         #     F_N_POINTS = 1e3
         # is sufficient.
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 5$', r'$\kappa = 8$', r'$\kappa = 20$']
         kappa = [3, 5, 8, 20]
-        sys_set = {'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
+        sys_set = {'K_RADAR': K_RADAR, 'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
         self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
@@ -323,7 +328,54 @@ class PlotTemperature(ReproduceS):
         self.p = p
 
     def create_it(self):
-        # In config, set 'F0': 933e6, 'F_MIN': 3.5e6, 'F_MAX': 7.5e6
+        # if not from_file:
+        self.create_from_code()
+        # else:
+        #     self.create_from_file(args)
+
+    # def create_from_file(self, *args):
+    #     """Accepts zero, one or two arguments.
+
+    #     If zero arguments are given, a default path is used to look for files.
+    #     If one argument is given, it should include
+    #         the full path (with or without file ending).
+    #     If two arguments are given, the first should be the path to
+    #         the directory where the file is located, and the second
+    #         argument must be the name of the file.
+    #     """
+    #     if len(args) != 0:
+    #         if len(args) == 1:
+    #             args = args[0]
+    #             parts = args.split('/')
+    #             path = '/'.join(parts[:-1]) + '/'
+    #             name = parts[-1]
+    #         elif len(args) == 2:
+    #             path = args[0]
+    #             name = args[1]
+    #     else:
+    #         path = '../../figures/'
+    #         name = 'hello_kitty_2020_6_9_2--28--4.npz'
+    #         # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+    #     name = name.split('.')[0]
+    #     try:
+    #         f = np.load(path + name + '.npz')
+    #     except Exception:
+    #         sys.exit(print(f'Could not open file {path + name}'))
+    #     sorted(f)
+    #     self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['f'], f['data'], f['meta'], f['legend_txt'], f['ridge_txt']
+
+    #     for r in self.data:
+    #         peak = int(np.argwhere(r[0] == np.max(r[0])))
+    #         self.f_list[0].append(self.f[peak])
+    #         peak = int(np.argwhere(r[1] == np.max(r[1])))
+    #         self.f_list[1].append(self.f[peak])
+    #         peak = int(np.argwhere(r[2] == np.max(r[2])))
+    #         self.f_list[2].append(self.f[peak])
+
+    def create_from_code(self):
+        F0 = 933e6
+        K_RADAR = - 2 * F0 * 2 * np.pi / const.c
+        # In config, set 'F_MIN': 3.5e6, 'F_MAX': 7.5e6
         # Also, using
         #     F_N_POINTS = 5e3
         # is sufficient.
@@ -331,7 +383,7 @@ class PlotTemperature(ReproduceS):
         self.ridge_txt = [r'$T_{\mathrm{e}} = %d \mathrm{K}$' % j for j in T]
         print(self.ridge_txt[0])
         self.legend_txt = ['Maxwellian', r'$\kappa = 3$', r'$\kappa = 20$']
-        sys_set = {'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 2000, 'T_I': 2000, 'T_ES': 90000,
+        sys_set = {'K_RADAR': K_RADAR, 'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 2000, 'T_I': 2000, 'T_ES': 90000,
                    'THETA': 0 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         kappa = [3, 20]

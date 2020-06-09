@@ -74,6 +74,7 @@ class PlotClass:
             save_path = '../figures'
             os.makedirs(save_path, exist_ok=True)
         self.save_path = f'{save_path}/{the_time}_{version}'
+        # np.savez(f'{save_path}', frequency=f, spectra=data, legend_txt=l_txt, ridge_txt=r_txt, meta=params)
         self.pdffig = PdfPages(str(self.save_path) + '.pdf')
         metadata = self.pdffig.infodict()
         metadata['Title'] = f'ISR Spectrum w/ {version}'
