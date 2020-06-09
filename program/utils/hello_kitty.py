@@ -23,15 +23,16 @@ from inputs import config as cf
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
+    'font.family': 'DejaVu Sans',
     'axes.unicode_minus': False,
     'pgf.texsystem': 'pdflatex'
 })
 
 
 class HelloKitty:
-    def __init__(self):
+    def __init__(self, vol):
         # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
-        self.vol = 1
+        self.vol = vol
         if self.vol == 1:
             self.Z = np.linspace(1e11, 8e11, 60)
         else:
@@ -178,7 +179,7 @@ class HelloKitty:
             pdffig.attach_note('max(s), 100percent power')
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
-            plt.savefig(f'{save_path}.pgf', bbox_inches='tight')
+            plt.savefig(f'{save_path}.pgf', bbox_inches='tight', metadata=self.meta)
             np.savez(f'{save_path}', angle=self.A, density=self.Z, power=self.g, dots=self.dots)
 
         plt.show()

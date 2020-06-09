@@ -1,9 +1,20 @@
+import sys
 from abc import ABC, abstractmethod
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+import matplotlib.patheffects as PathEffects
 import numpy as np
 import scipy.constants as const
+
+# Customize matplotlib
+matplotlib.rcParams.update({
+    'text.usetex': True,
+    'font.family': 'DejaVu Sans',
+    'axes.unicode_minus': False,
+    'pgf.texsystem': 'pdflatex'
+})
 
 if __name__ != '__main__':
     from utils import spectrum_calculation as isr
@@ -372,39 +383,38 @@ class PlotHKExtremes(ReproduceS):
         # Also, using
         #     F_N_POINTS = 1e4
         # is sufficient.
-        sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
-                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': list(range(10))}
+        sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 1e11,
+                   'NU_E': 100, 'NU_I': 100, 'T_E': 2000, 'T_I': 1500, 'T_ES': 90000,
+                   'THETA': 30 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat',
+                   'pitch_angle': list(range(10))}
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
+        # Ridge 1
         ridge = []
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        # f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        # print(f)
+
         sys_set['NE'] = 1e12
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.data.append(ridge)
         self.meta_data.append(meta_data)
+
+        # Ridge 2
         ridge = []
-        # f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        # print(f)
         sys_set['THETA'] = 60 * np.pi / 180
         sys_set['NE'] = 1e11
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-        # f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        # print(f)
+
         sys_set['NE'] = 1e12
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.data.append(ridge)
         self.meta_data.append(meta_data)
-        # f = (sys_set['NE'] * const.elementary_charge**2 / (const.m_e * const.epsilon_0))**.5 / (2 * np.pi)
-        # print(f)
 
-        self.legend_txt = ['2e10', '2e11']
+        self.legend_txt = ['1e11', '1e12']
         self.ridge_txt = ['30', '60']
 
     def plot_it(self):
@@ -413,11 +423,25 @@ class PlotHKExtremes(ReproduceS):
 
 class PlotHK:
     """Reproduce the Hello Kitty figures from saved data."""
-    def __init__(self):
-        # path = '../../figures/hello_kitty_2020_6_8_17--32--39.npz'
-        # path = '../../figures/hello_kitty_2020_6_8_22--1--51.npz'
-        path = '../../figures/hello_kitty_2020_6_9_2--28--4.npz'
-        self.file = np.load(path)
+    def __init__(self, *args):
+        if len(args) != 0:
+            if len(args) == 1:
+                args = args[0]
+                parts = args.split('/')
+                path = '/'.join(parts[:-1]) + '/'
+                self.name = parts[-1]
+            elif len(args) == 2:
+                path = args[0]
+                self.name = args[1]
+        else:
+            path = '../../figures/'
+            self.name = 'hello_kitty_2020_6_9_2--28--4.npz'
+            # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+        self.name = self.name.split('.')[0]
+        try:
+            self.file = np.load(path + self.name + '.npz')
+        except Exception:
+            sys.exit(print(f'Could not open file {path + self.name}'))
         sorted(self.file)
 
     def shade(self):
@@ -441,13 +465,15 @@ class PlotHK:
                     y_min.append(np.min(dots_y[mask][arg]))
                     y_max.append(np.max(dots_y[mask][arg]))
             plt.fill_between(xs, y_min, y_max, color='g', alpha=.8)
+            txt = plt.text(xs[-1], (y_max[-1] + y_min[-1]) / 2, r'$\mathrm{}$'.format(int(i)), color='k', va='center', ha='right', fontsize=15)
+            txt.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='w')])
 
     def plot_it(self):
-        f = plt.figure(figsize=(6, 4))
+        f = plt.figure(figsize=(8, 5))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         ax0 = plt.subplot(gs[0])
-        im = ax0.imshow(self.file['power'], extent=[0, len(self.file['angle']) - 1,
-                                        np.min(self.file['density']), np.max(self.file['density'])],
+        im = ax0.imshow(self.file['power'],
+                        extent=[0, len(self.file['angle']) - 1, np.min(self.file['density']), np.max(self.file['density'])],
                         origin='lower', aspect='auto', cmap='gist_heat')
         self.shade()
         plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
@@ -465,7 +491,7 @@ class PlotHK:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-
+        # plt.savefig(f'{self.name}.pgf', bbox_inches='tight', transparent=True)
         plt.show()
 
 
