@@ -90,14 +90,15 @@ class Reproduce(ABC):
 
 class PlotTestNumerical():
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 9e6
+    Also, using
+        F_N_POINTS = 1e3
+    is sufficient.
     """
 
     def __init__(self, p):
-        cf.F_N_POINTS = 1e3
-        cf.I_P['F_MIN'] = - 2e6
-        cf.I_P['F_MAX'] = 9e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
         self.p = p
 
     @classmethod
@@ -173,14 +174,13 @@ class PlotTestNumerical():
 class PlotTestDebye(Reproduce):
     """Reproduce figure of IS spectra using two kappa
     dist with and without Debye length correction.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 5e5
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 5e5
-        cf.I_P['F_MIN'] = - 2e6
-        cf.I_P['F_MAX'] = 2e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotTestDebye, self).__init__(p)
 
     def create_from_code(self):
         F0 = 430e6
@@ -203,15 +203,13 @@ class PlotTestDebye(Reproduce):
 
 class PlotMaxwell(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 5e5
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 5e5
-        cf.I_P['F_MIN'] = - 2e6
-        cf.I_P['F_MAX'] = 2e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotMaxwell, self).__init__(p)
-
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
@@ -229,15 +227,13 @@ class PlotMaxwell(Reproduce):
 
 class PlotKappa(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 5e5
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 5e5
-        cf.I_P['F_MIN'] = - 2e6
-        cf.I_P['F_MAX'] = 2e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotKappa, self).__init__(p)
-
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
@@ -256,15 +252,13 @@ class PlotKappa(Reproduce):
 
 class PlotSpectra(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 2e6, 'F_MAX': 2e6
+    Also, using
+        F_N_POINTS = 1e5
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 1e5
-        cf.I_P['F_MIN'] = - 2e6
-        cf.I_P['F_MAX'] = 2e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotSpectra, self).__init__(p)
-
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
@@ -288,15 +282,13 @@ class PlotSpectra(Reproduce):
 
 class PlotIonLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': - 3e3, 'F_MAX': 3e3
+    Also, using
+        F_N_POINTS = 1e3
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 1e3
-        cf.I_P['F_MIN'] = - 3e3
-        cf.I_P['F_MAX'] = 3e3
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotIonLine, self).__init__(p)
-
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
@@ -320,15 +312,13 @@ class PlotIonLine(Reproduce):
 
 class PlotPlasmaLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': 3.5e6, 'F_MAX': 7e6
+    Also, using
+        F_N_POINTS = 1e3
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 1e3
-        cf.I_P['F_MIN'] = 3.5e6
-        cf.I_P['F_MAX'] = 7e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotPlasmaLine, self).__init__(p)
-
     def create_from_code(self):
         F0 = 933e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
@@ -352,13 +342,14 @@ class PlotPlasmaLine(Reproduce):
 
 class PlotTemperature(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': 3.5e6, 'F_MAX': 7.5e6
+    Also, using
+        F_N_POINTS = 5e3
+    is sufficient.
     """
     def __init__(self, p):
-        cf.F_N_POINTS = 5e3
-        cf.I_P['F_MIN'] = 3.5e6
-        cf.I_P['F_MAX'] = 7.5e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
         super(PlotTemperature, self).__init__(p)
         self.f_list = [[], [], []]
 
@@ -453,15 +444,13 @@ class PlotTemperature(Reproduce):
 
 class PlotHKExtremes(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
+    
+    In config, set
+        'F_MIN': 2.5e6, 'F_MAX': 9.5e6
+    Also, using
+        F_N_POINTS = 1e4
+    is sufficient.
     """
-    def __init__(self, p):
-        cf.F_N_POINTS = 1e4
-        cf.I_P['F_MIN'] = 2.5e6
-        cf.I_P['F_MAX'] = 9.5e6
-        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
-        cf.w = 2 * np.pi * cf.f  # Angular frequency
-        super(PlotHKExtremes, self).__init__(p)
-
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
