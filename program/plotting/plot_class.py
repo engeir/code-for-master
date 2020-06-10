@@ -28,7 +28,7 @@ class PlotClass:
         self.page = 1
         self.plasma = False
         self.pdffig = None
-        self.save_path = str
+        self.save_path = None
         self.correct_inputs()
         self.colors = ['darkred', 'darkblue', 'darkorange', 'seagreen', 'firebrick', 'red', 'magenta']
         self.line_styles = ['-', '--', ':', '-.',
@@ -74,7 +74,10 @@ class PlotClass:
         if not os.path.exists(save_path):
             save_path = '../figures'
             os.makedirs(save_path, exist_ok=True)
-        self.save_path = f'{save_path}/{the_time}_{version}'
+        if self.save_path is None:
+            self.save_path = f'{save_path}/{the_time}_{version}'
+        else:
+            self.save_path = save_path + '/' + self.save_path
         np.savez(f'{self.save_path}', frequency=f, spectra=data, legend_txt=l_txt, ridge_txt=r_txt, meta=params)
         self.pdffig = PdfPages(str(self.save_path) + '.pdf')
         metadata = self.pdffig.infodict()

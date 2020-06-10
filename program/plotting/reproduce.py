@@ -8,6 +8,8 @@ import matplotlib.patheffects as PathEffects
 import numpy as np
 import scipy.constants as const
 
+from inputs import config as cf
+
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
@@ -20,24 +22,27 @@ if __name__ != '__main__':
     from utils import spectrum_calculation as isr
 
 
-class ReproduceS(ABC):
+class Reproduce(ABC):
     """Abstract base class to reproduce figures.
 
     Arguments:
         ABC {class} -- abstract base class
     """
 
-    # @abstractmethod
-    # def create_it(self, *args, from_file=bool):
-    #     """Method that create needed data.
-    #     """
+    def __init__(self, p):
+        self.f = np.ndarray([])
+        self.data = []
+        self.meta_data = []
+        self.legend_txt = []
+        self.ridge_txt = []
+        self.p = p
 
     def create_it(self, *args, from_file=False):
         if not from_file:
             self.create_from_code()
         else:
             self.create_from_file(*args)
-            
+
     @abstractmethod
     def create_from_code(self):
         """Method that create needed data.
@@ -71,7 +76,11 @@ class ReproduceS(ABC):
         except Exception:
             sys.exit(print(f'Could not open file {path + name}.npz'))
         sorted(f)
-        self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['frequency'], list(f['spectra']), list(f['meta']), list(f['legend_txt']), list(f['ridge_txt'])
+        self.f, self.data, self.meta_data = f['frequency'], list(f['spectra']), list(f['meta'])
+        self.legend_txt, self.ridge_txt = list(f['legend_txt']), list(f['ridge_txt'])
+
+        if self.p.save in ['y', 'yes']:
+            self.p.save_path = name
 
     @abstractmethod
     def plot_it(self):
@@ -81,15 +90,14 @@ class ReproduceS(ABC):
 
 class PlotTestNumerical():
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': - 2e6, 'F_MAX': 9e6
-    Also, using
-        F_N_POINTS = 1e3
-    is sufficient.
     """
 
     def __init__(self, p):
+        cf.F_N_POINTS = 1e3
+        cf.I_P['F_MIN'] = - 2e6
+        cf.I_P['F_MAX'] = 9e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
         self.p = p
 
     @classmethod
@@ -134,9 +142,9 @@ class PlotTestNumerical():
         plot(self.f, - rd, 'r', label='Negative')
         plt.legend()
         plt.xlim(xlim)
-        
+
         plt.tight_layout()
-        
+
         if self.p.save in ['y', 'yes']:
             self.p.pdffig.attach_note('numerical presicion')
             plt.savefig(self.p.pdffig, bbox_inches='tight', format='pdf', dpi=600)
@@ -162,27 +170,21 @@ class PlotTestNumerical():
         self.tearDown()
 
 
-class PlotTestDebye(ReproduceS):
-    """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': - 2e6, 'F_MAX': 2e6
-    Also, using
-        F_N_POINTS = 5e5
-    is sufficient.
+class PlotTestDebye(Reproduce):
+    """Reproduce figure of IS spectra using two kappa
+    dist with and without Debye length correction.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 5e5
+        cf.I_P['F_MIN'] = - 2e6
+        cf.I_P['F_MAX'] = 2e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotTestDebye, self).__init__(p)
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        # Change the value of kappa in params (and in legend_txt) to obtain plots of different kappa value.
         self.legend_txt = [r'$\lambda_{\mathrm{D}} = \lambda_{\mathrm{D},\kappa}$', r'$\lambda_{\mathrm{D}} = \lambda_{\mathrm{D,M}}$']
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
@@ -199,30 +201,20 @@ class PlotTestDebye(ReproduceS):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
 
-class PlotMaxwell(ReproduceS):
+class PlotMaxwell(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': - 2e6, 'F_MAX': 2e6
-    Also, using
-        F_N_POINTS = 5e5
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 5e5
+        cf.I_P['F_MIN'] = - 2e6
+        cf.I_P['F_MAX'] = 2e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotMaxwell, self).__init__(p)
 
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        # In config, set 'F_MIN': - 2e6, 'F_MAX': 2e6
-        # Also, using
-        #     F_N_POINTS = 5e5
-        # is sufficient.
         self.legend_txt = ['Maxwellian']
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
                    'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
@@ -235,30 +227,20 @@ class PlotMaxwell(ReproduceS):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
 
-class PlotKappa(ReproduceS):
+class PlotKappa(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': - 2e6, 'F_MAX': 2e6
-    Also, using
-        F_N_POINTS = 5e5
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 5e5
+        cf.I_P['F_MIN'] = - 2e6
+        cf.I_P['F_MAX'] = 2e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotKappa, self).__init__(p)
 
-    def create_it(self):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        # In config, set 'F_MIN': - 2e6, 'F_MAX': 2e6
-        # Also, using
-        #     F_N_POINTS = 5e5
-        # is sufficient.
         # Change the value of kappa in params (and in legend_txt) to obtain plots of different kappa value.
         self.legend_txt = [r'$\kappa = 20$']
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
@@ -272,22 +254,16 @@ class PlotKappa(ReproduceS):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
 
-class PlotSpectra(ReproduceS):
+class PlotSpectra(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': - 2e6, 'F_MAX': 2e6
-    Also, using
-        F_N_POINTS = 1e5
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 1e5
+        cf.I_P['F_MIN'] = - 2e6
+        cf.I_P['F_MAX'] = 2e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotSpectra, self).__init__(p)
 
     def create_from_code(self):
         F0 = 430e6
@@ -310,30 +286,20 @@ class PlotSpectra(ReproduceS):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
 
-class PlotIonLine(ReproduceS):
+class PlotIonLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': - 3e3, 'F_MAX': 3e3
-    Also, using
-        F_N_POINTS = 1e3
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 1e3
+        cf.I_P['F_MIN'] = - 3e3
+        cf.I_P['F_MAX'] = 3e3
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotIonLine, self).__init__(p)
 
     def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
-        # In config, set 'F_MIN': - 3e3, 'F_MAX': 3e3
-        # Also, using
-        #     F_N_POINTS = 1e3
-        # is sufficient.
         self.legend_txt = ['Maxwellian', r'$\kappa = 20$', r'$\kappa = 8$', r'$\kappa = 3$']
         kappa = [20, 8, 3]
         sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
@@ -352,30 +318,20 @@ class PlotIonLine(ReproduceS):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
 
 
-class PlotPlasmaLine(ReproduceS):
+class PlotPlasmaLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': 3.5e6, 'F_MAX': 7e6
-    Also, using
-        F_N_POINTS = 1e3
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 1e3
+        cf.I_P['F_MIN'] = 3.5e6
+        cf.I_P['F_MAX'] = 7e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotPlasmaLine, self).__init__(p)
 
     def create_from_code(self):
         F0 = 933e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c
-        # In config, set 'F_MIN': 3.5e6, 'F_MAX': 7e6
-        # Also, using
-        #     F_N_POINTS = 1e3
-        # is sufficient.
         self.legend_txt = ['Maxwellian', r'$\kappa = 20$', r'$\kappa = 8$', r'$\kappa = 3$']
         kappa = [20, 8, 3]
         sys_set = {'K_RADAR': K_RADAR, 'B': 50000e-9, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0, 'T_E': 5000, 'T_I': 2000, 'T_ES': 90000,
@@ -394,23 +350,17 @@ class PlotPlasmaLine(ReproduceS):
         self.p.plot_normal(self.f, self.data, 'plot', self.legend_txt)
 
 
-class PlotTemperature(ReproduceS):
+class PlotTemperature(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': 3.5e6, 'F_MAX': 7.5e6
-    Also, using
-        F_N_POINTS = 5e3
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
+        cf.F_N_POINTS = 5e3
+        cf.I_P['F_MIN'] = 3.5e6
+        cf.I_P['F_MAX'] = 7.5e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotTemperature, self).__init__(p)
         self.f_list = [[], [], []]
-        self.p = p
 
     def create_from_file(self, *args):
         """Accepts zero, one or two arguments.
@@ -440,7 +390,8 @@ class PlotTemperature(ReproduceS):
         except Exception:
             sys.exit(print(f'Could not open file {path + name}.npz'))
         sorted(f)
-        self.f, self.data, self.meta_data, self.legend_txt, self.ridge_txt = f['frequency'], list(f['spectra']), list(f['meta']), list(f['legend_txt']), list(f['ridge_txt'])
+        self.f, self.data, self.meta_data = f['frequency'], list(f['spectra']), list(f['meta'])
+        self.legend_txt, self.ridge_txt = list(f['legend_txt']), list(f['ridge_txt'])
 
         for r in self.data:
             peak = int(np.argwhere(r[0] == np.max(r[0])))
@@ -449,6 +400,9 @@ class PlotTemperature(ReproduceS):
             self.f_list[1].append(self.f[peak])
             peak = int(np.argwhere(r[2] == np.max(r[2])))
             self.f_list[2].append(self.f[peak])
+
+        if self.p.save in ['y', 'yes']:
+            self.p.save_path = name
 
     def create_from_code(self):
         F0 = 933e6
@@ -484,12 +438,12 @@ class PlotTemperature(ReproduceS):
         self.p.plot_ridge(self.f, self.data, 'plot', self.legend_txt, self.ridge_txt)
 
         T = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
-        plt.figure()
+        plt.figure(figsize=(6, 3))
         plt.plot(T, self.f_list[0], 'k', label='Maxwellian')
         plt.plot(T, self.f_list[1], 'k--', label=r'$\kappa = 20$')
         plt.plot(T, self.f_list[2], 'k:', label=r'$\kappa = 3$')
         plt.legend()
-        
+
         if self.p.save in ['y', 'yes']:
             self.p.pdffig.attach_note('freq change')
             plt.savefig(self.p.pdffig, bbox_inches='tight', format='pdf', dpi=600)
@@ -497,22 +451,16 @@ class PlotTemperature(ReproduceS):
             self.p.page += 1
 
 
-class PlotHKExtremes(ReproduceS):
+class PlotHKExtremes(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
-    In config, set
-        'F_MIN': 2.5e6, 'F_MAX': 9.5e6
-    Also, using
-        F_N_POINTS = 1e4
-    is sufficient.
     """
     def __init__(self, p):
-        self.f = np.ndarray([])
-        self.data = []
-        self.meta_data = []
-        self.legend_txt = []
-        self.ridge_txt = []
-        self.p = p
+        cf.F_N_POINTS = 1e4
+        cf.I_P['F_MIN'] = 2.5e6
+        cf.I_P['F_MAX'] = 9.5e6
+        cf.f = np.linspace(cf.I_P['F_MIN'], cf.I_P['F_MAX'], int(cf.F_N_POINTS))
+        cf.w = 2 * np.pi * cf.f  # Angular frequency
+        super(PlotHKExtremes, self).__init__(p)
 
     def create_from_code(self):
         F0 = 430e6
@@ -524,10 +472,11 @@ class PlotHKExtremes(ReproduceS):
         params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
         # Ridge 1
         ridge = []
+        # Line 1
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-
+        # Line 2
         sys_set['NE'] = 1e12
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
@@ -536,12 +485,13 @@ class PlotHKExtremes(ReproduceS):
 
         # Ridge 2
         ridge = []
+        # Line 1
         sys_set['THETA'] = 60 * np.pi / 180
         sys_set['NE'] = 1e11
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
         self.meta_data.append(meta_data)
-
+        # Line 2
         sys_set['NE'] = 1e12
         self.f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s)
@@ -608,7 +558,8 @@ class PlotHK:
                     y_min.append(np.min(dots_y[mask][arg]))
                     y_max.append(np.max(dots_y[mask][arg]))
             plt.fill_between(xs, y_min, y_max, color='g', alpha=.8)
-            txt = plt.text(xs[-1], (y_max[-1] + y_min[-1]) / 2, r'$\mathrm{}$'.format(int(i)), color='k', va='center', ha='right', fontsize=15)
+            x, y = xs[-1], (y_max[-1] + y_min[-1]) / 2
+            txt = plt.text(x, y, r'$\mathrm{}$'.format(int(i)), color='k', va='center', ha='right', fontsize=15)
             txt.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='w')])
 
     def plot_it(self):
