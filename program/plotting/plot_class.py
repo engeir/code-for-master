@@ -30,8 +30,9 @@ class PlotClass:
         self.pdffig = None
         self.save_path = None
         self.correct_inputs()
-        self.colors = ['darkred', 'darkblue', 'darkorange', 'seagreen', 'firebrick', 'red', 'magenta']
-        self.line_styles = ['-', '--', ':', '-.',
+        self.colors = ['gold', 'royalblue', 'magenta',
+                        'chartreuse', 'firebrick', 'red', 'darkorange', 'crimson']
+        self.line_styles = ['-', '--', '-.', ':',
                             (0, (3, 5, 1, 5, 1, 5)),
                             (0, (3, 1, 1, 1, 1, 1))]
 
@@ -65,12 +66,13 @@ class PlotClass:
                     version += f'_{d["version"][0]}'
                 else:
                     version += f'{d["version"][0]}'
-        params.insert(0, {'F_MIN': cf.I_P['F_MIN'], 'F_MAX': cf.I_P['F_MAX'],
-                          'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
-                          'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
+        if self.save_path is None:
+            params.insert(0, {'F_MIN': cf.I_P['F_MIN'], 'F_MAX': cf.I_P['F_MAX'],
+                            'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
+                            'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
         tt = time.localtime()
         the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
-        save_path = '../../../report/master-thesis/figures'
+        save_path = '../../../report/master-thesis/figures/in_use'
         if not os.path.exists(save_path):
             save_path = '../figures'
             os.makedirs(save_path, exist_ok=True)
@@ -120,27 +122,27 @@ class PlotClass:
             freq = freq[mask]
         if func_type == 'semilogy':
             plt.xlabel(f'Frequency [{p}Hz]')
-            plt.ylabel('Power [dB]')
-            # plt.ylabel(r'$10\times\log_{10}$(Power) [dB]')
+            plt.ylabel('Echo power [dB]')
+            # plt.ylabel(r'$10\times\log_{10}$(Echo power) [dB]')
             for i, _ in enumerate(Is):
                 Is[i] = 10 * np.log10(Is[i])
         else:
             plt.xlabel(f'Frequency [{p}Hz]')
-            plt.ylabel('Power')
+            plt.ylabel('Echo power')
         for clr, st, s, lab in zip(itertools.cycle(self.colors), itertools.cycle(self.line_styles), Is, l_txt):
             if self.plasma:
                 s = s[mask]
             if func_type == 'semilogy':
-                plt.plot(freq, s, color=clr, linestyle=st,
-                        linewidth=.8, label=lab)
+                plt.plot(freq, s, linestyle=st, alpha=.7, color=clr,
+                         linewidth=.8, label=lab)
             else:
                 plot_object = getattr(plt, func_type)
-                plot_object(freq, s, color=clr, linestyle=st,
+                plot_object(freq, s, linestyle=st, alpha=.7, color=clr,
                             linewidth=.8, label=lab)
 
         plt.legend()
         plt.minorticks_on()
-        plt.grid(True, which="both", ls="-", alpha=0.4)
+        plt.grid(True, which="major", ls="-", alpha=0.4)
         plt.tight_layout()
 
         if self.save in ['y', 'yes']:

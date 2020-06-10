@@ -58,8 +58,7 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=No
               'w_c': w_c, 'kappa': kappa, 'vdf': vdf, 'Z': sys_set['Z'], 'mat_file': sys_set['mat_file'], 'pitch_angle': sys_set['pitch_angle']}
     y = np.linspace(0, cf.Y_MAX_e**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     func.initialize(y, params)
-    Fe = para.integrate(
-        const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
+    Fe = para.integrate(const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
 
     Xp_i = np.sqrt(
         1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * sys_set['K_RADAR']**2))

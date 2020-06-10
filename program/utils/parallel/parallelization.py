@@ -10,6 +10,7 @@ import numpy as np
 import scipy.special as sps
 import scipy.constants as const
 import scipy.integrate as si
+import matplotlib.pyplot as plt
 
 from inputs import config as cf
 
@@ -59,6 +60,11 @@ def parallel(y, f, index):
 
 def simpson(w, y, f):
     val = np.exp(- 1j * w * y) * f
+    # if w > 1e6:
+        # plt.plot(y, val)
+        # plt.show()
+        # np.savez('integrand', y=y, val=val, w=w)
+        # exit()
 
     sint = si.simps(val, y)
     return sint

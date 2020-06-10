@@ -35,8 +35,8 @@ class Simulation:
         self.legend_txt = []
         self.ridge_txt = []
         self.plot = PlotClass()
-        # self.r = reproduce.PlotTestNumerical(self.plot)
-        self.r = reproduce.PlotTestDebye(self.plot)
+        self.r = reproduce.PlotTestNumerical(self.plot)
+        # self.r = reproduce.PlotTestDebye(self.plot)
         # self.r = reproduce.PlotMaxwell(self.plot)
         # self.r = reproduce.PlotSpectra(self.plot)
         # self.r = reproduce.PlotKappa(self.plot)
@@ -105,12 +105,13 @@ class Simulation:
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
         """
-        self.from_file = True
-        self.r.create_it('../figures/2020_6_10_8--55--38_k_k.npz', from_file=self.from_file)
-        self.f = self.r.f
-        self.data = self.r.data
-        self.legend_txt = self.r.legend_txt
-        self.ridge_txt = self.r.ridge_txt
+        self.r.create_it()
+        # # self.from_file = True
+        # self.r.create_it('../figures/', 'kappa_debye.npz', from_file=self.from_file)
+        # self.f = self.r.f
+        # self.data = self.r.data
+        # self.legend_txt = self.r.legend_txt
+        # self.ridge_txt = self.r.ridge_txt
         self.meta_data = self.r.meta_data
 
     def plot_data(self):
