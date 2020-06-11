@@ -17,6 +17,9 @@ from plotting import hello_kitty as hk  # pylint: disable=C0413
 from plotting import reproduce  # pylint: disable=C0413
 from plotting.plot_class import PlotClass  # pylint: disable=C0413
 
+from decimal import *
+getcontext().prec = 50
+
 # Customize matplotlib
 matplotlib.rcParams.update({
     'text.usetex': True,
@@ -35,7 +38,8 @@ class Simulation:
         self.legend_txt = []
         self.ridge_txt = []
         self.plot = PlotClass()
-        self.r = reproduce.PlotTestNumerical(self.plot)
+        # self.r = reproduce.PlotTestNumerical(self.plot)
+        self.r = reproduce.PlotNumerical(self.plot)
         # self.r = reproduce.PlotTestDebye(self.plot)
         # self.r = reproduce.PlotMaxwell(self.plot)
         # self.r = reproduce.PlotSpectra(self.plot)
@@ -48,21 +52,22 @@ class Simulation:
     def create_data(self):
         """Create IS spectra.
 
-        The spectra should be appended to the self.data list, giving a list
-        of spectra that are themselves np.ndarrays, or into a list of such
+        The spectra should be appended to the ``self.data`` list, giving a list
+        of spectra that are themselves ``np.ndarrays``, or into a list of such
         lists as the aforementioned.
 
-        A list of spectra can be plotted in 'plot_normal', while a list of
-        lists can be plotted by plot_ridge. When using plot_ridge, it is
+        A list of spectra can be plotted in ``plot_normal``, while a list of
+        lists can be plotted by ``plot_ridge``. When using ``plot_ridge``, it is
         assumed that all the lists in the outer list is of equal length.
 
-        The list self.ridge_txt should be the same length as the length
-        of the outer list when plotting with plt_ridge, since this text
-        will go on the left of every ridge. The list self.legend_txt should
+        The list ``self.ridge_txt`` should be the same length as the length
+        of the outer list when plotting with ``plot_ridge``, since this text
+        will go on the left of every ridge. The list ``self.legend_txt`` should
         be the same length as the length of the inner lists, and will give
         the legend for the spectra given in the inner lists.
 
         Notes:
+        ::
         Possible items in the sys_set dictionary include:
             B -- Magnetic field strength [T]
             F0 -- Radar frequency [Hz]
@@ -84,6 +89,7 @@ class Simulation:
 
         Examples:
         ::
+        ```
             TEMPS = [2000, 5000]
             methods = ['maxwell', 'kappa']
             sys_set = {'B': 5e-4, 'MI': 16, 'NE': 2e11, 'NU_E': 0, 'NU_I': 0,
@@ -101,31 +107,34 @@ class Simulation:
                     ridge.append(s)
                 self.data.append(ridge)
 
-            # For a nicer legend, it is added manually
+            # For a nicer legend, this is added manually
             self.legend_txt.append('Maxwellian')
             self.legend_txt.append('Kappa')
+        ```
         """
-        self.r.create_it()
-        # # self.from_file = True
-        # self.r.create_it('../figures/', 'kappa_debye.npz', from_file=self.from_file)
-        # self.f = self.r.f
-        # self.data = self.r.data
-        # self.legend_txt = self.r.legend_txt
-        # self.ridge_txt = self.r.ridge_txt
+        # self.from_file = True
+        self.r.create_it('../figures/2020_6_11_9--37--7_m_k.npz', from_file=self.from_file)
+        self.f = self.r.f
+        self.data = self.r.data
+        self.legend_txt = self.r.legend_txt
+        self.ridge_txt = self.r.ridge_txt
         self.meta_data = self.r.meta_data
 
     def plot_data(self):
-        """Plot the created data from self.data.
+        """Plot the created data from ``self.data``.
 
         If you want to only plot the plasma line, set
-        self.plot.plasma = True
+        ```
+            self.plot.plasma = True
+        ```
 
-        self.plot.plot_normal() accepts list of np.ndarray and
-        self.plot.plot_ridge() accepts list of lists of np.ndarray,
-        i.e. list of the structure you send to self.plot.plot_normal()
+        ``self.plot.plot_normal()`` accepts list of ``np.ndarray`` and
+        ``self.plot.plot_ridge()`` accepts list of lists of ``np.ndarray``,
+        i.e. list of the structure you send to ``self.plot.plot_normal()``
 
         Examples:
         ::
+        ```
             # Given the example in self.create_data()
             # self.plot.plasma = True
             self.plot.plot_normal(self.f, self.data[0], 'plot',
@@ -136,6 +145,7 @@ class Simulation:
                                  self.ridge_txt)
             self.plot.plot_ridge(self.f, self.data, 'semilogy',
                                  self.legend_txt, self.ridge_txt)
+        ```
         """
         self.r.plot_it()
 

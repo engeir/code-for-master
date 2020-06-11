@@ -60,11 +60,6 @@ def parallel(y, f, index):
 
 def simpson(w, y, f):
     val = np.exp(- 1j * w * y) * f
-    # if w > 1e6:
-        # plt.plot(y, val)
-        # plt.show()
-        # np.savez('integrand', y=y, val=val, w=w)
-        # exit()
 
     sint = si.simps(val, y)
     return sint

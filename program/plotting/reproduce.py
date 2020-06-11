@@ -88,8 +88,8 @@ class Reproduce(ABC):
         """
 
 
-class PlotTestNumerical():
-    """Reproduce figure with ridge plot over different temperatures.
+class PlotNumerical(Reproduce):
+    """Reproduce figure with a comparison between the semi-analytic and numerical implementation.
     
     In config, set
         'F_MIN': - 2e6, 'F_MAX': 9e6
@@ -97,78 +97,75 @@ class PlotTestNumerical():
         F_N_POINTS = 1e3
     is sufficient.
     """
-
-    def __init__(self, p):
-        self.p = p
-
-    @classmethod
-    def setUpClass(cls):
+    def create_from_code(self):
         F0 = 430e6
         K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        cls.sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16, 'NE': 1e11, 'NU_E': 100, 'NU_I': 100,
-                       'T_E': 2000, 'T_I': 1500, 'T_ES': 90000, 'THETA': 30 * np.pi / 180, 'Z': 300,
-                       'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
-        cls.params = {'kappa': 3, 'vdf': 'maxwell', 'area': False}
-        cls.f = None
-        cls.s1 = None
-        cls.s2 = None
-        cls.maxwell = True
-        cls.meta_data = []
-
-    def tearDown(self):
-        plot = plt.loglog
+        sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 16,
+                   'NE': 1e12, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000,
+                   'T_I': 1500, 'T_ES': 90000,
+                   'THETA': 30 * np.pi / 180, 'Z': 300,
+                   'mat_file': 'fe_zmuE-07.mat',
+                   'pitch_angle': 'all'}
+        params = {'kappa': 3, 'vdf': 'maxwell', 'area': False}
+        
+        ridge = []
+        self.f, s1, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
+        ridge.append(s1)
+        self.meta_data.append(meta_data)
+        _, s2, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s2)
+        self.data.append(ridge)
+        
+        ridge = []
+        params['vdf'] = 'kappa'
+        self.f, s1, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
+        ridge.append(s1)
+        self.meta_data.append(meta_data)
+        _, s2, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
+        ridge.append(s2)
+        self.data.append(ridge)
+        
+    def plot_it(self):
+        for maxwell, data in enumerate(self.data):
+            self.plotter(maxwell, data)
+    
+    def plotter(self, maxwell, data):
+        s1 = data[0]
+        s2 = data[1]
+        plot = plt.semilogy
         xlim = [1e3, self.f[-1]]
-        d = self.s1 - self.s2
-        rd = d / self.s1
+        d = s1 - s2
+        rd = d / s1
         plt.figure(figsize=(8, 5))
         plt.subplot(3, 1, 1)
-        if self.maxwell == True:
+        if maxwell == 0:
             plt.title('Maxwell')
-            self.maxwell = False
         else:
             plt.title('Kappa')
-        plot(self.f, self.s1, 'k', label='Semi-analytic (SA)')
-        plot(self.f, self.s2, 'r--', label='Numerical (N)')
+        plot(self.f, s1, 'k', label='Semi-analytic (SA)')
+        plot(self.f, s2, 'r--', label='Numerical (N)')
         plt.legend()
-        plt.xlim(xlim)
+        # plt.xlim(xlim)
         plt.subplot(3, 1, 2)
         plt.title('Difference (SA - N)')
         plot(self.f, d, 'k', label='Positive')
         plot(self.f, - d, 'r', label='Negative')
         plt.legend()
-        plt.xlim(xlim)
+        # plt.xlim(xlim)
         plt.subplot(3, 1, 3)
         plt.title('Difference relative to semi-analytic [(SA - N) / SA]')
         plot(self.f, rd, 'k', label='Positive')
         plot(self.f, - rd, 'r', label='Negative')
         plt.legend()
-        plt.xlim(xlim)
+        # plt.xlim(xlim)
 
         plt.tight_layout()
-
+        
         if self.p.save in ['y', 'yes']:
-            self.p.pdffig.attach_note('numerical presicion')
+            self.p.pdffig.attach_note('numerical precision test')
             plt.savefig(self.p.pdffig, bbox_inches='tight', format='pdf', dpi=600)
             plt.savefig(str(self.p.save_path) + f'_page_{self.p.page}.pgf', bbox_inches='tight')
             self.p.page += 1
-
-    def test_numerical_maxwell(self):
-        self.f, self.s1, _ = isr.isr_spectrum('maxwell', self.sys_set, **self.params)
-        _, self.s2, _ = isr.isr_spectrum('a_vdf', self.sys_set, **self.params)
-
-    def test_numerical_kappa(self):
-        self.params['vdf'] = 'kappa'
-        _, self.s1, _ = isr.isr_spectrum('kappa', self.sys_set, **self.params)
-        _, self.s2, _ = isr.isr_spectrum('a_vdf', self.sys_set, **self.params)
-
-    def create_it(self):
-        self.setUpClass()
-
-    def plot_it(self):
-        self.test_numerical_maxwell()
-        self.tearDown()
-        self.test_numerical_kappa()
-        self.tearDown()
 
 
 class PlotTestDebye(Reproduce):
