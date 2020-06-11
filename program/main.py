@@ -112,7 +112,7 @@ class Simulation:
             self.legend_txt.append('Kappa')
         ```
         """
-        self.from_file = True
+        # self.from_file = True
         self.r.create_it('../figures/num_pres_yhigh_vhigh.npz', from_file=self.from_file)
         self.f = self.r.f
         self.data = self.r.data
