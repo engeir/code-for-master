@@ -90,7 +90,7 @@ class Reproduce(ABC):
 
 class PlotNumerical(Reproduce):
     """Reproduce figure with a comparison between the semi-analytic and numerical implementation.
-    
+
     In config, set
         'F_MIN': - 2e6, 'F_MAX': 9e6
     Also, using
@@ -107,7 +107,7 @@ class PlotNumerical(Reproduce):
                    'mat_file': 'fe_zmuE-07.mat',
                    'pitch_angle': 'all'}
         params = {'kappa': 3, 'vdf': 'maxwell', 'area': False}
-        
+
         ridge = []
         self.f, s1, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
         ridge.append(s1)
@@ -115,7 +115,7 @@ class PlotNumerical(Reproduce):
         _, s2, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s2)
         self.data.append(ridge)
-        
+
         ridge = []
         params['vdf'] = 'kappa'
         self.f, s1, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
@@ -124,11 +124,11 @@ class PlotNumerical(Reproduce):
         _, s2, _ = isr.isr_spectrum('a_vdf', sys_set, **params)
         ridge.append(s2)
         self.data.append(ridge)
-        
+
     def plot_it(self):
         for maxwell, data in enumerate(self.data):
             self.plotter(maxwell, data)
-    
+
     def plotter(self, maxwell, data):
         s1 = data[0]
         s2 = data[1]
@@ -146,21 +146,28 @@ class PlotNumerical(Reproduce):
         plot(self.f, s2, 'r--', label='Numerical (N)')
         plt.legend()
         # plt.xlim(xlim)
+        plt.minorticks_on()
+        plt.grid(True, which="both", ls="-", alpha=0.4)
         plt.subplot(3, 1, 2)
         plt.title('Difference (SA - N)')
         plot(self.f, d, 'k', label='Positive')
         plot(self.f, - d, 'r', label='Negative')
         plt.legend()
         # plt.xlim(xlim)
+        plt.minorticks_on()
+        plt.grid(True, which="both", ls="-", alpha=0.4)
         plt.subplot(3, 1, 3)
         plt.title('Difference relative to semi-analytic [(SA - N) / SA]')
         plot(self.f, rd, 'k', label='Positive')
         plot(self.f, - rd, 'r', label='Negative')
         plt.legend()
         # plt.xlim(xlim)
+        plt.minorticks_on()
+        plt.grid(True, which="both", ls="-", alpha=0.4)
+        plt.yticks([1e-9, 1e-6, 1e-3, 1e0])
 
         plt.tight_layout()
-        
+
         if self.p.save in ['y', 'yes']:
             self.p.pdffig.attach_note('numerical precision test')
             plt.savefig(self.p.pdffig, bbox_inches='tight', format='pdf', dpi=600)
@@ -171,7 +178,7 @@ class PlotNumerical(Reproduce):
 class PlotTestDebye(Reproduce):
     """Reproduce figure of IS spectra using two kappa
     dist with and without Debye length correction.
-    
+
     In config, set
         'F_MIN': - 2e6, 'F_MAX': 2e6
     Also, using
@@ -200,7 +207,7 @@ class PlotTestDebye(Reproduce):
 
 class PlotMaxwell(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': - 2e6, 'F_MAX': 2e6
     Also, using
@@ -224,7 +231,7 @@ class PlotMaxwell(Reproduce):
 
 class PlotKappa(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': - 2e6, 'F_MAX': 2e6
     Also, using
@@ -249,7 +256,7 @@ class PlotKappa(Reproduce):
 
 class PlotSpectra(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': - 2e6, 'F_MAX': 2e6
     Also, using
@@ -279,7 +286,7 @@ class PlotSpectra(Reproduce):
 
 class PlotIonLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': - 3e3, 'F_MAX': 3e3
     Also, using
@@ -309,7 +316,7 @@ class PlotIonLine(Reproduce):
 
 class PlotPlasmaLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': 3.5e6, 'F_MAX': 7e6
     Also, using
@@ -339,7 +346,7 @@ class PlotPlasmaLine(Reproduce):
 
 class PlotTemperature(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': 3.5e6, 'F_MAX': 7.5e6
     Also, using
@@ -441,7 +448,7 @@ class PlotTemperature(Reproduce):
 
 class PlotHKExtremes(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
-    
+
     In config, set
         'F_MIN': 2.5e6, 'F_MAX': 9.5e6
     Also, using

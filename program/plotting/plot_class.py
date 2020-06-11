@@ -123,7 +123,6 @@ class PlotClass:
         if func_type == 'semilogy':
             plt.xlabel(f'Frequency [{p}Hz]')
             plt.ylabel('Echo power [dB]')
-            # plt.ylabel(r'$10\times\log_{10}$(Echo power) [dB]')
             for i, _ in enumerate(Is):
                 Is[i] = 10 * np.log10(Is[i])
         else:
