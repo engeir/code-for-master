@@ -29,7 +29,7 @@ Y_MAX_i = 1.5e-2
 V_MAX = 6e6
 ORDER = 3
 
-I_P = {'F_MIN': 3.5e6, 'F_MAX': 7.5e6}
+I_P = {'F_MIN': - 7.5e6, 'F_MAX': - 3.5e6}
 f = np.linspace(I_P['F_MIN'], I_P['F_MAX'], int(F_N_POINTS))
 f = (f / I_P['F_MAX'])**1 * I_P['F_MAX']
 w = 2 * np.pi * f  # Angular frequency
