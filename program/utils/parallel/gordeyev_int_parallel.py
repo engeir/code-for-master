@@ -10,7 +10,6 @@ import numpy as np
 import scipy.special as sps
 import scipy.constants as const
 import scipy.integrate as si
-import matplotlib.pyplot as plt
 
 from inputs import config as cf
 

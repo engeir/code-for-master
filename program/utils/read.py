@@ -5,6 +5,7 @@ import ast
 import numpy as np
 from scipy.io import loadmat
 import scipy.constants as const
+import matplotlib.pyplot as plt
 
 
 def f_0_maxwell(v, params):
@@ -16,8 +17,23 @@ def f_0_maxwell(v, params):
 
 def interpolate_data(v, params):
     if os.path.basename(os.path.realpath(sys.argv[0])) != 'main.py':
-        f_1 = np.linspace(1, 600, 600)
-        energies = np.linspace(1, 110, 600)  # electronvolt
+        # f_1 = np.linspace(1, 600, 600)
+        # energies = np.linspace(1, 110, 600)  # electronvolt
+        path = 'data/arecibo/'
+        if not os.path.exists(path):
+            path = 'program/data/arecibo/'
+        x = loadmat(path + params['mat_file'])
+        data = x['fe_zmuE']
+        if isinstance(params['pitch_angle'], list):
+            if all(isinstance(x, int) for x in params['pitch_angle']):
+                sum_over_pitch = data[:, params['pitch_angle'], :]
+                norm = len(params['pitch_angle'])
+        else:
+            norm = 18
+        sum_over_pitch = np.einsum('ijk->ik', data) / norm  # removes j-dimansion through dot-product
+        idx = int(np.argwhere(read_dat_file('z4fe.dat')==params['Z']))
+        f_1 = sum_over_pitch[idx, :]
+        energies = read_dat_file('E4fe.dat')
     else:
         path = 'data/arecibo/'
         x = loadmat(path + params['mat_file'])
@@ -52,6 +68,8 @@ def read_dat_file(file):
     """
     l = np.array([])
     path = 'data/arecibo/'
+    if not os.path.exists(path):
+        path = 'program/data/arecibo/'
     with open(path + file) as f:
         ll = f.readlines()
         ll = [x.strip() for x in ll]

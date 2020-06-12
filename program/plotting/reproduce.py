@@ -8,7 +8,7 @@ import matplotlib.patheffects as PathEffects
 import numpy as np
 import scipy.constants as const
 
-from inputs import config as cf
+# from inputs import config as cf
 
 # Customize matplotlib
 matplotlib.rcParams.update({
@@ -52,11 +52,13 @@ class Reproduce(ABC):
         """Accepts zero, one or two arguments.
 
         If zero arguments are given, a default path is used to look for files.
+        ::
         If one argument is given, it should include
-            the full path (with or without file ending).
+        the full path (with or without file ending).
+        ::
         If two arguments are given, the first should be the path to
-            the directory where the file is located, and the second
-            argument must be the name of the file.
+        the directory where the file is located, and the second
+        argument must be the name of the file.
         """
         if len(args) != 0:
             if len(args) == 1:
@@ -89,12 +91,17 @@ class Reproduce(ABC):
 
 
 class PlotNumerical(Reproduce):
-    """Reproduce figure with a comparison between the semi-analytic and numerical implementation.
+    """Reproduce figure with a comparison between the semi-analytic
+    and numerical implementation.
 
     In config, set
+    ```
         'F_MIN': - 2e6, 'F_MAX': 9e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 1e3
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -180,9 +187,13 @@ class PlotTestDebye(Reproduce):
     dist with and without Debye length correction.
 
     In config, set
+    ```
         'F_MIN': - 2e6, 'F_MAX': 2e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 5e5
+    ```
     is sufficient.
     """
 
@@ -209,9 +220,13 @@ class PlotMaxwell(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': - 2e6, 'F_MAX': 2e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 5e5
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -233,9 +248,13 @@ class PlotKappa(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': - 2e6, 'F_MAX': 2e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 5e5
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -258,9 +277,13 @@ class PlotSpectra(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': - 2e6, 'F_MAX': 2e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 1e5
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -288,9 +311,13 @@ class PlotIonLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': - 3e3, 'F_MAX': 3e3
+    ```
     Also, using
+    ```
         F_N_POINTS = 1e3
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -318,9 +345,13 @@ class PlotPlasmaLine(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': 3.5e6, 'F_MAX': 7e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 1e3
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -348,9 +379,13 @@ class PlotTemperature(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': 3.5e6, 'F_MAX': 7.5e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 5e3
+    ```
     is sufficient.
     """
     def __init__(self, p):
@@ -361,11 +396,13 @@ class PlotTemperature(Reproduce):
         """Accepts zero, one or two arguments.
 
         If zero arguments are given, a default path is used to look for files.
+        ::
         If one argument is given, it should include
-            the full path (with or without file ending).
+        the full path (with or without file ending).
+        ::
         If two arguments are given, the first should be the path to
-            the directory where the file is located, and the second
-            argument must be the name of the file.
+        the directory where the file is located, and the second
+        argument must be the name of the file.
         """
         if len(args) != 0:
             if len(args) == 1:
@@ -450,9 +487,13 @@ class PlotHKExtremes(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
     In config, set
+    ```
         'F_MIN': 2.5e6, 'F_MAX': 9.5e6
+    ```
     Also, using
+    ```
         F_N_POINTS = 1e4
+    ```
     is sufficient.
     """
     def create_from_code(self):
@@ -504,11 +545,13 @@ class PlotHK:
         """Accepts zero, one or two arguments.
 
         If zero arguments are given, a default path is used to look for files.
+        ::
         If one argument is given, it should include
-            the full path (with or without file ending).
+        the full path (with or without file ending).
+        ::
         If two arguments are given, the first should be the path to
-            the directory where the file is located, and the second
-            argument must be the name of the file.
+        the directory where the file is located, and the second
+        argument must be the name of the file.
         """
         if len(args) != 0:
             if len(args) == 1:
@@ -521,8 +564,8 @@ class PlotHK:
                 self.name = args[1]
         else:
             path = '../../figures/'
-            self.name = 'hello_kitty_2020_6_9_2--28--4.npz'
-            # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+            # self.name = 'hello_kitty_2020_6_9_2--28--4.npz'
+            self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
         self.name = self.name.split('.')[0]
         try:
             self.file = np.load(path + self.name + '.npz')
@@ -567,7 +610,7 @@ class PlotHK:
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
         ax1 = plt.subplot(gs[1])
-        ax1.plot(self.file['angle'])
+        ax1.plot(self.file['angle'], 'k')
         plt.xlim([0, len(self.file['angle']) - 1])
         plt.yticks([30, 45, 60])
         plt.ylabel('Aspect angle')
@@ -578,7 +621,7 @@ class PlotHK:
         f.colorbar(im, ax=axs).ax.set_ylabel('Echo power')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
-        # plt.savefig(f'{self.name}.pgf', bbox_inches='tight', transparent=True)
+        plt.savefig(f'{self.name}.pgf', bbox_inches='tight', transparent=True)
         plt.show()
 
 

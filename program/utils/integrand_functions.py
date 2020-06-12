@@ -10,7 +10,7 @@ import scipy.integrate as si
 
 from inputs import config as cf
 from utils import vdfs
-from utils.parallel import v_int_parallel as para_int
+from utils.parallel import v_int_parallel
 
 
 class INTEGRAND(ABC):
@@ -134,9 +134,9 @@ class INT_LONG(INTEGRAND):
         # Compare the velocity integral to the Maxwellian case.
         # This way we make up for the change in characteristic velocity
         # and Debye length for different particle distributions.
-        res_max = para_int.integrand(self.y, self.params, v, vdfs.F_MAXWELL(v, self.params).f_0())
+        res_max = v_int_parallel.integrand(self.y, self.params, v, vdfs.F_MAXWELL(v, self.params).f_0())
         sint_max = si.simps(res_max, self.y)
-        res = para_int.integrand(self.y, self.params, v, f.f_0())
+        res = v_int_parallel.integrand(self.y, self.params, v, f.f_0())
         sint_res = si.simps(res, self.y)
         # sint_maxwellian = 3.5436498998618917e-14
         # The scaling of the factor describing the characteristic velocity

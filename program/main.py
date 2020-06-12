@@ -39,14 +39,14 @@ class Simulation:
         self.ridge_txt = []
         self.plot = PlotClass()
         # self.r = reproduce.PlotTestNumerical(self.plot)
-        self.r = reproduce.PlotNumerical(self.plot)
+        # self.r = reproduce.PlotNumerical(self.plot)
         # self.r = reproduce.PlotTestDebye(self.plot)
         # self.r = reproduce.PlotMaxwell(self.plot)
         # self.r = reproduce.PlotSpectra(self.plot)
         # self.r = reproduce.PlotKappa(self.plot)
         # self.r = reproduce.PlotIonLine(self.plot)
         # self.r = reproduce.PlotPlasmaLine(self.plot)
-        # self.r = reproduce.PlotTemperature(self.plot)
+        self.r = reproduce.PlotTemperature(self.plot)
         # self.r = reproduce.PlotHKExtremes(self.plot)
 
     def create_data(self):
@@ -113,7 +113,7 @@ class Simulation:
         ```
         """
         # self.from_file = True
-        self.r.create_it('../figures/num_pres_yhigh_vhigh.npz', from_file=self.from_file)
+        self.r.create_it('../figures/temp_ridge.npz', from_file=self.from_file)
         self.f = self.r.f
         self.data = self.r.data
         self.legend_txt = self.r.legend_txt

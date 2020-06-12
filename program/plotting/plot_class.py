@@ -30,8 +30,8 @@ class PlotClass:
         self.pdffig = None
         self.save_path = None
         self.correct_inputs()
-        self.colors = ['gold', 'royalblue', 'magenta',
-                        'chartreuse', 'firebrick', 'red', 'darkorange', 'crimson']
+        self.colors = ['k', 'magenta', 'royalblue', 'yellow',
+                       'chartreuse', 'firebrick', 'red', 'darkorange']
         self.line_styles = ['-', '--', '-.', ':',
                             (0, (3, 5, 1, 5, 1, 5)),
                             (0, (3, 1, 1, 1, 1, 1))]
@@ -110,6 +110,7 @@ class PlotClass:
         if len(Is) != len(l_txt):
             print('Warning: The number of spectra does ' + \
                   'not match the number of labels.')
+        self.colors = np.linspace(0, 1, len(Is))
         Is = Is.copy()
         # Linear plot show only ion line (kHz range).
         if func_type == 'plot' and not self.plasma:
@@ -132,11 +133,11 @@ class PlotClass:
             if self.plasma:
                 s = s[mask]
             if func_type == 'semilogy':
-                plt.plot(freq, s, linestyle=st, alpha=.7, color=clr,
+                plt.plot(freq, s, linestyle=st, alpha=.7, color=(clr, 0., 0.),  # color=clr,
                          linewidth=.8, label=lab)
             else:
                 plot_object = getattr(plt, func_type)
-                plot_object(freq, s, linestyle=st, alpha=.7, color=clr,
+                plot_object(freq, s, linestyle=st, alpha=.7, color=(clr, 0., 0.),  # color=clr,
                             linewidth=.8, label=lab)
 
         plt.legend()

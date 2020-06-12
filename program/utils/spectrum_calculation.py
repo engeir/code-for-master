@@ -11,7 +11,7 @@ import scipy.integrate as si
 
 from inputs import config as cf
 from utils import integrand_functions as intf
-from utils.parallel import parallelization as para
+from utils.parallel import gordeyev_int_parallel
 
 
 def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=None):
@@ -51,14 +51,14 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=No
     y = np.linspace(0, cf.Y_MAX_i**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     f_ion = intf.INT_MAXWELL()
     f_ion.initialize(y, params)
-    Fi = para.integrate(M_i, sys_set['T_I'], sys_set['NU_I'], y, function=f_ion, kappa=kappa)
+    Fi = gordeyev_int_parallel.integrate(M_i, sys_set['T_I'], sys_set['NU_I'], y, function=f_ion, kappa=kappa)
 
     # Electrons
     params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'], 'nu': sys_set['NU_E'], 'm': const.m_e, 'T': sys_set['T_E'], 'T_ES': sys_set['T_ES'],
               'w_c': w_c, 'kappa': kappa, 'vdf': vdf, 'Z': sys_set['Z'], 'mat_file': sys_set['mat_file'], 'pitch_angle': sys_set['pitch_angle']}
     y = np.linspace(0, cf.Y_MAX_e**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     func.initialize(y, params)
-    Fe = para.integrate(const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
+    Fe = gordeyev_int_parallel.integrate(const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
 
     Xp_i = np.sqrt(
         1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * sys_set['K_RADAR']**2))

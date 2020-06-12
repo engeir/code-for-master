@@ -87,31 +87,39 @@ class TestVDF(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.v = np.linspace(0, (6e6)**(1 / 3), int(1e7))**3
+        cls.v = np.linspace(0, (6e6)**(1 / 3), int(4e4))**3
         cls.params = {'m': 9.1093837015e-31, 'T': 1000, 'kappa': 3, 'T_ES': 90000,
-                      'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
+                      'Z': 300, 'mat_file': 'fe_zmuE-07.mat', 'pitch_angle': 'all'}
         cls.f = None
+        # cls.fs = []
+
+    # @classmethod
+    # def tearDownClass(cls):
+    #     np.savez('f', v=cls.v, m=cls.fs[0], k=cls.fs[1], r=cls.fs[2])
 
     def tearDown(self):
         # The function f is scaled with the Jacobian of cartesian to spherical
         f = self.f.f_0() * self.v**2 * 4 * np.pi
         res = si.simps(f, self.v)
-        self.assertAlmostEqual(res, 1, places=3)
+        self.assertAlmostEqual(res, 1, places=6)
 
     def test_vdf_maxwell(self):
         self.f = vdfs.F_MAXWELL(self.v, self.params)
+        # self.fs.insert(0, self.f.f_0())
 
     def test_vdf_kappa(self):
         self.f = vdfs.F_KAPPA(self.v, self.params)
+        # self.fs.insert(1, self.f.f_0())
 
-    def test_vdf_kappa_vol2(self):
-        self.f = vdfs.F_KAPPA_2(self.v, self.params)
+    # def test_vdf_kappa_vol2(self):
+    #     self.f = vdfs.F_KAPPA_2(self.v, self.params)
 
-    def test_vdf_gauss_shell(self):
-        self.f = vdfs.F_GAUSS_SHELL(self.v, self.params)
+    # def test_vdf_gauss_shell(self):
+    #     self.f = vdfs.F_GAUSS_SHELL(self.v, self.params)
 
     def test_vdf_real_data(self):
         self.f = vdfs.F_REAL_DATA(self.v, self.params)
+        # self.fs.insert(2, self.f.f_0())
 
 
 if __name__ == '__main__':
