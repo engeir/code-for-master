@@ -165,4 +165,4 @@ class Simulation:
 
 if __name__ == '__main__':
     # Simulation().run()
-    hk.HelloKitty(2).run()
+    hk.HelloKitty(1).run()
