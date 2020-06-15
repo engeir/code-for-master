@@ -40,8 +40,8 @@ class INTEGRAND(ABC):
 
 
 class INT_KAPPA(INTEGRAND):
-    """Integrand for the Gordeyev implementation
-    of the kappa distribution from Mace (2003).
+    """Implementation of the integrand of the Gordeyev
+    integral for the kappa distribution from Mace (2003).
 
     Arguments:
         INTEGRAND {ABC} -- base class used to create integrand objects
@@ -75,8 +75,9 @@ class INT_KAPPA(INTEGRAND):
 
 
 class INT_MAXWELL(INTEGRAND):
-    """Intregrand for the Gordeyev implementation of the Maxwellian
-    distribution from e.g. Hagfors (1961) or Mace (2003).
+    """Implementation of the intregrand in the Gordeyev
+    integral for the Maxwellian distribution from
+    e.g. Hagfors (1961) or Mace (2003).
 
     Arguments:
         INTEGRAND {ABC} -- base class used to create integrand objects
@@ -101,8 +102,8 @@ class INT_MAXWELL(INTEGRAND):
 
 
 class INT_LONG(INTEGRAND):
-    """Intregrand for the Gordeyev implementation
-    of the isotropic distribution from Mace (2003).
+    """Implementation of the intregrand in the Gordeyev
+    integral for the isotropic distribution from Mace (2003).
 
     Arguments:
         INTEGRAND {ABC} -- base class used to create integrand objects
@@ -134,14 +135,14 @@ class INT_LONG(INTEGRAND):
         # Compare the velocity integral to the Maxwellian case.
         # This way we make up for the change in characteristic velocity
         # and Debye length for different particle distributions.
-        res_max = v_int_parallel.integrand(self.y, self.params, v, vdfs.F_MAXWELL(v, self.params).f_0())
-        sint_max = si.simps(res_max, self.y)
+        res_maxwell = v_int_parallel.integrand(self.y, self.params, v, vdfs.F_MAXWELL(v, self.params).f_0())
+        int_maxwell = si.simps(res_maxwell, self.y)
         res = v_int_parallel.integrand(self.y, self.params, v, f.f_0())
-        sint_res = si.simps(res, self.y)
-        # sint_maxwellian = 3.5436498998618917e-14
+        int_res = si.simps(res, self.y)
         # The scaling of the factor describing the characteristic velocity
-        self.char_vel = sint_max / sint_res
-        print(self.char_vel)
+        self.char_vel = int_maxwell / int_res
+        print(f'Debye length of the current distribution is {self.char_vel}' + \
+              'times the Maxwellian Debye length.')
         return res
 
     def p_d(self):
@@ -152,10 +153,11 @@ class INT_LONG(INTEGRAND):
         w_c = self.params['w_c']
         num = abs(self.params['K_RADAR']) * abs(w_c) * \
                   (cos_t**2 * w_c * self.y + sin_t**2 * np.sin(w_c * self.y))
-        den = w_c * (cos_t**2 * w_c**2 * self.y**2 - 2 * sin_t **
-                     2 * np.cos(w_c * self.y) + 2 * sin_t**2)**.5
-        # np.sign(y[-1]) takes care of weather the limit should be considered taken from above or below,
-        # where the last element of the np.ndarray is chosen since it is assumed y runs from 0 to some finite real number.
+        den = w_c * (cos_t**2 * w_c**2 * self.y**2 -
+                     2 * sin_t**2 * np.cos(w_c * self.y) +
+                     2 * sin_t**2)**.5
+        # np.sign(y[-1]) takes care of weather the limit should be considered taken from above or below.
+        # The last element of the np.ndarray is chosen since it is assumed y runs from 0 to some finite real number.
         first = np.sign(self.y[-1]) * abs(self.params['K_RADAR']) * abs(w_c) / abs(w_c)
         with np.errstate(divide='ignore', invalid='ignore'):
             out = num / den

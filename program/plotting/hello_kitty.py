@@ -33,17 +33,27 @@ class HelloKitty:
     def __init__(self, vol):
         """Create the data and plot a Hello Kitty figure.
 
+        In `config`, set
+        ```
+            'F_MIN': 2.5e6, 'F_MAX': 9.5e6
+        ```
+        Also, using
+        ```
+            F_N_POINTS = 1e4
+        ```
+         is sufficient.
+
         Args:
             vol {int or float} -- choose between two different input settings,
-            creating two different HK plots
+                creating two different HK plots
         """
-        # For plot nr. 1, set 'self.vol = 1. For plot nr. 2, set self.vol = 2.
         self.vol = int(vol)
         if self.vol == 1:
             self.Z = np.linspace(1e11, 8e11, 60)
         else:
             self.Z = np.linspace(2e11, 1e12, 60)
         self.A = 45 + 15 * np.cos(np.linspace(0, np.pi, 30))
+        self.fr = np.zeros((len(self.Z), len(self.A)))
         self.g = np.zeros((len(self.Z), len(self.A)))
         self.dots = [[], [], []]
         self.meta = []
@@ -57,8 +67,6 @@ class HelloKitty:
             self.save = False
 
     def create_data(self):
-        # In config, set 'F_MIN': 2.5e6, 'F_MAX': 9.5e6
-        # Also, using F_N_POINTS = 1e4 is sufficient.
         if self.vol == 1:
             sys_set = {'K_RADAR': self.K_RADAR, 'B': 35000e-9, 'MI': 16,
                        'NE': 2e10, 'NU_E': 100, 'NU_I': 100, 'T_E': 2000,
@@ -90,11 +98,12 @@ class HelloKitty:
                     sys.stdout = f
                     f, s, meta_data = isr.isr_spectrum('a_vdf', sys_set, **params)
                     sys.stdout = old_stdout
-                    plasma_power, energy_interval = self.check_energy(f, s, a)
+                    plasma_power, energy_interval, fr = self.check_energy(f, s, a)
                     if energy_interval != 0:
                         self.dots[0].append(energy_interval)
                         self.dots[1].append(j)
                         self.dots[2].append(z)
+                    self.fr[i, j] = fr
                     self.g[i, j] = plasma_power
                     pbar.update(1)
         self.meta.append(meta_data)
@@ -126,7 +135,7 @@ class HelloKitty:
                 res = 2
             elif bool(25.38 < E_plasma < 27.14):
                 res = 3
-        return power, res
+        return power, res, freq
 
     def plot_data(self):
         # Hello kitty figure duplication
@@ -186,7 +195,7 @@ class HelloKitty:
             plt.savefig(pdffig, bbox_inches='tight', format='pdf', dpi=600)
             pdffig.close()
             plt.savefig(f'{save_path}.pgf', bbox_inches='tight', metadata=self.meta)
-            np.savez(f'{save_path}', angle=self.A, density=self.Z, power=self.g, dots=self.dots)
+            np.savez(f'{save_path}', angle=self.A, density=self.Z, power=self.g, dots=self.dots, fr=self.fr)
 
         plt.show()
 

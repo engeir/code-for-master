@@ -1,5 +1,6 @@
-"""Implementation of parallel computation of
-the velocity integrals for the integral variable y.
+"""Implementation of parallel computation of the
+velocity integrals as a function of the integral
+variable y from the Gordeyev integral.
 """
 
 import ctypes
@@ -13,11 +14,12 @@ from inputs import config as cf
 
 
 def integrand(y, params, v, f):
-    """Integrate from 0 to V_MAX with an integrand on
-    the form e^{-iwt}f(t), for every value in the np.ndarray w.
+    """Integrate from `0` to `V_MAX` with an integrand on
+    the form `e^{-iwt}f(t)`, for every value in the np.ndarray `y`.
 
     Arguments:
         y {np.ndarray} -- sample points of integration variable
+            from Gordeyev integral
         params {dict} -- plasma parameters
         v {np.ndarray} -- sample points of VDF
         f {np.ndarray} -- value of VDF at sample points
@@ -28,7 +30,6 @@ def integrand(y, params, v, f):
     """
     idx = set(enumerate(y))
     func = partial(parallel, params, v, f)
-    # processes = 96
     pool = mp.Pool()
     pool.map(func, idx)
     pool.close()
@@ -47,6 +48,15 @@ def v_int_integrand(y, params, v, f):
 
 
 def p(y, params):
+    """From Mace [2003].
+
+    Args:
+        y {np.ndarray} -- parameter from Gordeyev integral
+        params {dict} -- plasma parameters
+
+    Returns:
+        np.ndarray -- value of the `p` function
+    """
     k_perp = params['K_RADAR'] * np.sin(params['THETA'])
     k_par = params['K_RADAR'] * np.cos(params['THETA'])
     return (2 * k_perp**2 / params['w_c']**2 * (1 - np.cos(y * params['w_c'])) + k_par**2 * y**2)**.5

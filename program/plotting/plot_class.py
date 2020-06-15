@@ -13,7 +13,7 @@ import si_prefix as sip
 from inputs import config as cf
 
 class PlotClass:
-    """Create a plot object that automatically will show the data created.
+    """Create a plot object to show the data created.
     """
 
     def __init__(self):
@@ -21,7 +21,7 @@ class PlotClass:
 
         Keyword Arguments:
             plasma {bool} -- choose to plot only the part of the
-            spectrum where the plasma line is found (default: {False})
+                spectrum where the plasma line is found (default: {False})
         """
         self.save = input('Press "y/yes" to save plot, ' + \
                           'any other key to dismiss.\t').lower()
@@ -40,6 +40,7 @@ class PlotClass:
         self.__dict__[name] = value
         self.correct_inputs()
 
+    # TODO: probably not needed anymore
     def correct_inputs(self):
         """Extra check suppressing the parameters
         that was given but is not necessary.
@@ -52,12 +53,15 @@ class PlotClass:
 
     def save_it(self, f, data, l_txt, r_txt, params):
         """Save the figure as a multi page pdf with all
-        parameters saved in the meta data.
+        parameters saved in the meta data, and as one
+        pgf file for each page.
 
         The date and time is used in the figure name, in addition
         to it ending with which method was used. The settings that
         was used in config as inputs to the plot object is saved
         in the metadata of the figure.
+
+        If a figure is created from file, the same file name is used.
         """
         version = ''
         for d in params:
@@ -68,8 +72,8 @@ class PlotClass:
                     version += f'{d["version"][0]}'
         if self.save_path is None:
             params.insert(0, {'F_MIN': cf.I_P['F_MIN'], 'F_MAX': cf.I_P['F_MAX'],
-                            'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
-                            'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
+                              'V_MAX': cf.V_MAX, 'F_N_POINTS': cf.F_N_POINTS,
+                              'Y_N_POINTS': cf.Y_N_POINTS, 'V_N_POINTS': cf.V_N_POINTS})
         tt = time.localtime()
         the_time = f'{tt[0]}_{tt[1]}_{tt[2]}_{tt[3]}--{tt[4]}--{tt[5]}'
         save_path = '../../../report/master-thesis/figures/in_use'
@@ -91,15 +95,15 @@ class PlotClass:
         metadata['ModDate'] = datetime.datetime.today()
 
     def plot_normal(self, f, Is, func_type, l_txt):
-        """Make a plot using f as x axis and Is as y axis.
+        """Make a plot using `f` as `x` axis and `Is` as `y` axis.
 
         Arguments:
             f {np.ndarray} -- variable along x axis
             Is {list} -- list of np.ndarrays that give the y axis
-            values along x axis
+                values along x axis
             func_type {str} -- attribute of the matplotlib.pyplot object
             l_txt {list} -- a list of strings that give the legend
-            of the spectra. Same length as the inner lists
+                of the spectra. Same length as the inner lists
         """
         try:
             getattr(plt, func_type)
@@ -112,6 +116,7 @@ class PlotClass:
                   'not match the number of labels.')
         self.colors = np.linspace(0, 1, len(Is))
         Is = Is.copy()
+        # TODO: should probably remove this
         # Linear plot show only ion line (kHz range).
         if func_type == 'plot' and not self.plasma:
             f, Is = self.only_ionline(f, Is)
@@ -157,16 +162,16 @@ class PlotClass:
         Arguments:
             frequency {np.ndarray} -- frequency axis
             multi_parameters {list} -- list (outer) containing
-            lists (inner) of np.ndarrays.
-            The arrays contain the spectrum values at the frequencies
-            given by 'frequency'
+                lists (inner) of np.ndarrays. The arrays
+                contain the spectrum values at the frequencies
+                given by "frequency"
             func_type {str} -- attribute of the matplotlib.pyplot class
             l_txt {list} -- a list of strings that give the legend of the
-            spectra. Same length as the inner lists
+                spectra. Same length as the inner lists
 
         Keyword Arguments:
             ridge_txt {list} -- list of strings that give the text to the left
-            of all ridges. Same length as outer list or None (default: {None})
+                of all ridges. Same length as outer list or None (default: {None})
         """
         # Inspired by https://tinyurl.com/y9p5gewr
         try:
@@ -183,6 +188,7 @@ class PlotClass:
                     ridge_txt.append('')
         f_original = frequency.copy()
         multi_params = multi_parameters.copy()
+        # Reverse the order to put the first elements at the bottom of the figure
         multi_params.reverse()
         ridge_txt = ridge_txt.copy()
         if ridge_txt is None:
@@ -197,7 +203,7 @@ class PlotClass:
             if len(params) != len(l_txt):
                 print('Warning: The number of spectra ' + \
                       'does not match the number of labels.')
-            # f is reset due to the scaling of 'plot' immediately below.
+            # f is reset due to the scaling of 'plot' below
             f = f_original
             # Linear plot show only ion line (kHz range).
             if func_type == 'plot' and not self.plasma:
@@ -206,6 +212,7 @@ class PlotClass:
             if self.plasma:
                 mask = self.find_p_line(freq * 10**exp, params)
                 freq = freq[mask]
+            # Make a new subplot / ridge
             ax_objs.append(fig.add_subplot(gs[j:j + 1, 0:]))
             first = 0
             for st, s, lab in zip(itertools.cycle(self.line_styles), params, l_txt):
@@ -238,10 +245,10 @@ class PlotClass:
 
     @staticmethod
     def remove_background(plt_obj, multi_params, j, p):
-        # make background transparent
+        # Make the background transparent
         rect = plt_obj.patch
         rect.set_alpha(0)
-        # remove borders, axis ticks and labels
+        # Remove borders, axis ticks and labels
         plt_obj.set_yticklabels([])
         plt.tick_params(axis='y', which='both', left=False,
                         right=False, labelleft=False)
@@ -257,7 +264,7 @@ class PlotClass:
 
     @staticmethod
     def scale_f(frequency):
-        """Scale the axis and add the appropriate SI prefix.
+        """Scale the axis and add the corresponding SI prefix.
 
         Arguments:
             frequency {np.ndarray} -- the variable along an axis
@@ -291,8 +298,8 @@ class PlotClass:
             np.ndarray -- array with boolean elements
         """
         spec = spectrum[0]
-        # Assumes that it is the rightmost peak (highest frequency).
         try:
+            # Assumes that the rightmost peak (highest frequency) is the plasma line
             p = signal.find_peaks(spec, height=10)[0][-1]
         except Exception:
             print('Warning: did not find any plasma line')
@@ -318,6 +325,18 @@ class PlotClass:
         return f, Is
 
     def match_box(self, freq_original, freq, multi_parameters, args):
+        """Create a scaling box for easier comparison of the ridges.
+
+        Should cover as much as possible in the ridge that span the
+        smallest range along the `y` axis.
+
+        Args:
+            freq_original {np.ndarray} -- frequency axis
+            freq {np.ndarray} -- copy of the frequency axis
+            multi_parameters {list} -- list of the spectra
+            args {list} -- zeroth element is y_min and
+                first is the index for the ridge
+        """
         multi_params = multi_parameters.copy()
         v_line_x = np.linspace(.04, .2, len(multi_params))
         if self.plasma:

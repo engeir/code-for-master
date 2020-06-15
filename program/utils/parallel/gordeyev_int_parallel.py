@@ -1,5 +1,5 @@
 """Implementation of parallel computation of
-the integrals for the frequency spectrum.
+the Gordeyev integral as a function of frequency.
 """
 
 import ctypes
@@ -15,8 +15,8 @@ from inputs import config as cf
 
 
 def integrate(m, T, nu, y, function, kappa=None):
-    """Integrate from 0 to Y_MAX with an integrand on the form
-    e^{-iwy}f(y), for every value in the np.ndarray w.
+    """Integrate from `0` to `Y_MAX` with an integrand on the form
+    `e^{-iwy}f(y)`, for every value in the np.ndarray `w`.
 
     Arguments:
         m {float} -- mass [kg]
@@ -27,11 +27,11 @@ def integrate(m, T, nu, y, function, kappa=None):
 
     Keyword Arguments:
         kappa {int or float} -- index determining the order of the
-        kappa VDFs (default: {None})
+            kappa VDFs (default: {None})
 
     Returns:
         np.ndarray -- a scaled version of the result from the
-        integration based on Hagfors [1968]
+            integration based on Hagfors [1968]
     """
     idx = set(enumerate(cf.w))
     f = function.integrand()

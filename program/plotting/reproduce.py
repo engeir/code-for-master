@@ -216,63 +216,6 @@ class PlotTestDebye(Reproduce):
         self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
 
 
-class PlotMaxwell(Reproduce):
-    """Reproduce figure with ridge plot over different temperatures.
-
-    In config, set
-    ```
-        'F_MIN': - 2e6, 'F_MAX': 2e6
-    ```
-    Also, using
-    ```
-        F_N_POINTS = 5e5
-    ```
-    is sufficient.
-    """
-    def create_from_code(self):
-        F0 = 430e6
-        K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        self.legend_txt = ['Maxwellian']
-        sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
-                   'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 8, 'vdf': 'real_data', 'area': False}
-        self.f, s, meta_data = isr.isr_spectrum('maxwell', sys_set, **params)
-        self.data.append(s)
-        self.meta_data.append(meta_data)
-
-    def plot_it(self):
-        self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
-
-
-class PlotKappa(Reproduce):
-    """Reproduce figure with ridge plot over different temperatures.
-
-    In config, set
-    ```
-        'F_MIN': - 2e6, 'F_MAX': 2e6
-    ```
-    Also, using
-    ```
-        F_N_POINTS = 5e5
-    ```
-    is sufficient.
-    """
-    def create_from_code(self):
-        F0 = 430e6
-        K_RADAR = - 2 * F0 * 2 * np.pi / const.c  # Radar wavenumber
-        # Change the value of kappa in params (and in legend_txt) to obtain plots of different kappa value.
-        self.legend_txt = [r'$\kappa = 20$']
-        sys_set = {'K_RADAR': K_RADAR, 'B': 35000e-9, 'MI': 29, 'NE': 2e10, 'NU_E': 0, 'NU_I': 0, 'T_E': 200, 'T_I': 200, 'T_ES': 90000,
-                   'THETA': 45 * np.pi / 180, 'Z': 599, 'mat_file': 'fe_zmuE-07.mat'}
-        params = {'kappa': 20, 'vdf': 'real_data', 'area': False}
-        self.f, s, meta_data = isr.isr_spectrum('kappa', sys_set, **params)
-        self.data.append(s)
-        self.meta_data.append(meta_data)
-
-    def plot_it(self):
-        self.p.plot_normal(self.f, self.data, 'semilogy', self.legend_txt)
-
-
 class PlotSpectra(Reproduce):
     """Reproduce figure with ridge plot over different temperatures.
 
@@ -571,7 +514,6 @@ class PlotHK:
             self.file = np.load(path + self.name + '.npz')
         except Exception:
             sys.exit(print(f'Could not open file {path + self.name}'))
-        sorted(self.file)
 
     def shade(self):
         dots_x = []

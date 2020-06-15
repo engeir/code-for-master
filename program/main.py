@@ -1,4 +1,4 @@
-"""Main script for  controlling the calculation method of the IS spectrum.
+"""Main script for controlling the calculation method of the IS spectrum.
 """
 
 # The start method of the multiprocessing module was changed from python3.7
@@ -17,8 +17,6 @@ from plotting import hello_kitty as hk  # pylint: disable=C0413
 from plotting import reproduce  # pylint: disable=C0413
 from plotting.plot_class import PlotClass  # pylint: disable=C0413
 
-from decimal import *
-getcontext().prec = 50
 
 # Customize matplotlib
 matplotlib.rcParams.update({
@@ -52,17 +50,17 @@ class Simulation:
     def create_data(self):
         """Create IS spectra.
 
-        The spectra should be appended to the ``self.data`` list, giving a list
-        of spectra that are themselves ``np.ndarrays``, or into a list of such
+        The spectra should be appended to the `self.data` list, giving a list
+        of spectra that are themselves `np.ndarrays`, or into a list of such
         lists as the aforementioned.
 
-        A list of spectra can be plotted in ``plot_normal``, while a list of
-        lists can be plotted by ``plot_ridge``. When using ``plot_ridge``, it is
+        A list of spectra can be plotted in `plot_normal`, while a list of
+        lists can be plotted by `plot_ridge`. When using `plot_ridge`, it is
         assumed that all the lists in the outer list is of equal length.
 
-        The list ``self.ridge_txt`` should be the same length as the length
-        of the outer list when plotting with ``plot_ridge``, since this text
-        will go on the left of every ridge. The list ``self.legend_txt`` should
+        The list `self.ridge_txt` should be the same length as the length
+        of the outer list when plotting with `plot_ridge`, since this text
+        will go on the left of every ridge. The list `self.legend_txt` should
         be the same length as the length of the inner lists, and will give
         the legend for the spectra given in the inner lists.
 
@@ -112,8 +110,8 @@ class Simulation:
             self.legend_txt.append('Kappa')
         ```
         """
-        # self.from_file = True
-        self.r.create_it('../figures/temp_ridge.npz', from_file=self.from_file)
+        self.from_file = True
+        self.r.create_it('../figures/temp_ridge_neg.npz', from_file=self.from_file)
         self.f = self.r.f
         self.data = self.r.data
         self.legend_txt = self.r.legend_txt
@@ -121,16 +119,16 @@ class Simulation:
         self.meta_data = self.r.meta_data
 
     def plot_data(self):
-        """Plot the created data from ``self.data``.
+        """Plot the created data from `self.data`.
 
         If you want to only plot the plasma line, set
         ```
             self.plot.plasma = True
         ```
 
-        ``self.plot.plot_normal()`` accepts list of ``np.ndarray`` and
-        ``self.plot.plot_ridge()`` accepts list of lists of ``np.ndarray``,
-        i.e. list of the structure you send to ``self.plot.plot_normal()``
+        `self.plot.plot_normal()` accepts a list of `np.ndarray`s and
+        `self.plot.plot_ridge()` accepts a list of lists of `np.ndarray`s,
+        i.e. a list of the type you send to `self.plot.plot_normal()`.
 
         Examples:
         ::

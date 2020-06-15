@@ -1,4 +1,4 @@
-"""Script containing the calculation of the power density function
+"""Script containing the calculation of the power density spectrum
 and other plasma parameters.
 """
 
@@ -31,6 +31,8 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=No
         (default: {None})
         area {bool} -- if True, calculates the area under the ion line
         (default: {False})
+        debye {str} -- if set to `maxwell`, the Maxwellian Debye length
+        is used (default: {None})
 
     Returns:
         f {np.ndarray} -- 1D array giving the frequency axis
@@ -47,30 +49,34 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=No
     W_c = w_ion_gyro(np.linalg.norm([sys_set['B']], 2), M_i)
 
     # Ions
-    params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'], 'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'], 'w_c': W_c}
+    params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'],
+              'nu': sys_set['NU_I'], 'm': M_i, 'T': sys_set['T_I'], 'w_c': W_c}
     y = np.linspace(0, cf.Y_MAX_i**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     f_ion = intf.INT_MAXWELL()
     f_ion.initialize(y, params)
     Fi = gordeyev_int_parallel.integrate(M_i, sys_set['T_I'], sys_set['NU_I'], y, function=f_ion, kappa=kappa)
 
     # Electrons
-    params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'], 'nu': sys_set['NU_E'], 'm': const.m_e, 'T': sys_set['T_E'], 'T_ES': sys_set['T_ES'],
-              'w_c': w_c, 'kappa': kappa, 'vdf': vdf, 'Z': sys_set['Z'], 'mat_file': sys_set['mat_file'], 'pitch_angle': sys_set['pitch_angle']}
+    params = {'K_RADAR': sys_set['K_RADAR'], 'THETA': sys_set['THETA'],
+              'nu': sys_set['NU_E'], 'm': const.m_e, 'T': sys_set['T_E'],
+              'T_ES': sys_set['T_ES'], 'w_c': w_c, 'kappa': kappa, 'vdf': vdf,
+              'Z': sys_set['Z'], 'mat_file': sys_set['mat_file'],
+              'pitch_angle': sys_set['pitch_angle']}
     y = np.linspace(0, cf.Y_MAX_e**(1 / cf.ORDER), int(cf.Y_N_POINTS), dtype=np.double)**cf.ORDER
     func.initialize(y, params)
     Fe = gordeyev_int_parallel.integrate(const.m_e, sys_set['T_E'], sys_set['NU_E'], y, function=func, kappa=kappa)
 
-    Xp_i = np.sqrt(
-        1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * sys_set['K_RADAR']**2))
+    Xp_i = np.sqrt(1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=None)**2 * \
+           sys_set['K_RADAR']**2))
     if func.the_type == 'maxwell' or debye == 'maxwell':
-        Xp_e = np.sqrt(
-            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'])**2 * sys_set['K_RADAR']**2))
+        Xp_e = np.sqrt(1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'])**2 * \
+               sys_set['K_RADAR']**2))
     elif func.the_type == 'kappa':
-        Xp_e = np.sqrt(
-            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * sys_set['K_RADAR']**2))
+        Xp_e = np.sqrt(1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], kappa=kappa)**2 * \
+               sys_set['K_RADAR']**2))
     elif func.the_type == 'a_vdf':
-        Xp_e = np.sqrt(
-            1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * sys_set['K_RADAR']**2))
+        Xp_e = np.sqrt(1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * \
+               sys_set['K_RADAR']**2))
 
     # In case we have $ \omega = 0 $ in our frequency array, we just ignore this warning message
     with np.errstate(divide='ignore', invalid='ignore'):
@@ -178,6 +184,16 @@ def correct_inputs(version, sys_set, params):
 
 
 def version_check(version, vdf, kappa):
+    """Check if the parameters given are complete.
+
+    Args:
+        version {str} -- which Gordeyev integrand to use
+        vdf {str} -- which distribution to use
+        kappa {int or float} -- kappa index
+
+    Returns:
+        object -- an integrand object from `integrand_functions.py`
+    """
     versions = ['kappa', 'maxwell', 'a_vdf']
     try:
         if not version in versions:

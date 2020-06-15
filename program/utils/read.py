@@ -1,3 +1,7 @@
+"""This script reads from folder `arecibo` and combines the
+calculated electron distribution from file with a Maxwellian.
+"""
+
 import os
 import sys
 
@@ -5,7 +9,6 @@ import ast
 import numpy as np
 from scipy.io import loadmat
 import scipy.constants as const
-import matplotlib.pyplot as plt
 
 
 def f_0_maxwell(v, params):
@@ -16,9 +19,17 @@ def f_0_maxwell(v, params):
 
 
 def interpolate_data(v, params):
+    """Interpolate calculated distribution down to zero
+    energy and add to a 1D Maxwellian.
+
+    Args:
+        v {np.ndarray} -- 1D velocity array
+        params {dict} -- dictionary of all needed parameters
+
+    Returns:
+        np.ndarray -- 1D array of the distribution
+    """
     if os.path.basename(os.path.realpath(sys.argv[0])) != 'main.py':
-        # f_1 = np.linspace(1, 600, 600)
-        # energies = np.linspace(1, 110, 600)  # electronvolt
         path = 'data/arecibo/'
         if not os.path.exists(path):
             path = 'program/data/arecibo/'
@@ -58,7 +69,7 @@ def interpolate_data(v, params):
 
 
 def read_dat_file(file):
-    """Return the contents of a .dat file as a single numpy row vector.
+    """Return the contents of a `.dat` file as a single numpy row vector.
 
     Arguments:
         file {str} -- the file name of the .dat file

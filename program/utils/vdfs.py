@@ -75,7 +75,7 @@ class F_KAPPA(VDF):
             sps.gamma(self.params['kappa'] + 1) / sps.gamma(self.params['kappa'] - 1 / 2)
 
     def f_0(self):
-        """Return the values along velocity v of a kappa VDF.
+        """Return the values along velocity `v` of a kappa VDF.
 
         Kappa VDF used in Gordeyev paper by Mace (2003).
 
@@ -110,7 +110,7 @@ class F_KAPPA_2(VDF):
             sps.gamma(self.params['kappa']) / sps.gamma(self.params['kappa'] - 3 / 2)
 
     def f_0(self):
-        """Return the values along velocity v of a kappa VDF.
+        """Return the values along velocity `v` of a kappa VDF.
 
         Kappa VDF used in dispersion relation paper by Ziebell, Gaelzer and Simoes (2017).
         Defined by Leubner (2002) (sec 3.2).
