@@ -507,13 +507,18 @@ class PlotHK:
                 self.name = args[1]
         else:
             path = '../../figures/'
+            # In use
             # self.name = 'hello_kitty_2020_6_9_2--28--4.npz'
-            self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+            # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+            # New
+            self.name = 'hello_kitty_2020_6_15_22--27--16.npz'
+            # self.name = 'hello_kitty_2020_6_15_15--50--18.npz'
         self.name = self.name.split('.')[0]
         try:
             self.file = np.load(path + self.name + '.npz')
         except Exception:
             sys.exit(print(f'Could not open file {path + self.name}'))
+        self.g = self.file['power']
 
     def shade(self):
         dots_x = []
@@ -540,14 +545,36 @@ class PlotHK:
             txt = plt.text(x, y, r'$\mathrm{}$'.format(int(i)), color='k', va='center', ha='right', fontsize=15)
             txt.set_path_effects([PathEffects.withStroke(linewidth=1, foreground='w')])
 
+    def shade2p0(self, *args):
+        """Mark points on the plasma line power plot
+        that map to any number of energy intervals.
+
+        *args can be any number of lists
+        or tuples of length 2 (E_min, E_max)
+        """
+        l = const.c / 430e6
+        deg = self.file['angle'][:self.file['fr'].shape[1]]
+        E_plasma = .5 * const.m_e * (self.file['fr'] * l / (2 * np.cos(deg * np.pi / 180)**(1)))**2 / const.eV
+        for a in args:
+            try:
+                if len(a) == 2:
+                    m = (a[0] < E_plasma) & (E_plasma < a[1])
+                    self.g[:, :30][m] = np.nan
+            except Exception:
+                pass
+
     def plot_it(self):
+        self.shade2p0([15.58, 18.42], [22.47, 23.75], [60, 64])
+        # self.shade2p0([20.29, 21.99], [22.45, 23.82], (25.38, 27.03), [32.82, 34.33], [46, 47], [61.55, 65])
         f = plt.figure(figsize=(8, 5))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         ax0 = plt.subplot(gs[0])
-        im = ax0.imshow(self.file['power'],
+        im = ax0.imshow(self.g,
                         extent=[0, len(self.file['angle']) - 1, np.min(self.file['density']), np.max(self.file['density'])],
                         origin='lower', aspect='auto', cmap='gist_heat')
-        self.shade()
+        current_cmap = im.get_cmap()
+        current_cmap.set_bad(color='green', alpha=.6)
+        # self.shade()
         plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
@@ -564,6 +591,12 @@ class PlotHK:
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
         plt.savefig(f'{self.name}.pgf', bbox_inches='tight', transparent=True)
+
+        # plt.figure(figsize=(8, 5))
+        # plt.imshow(self.file['fr'],
+        #        extent=[0, len(
+        #                self.file['angle']) - 1, np.min(self.file['density']), np.max(self.file['density'])],
+        #        origin='lower', aspect='auto', cmap='gist_heat')
         plt.show()
 
 
