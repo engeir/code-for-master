@@ -1,3 +1,6 @@
+"""Class containing two plotting styles used in `reproduce.py`.
+"""
+
 import os
 import time
 import datetime

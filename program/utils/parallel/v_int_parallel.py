@@ -40,7 +40,7 @@ def parallel(params, v, f, index):
     array[index[0]] = v_int_integrand(index[1], params, v, f)
 
 
-def v_int_integrand(y, params, v, f):
+def v_int_integrand(y, params, v, f):  # $\label{lst:velocity}$
     sin = np.sin(p(y, params) * v)
     val = v * sin * f
     res = si.simps(val, v)

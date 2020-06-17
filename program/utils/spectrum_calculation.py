@@ -78,7 +78,7 @@ def isr_spectrum(version, system_set, kappa=None, vdf=None, area=False, debye=No
         Xp_e = np.sqrt(1 / (2 * L_Debye(sys_set['NE'], sys_set['T_E'], char_vel=func.char_vel)**2 * \
                sys_set['K_RADAR']**2))
 
-    # In case we have $ \omega = 0 $ in our frequency array, we just ignore this warning message
+    # In case we have $ \omega = 0 $ in our frequency array, we just ignore this warning message $\label{lst:is_spectrum}$
     with np.errstate(divide='ignore', invalid='ignore'):
         Is = sys_set['NE'] / (np.pi * cf.w) * (np.imag(- Fe) * abs(1 + 2 * Xp_i**2 * Fi)**2 + (
             4 * Xp_e**4 * np.imag(- Fi) * abs(Fe)**2)) / abs(1 + 2 * Xp_e**2 * Fe + 2 * Xp_i**2 * Fi)**2

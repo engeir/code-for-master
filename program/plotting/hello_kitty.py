@@ -1,5 +1,8 @@
 """Script for calculating the peak power of the plasma line
 at different pitch angles, height and time of day.
+
+Already implemented are two versions, vol.1 and vol.2.
+Run from `main.py`.
 """
 
 import os
@@ -31,7 +34,11 @@ matplotlib.rcParams.update({
 
 class HelloKitty:
     def __init__(self, vol):
-        """Create the data and plot a Hello Kitty figure.
+        """Create the data and a "Hello Kitty" plot.
+
+        Both the plots and the raw data is saved to file, and the
+        ``PlotHK`` class can reproduce the plots based on the
+        saved data.
 
         In `config`, set
         ```

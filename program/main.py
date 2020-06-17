@@ -1,4 +1,9 @@
-"""Main script for controlling the calculation method of the IS spectrum.
+"""Main script for controlling the calculation of the IS spectrum.
+
+Calculate spectra from specified parameters as shown in the
+examples given in the class methods, create a new set-up with
+the `Reproduce` abstract base class in `reproduce.py` or use
+one of the pre-defined classes from `reproduce.py`.
 """
 
 # The start method of the multiprocessing module was changed from python3.7

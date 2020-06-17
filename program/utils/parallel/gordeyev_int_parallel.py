@@ -39,7 +39,7 @@ def integrate(m, T, nu, y, function, kappa=None):
     pool = mp.Pool()
     pool.map(func, idx)
     pool.close()
-    if function.the_type == 'kappa':
+    if function.the_type == 'kappa':  # $\label{lst:gordeyev_scale}$
         a = array / (2**(kappa - 1 / 2) * sps.gamma(kappa + 1 / 2))
     elif function.the_type == 'a_vdf':
         # Characteristic velocity scaling

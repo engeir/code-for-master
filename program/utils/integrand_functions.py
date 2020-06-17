@@ -1,4 +1,4 @@
-"""Script containing the integrands used in Gordeyev integrals.
+"""Script containing the integrands used in the Gordeyev integral.
 """
 
 from abc import ABC, abstractmethod, abstractproperty

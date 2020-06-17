@@ -1,3 +1,9 @@
+"""Reproduce the plots used in the thesis, and/or create new
+"experiments" based on the abstract base class `Reproduce`.
+
+Run from `main.py`.
+"""
+
 import sys
 from abc import ABC, abstractmethod
 
@@ -507,7 +513,7 @@ class PlotHK:
                 self.name = args[1]
         else:
             path = '../../figures/'
-            # In use
+            # Old
             # self.name = 'hello_kitty_2020_6_9_2--28--4.npz'
             # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
             # New
@@ -547,7 +553,7 @@ class PlotHK:
 
     def shade2p0(self, *args):
         """Mark points on the plasma line power plot
-        that map to any number of energy intervals.
+        that map to any number of energy (eV) intervals.
 
         *args can be any number of lists
         or tuples of length 2 (E_min, E_max)
@@ -564,7 +570,7 @@ class PlotHK:
                 pass
 
     def plot_it(self):
-        self.shade2p0([15.58, 18.42], [22.47, 23.75], [60, 64])
+        self.shade2p0([15.88, 18.72], [22.47, 23.75], [60, 64])
         # self.shade2p0([20.29, 21.99], [22.45, 23.82], (25.38, 27.03), [32.82, 34.33], [46, 47], [61.55, 65])
         f = plt.figure(figsize=(8, 5))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
@@ -592,11 +598,6 @@ class PlotHK:
                         top=False, labelbottom=False)
         plt.savefig(f'{self.name}.pgf', bbox_inches='tight', transparent=True)
 
-        # plt.figure(figsize=(8, 5))
-        # plt.imshow(self.file['fr'],
-        #        extent=[0, len(
-        #                self.file['angle']) - 1, np.min(self.file['density']), np.max(self.file['density'])],
-        #        origin='lower', aspect='auto', cmap='gist_heat')
         plt.show()
 
 
