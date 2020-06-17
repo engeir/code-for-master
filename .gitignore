@@ -5,5 +5,6 @@ __pycache__
 **/.mypy_cache/*
 .DS_Store
 .DS_Store?
-**/arecibo2/**
-**/Arecibo-photo-electrons/**
+**/arecibo2
+**/Arecibo-photo-electrons
+**/figures
