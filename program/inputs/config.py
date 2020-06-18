@@ -16,9 +16,9 @@ if os.path.basename(os.path.realpath(sys.argv[0])) != 'main.py':
     Y_N_POINTS = 1e1
     V_N_POINTS = 1e1
 else:
-    F_N_POINTS = 1e4  # Number of sample points in frequency
-    Y_N_POINTS = 8e4  # Number of sample points in integral variable
-    V_N_POINTS = 4e4  # Number of sample points in velocity integral variable
+    F_N_POINTS = 1e4  # Number of sample points in frequency, $N_f$
+    Y_N_POINTS = 8e4  # Number of sample points in integral variable, $N_y$
+    V_N_POINTS = 4e4  # Number of sample points in velocity integral variable, $N_v$
 # Adds one sample to get an even number of bins, which in
 # turn give better precision in the Simpson integration.
 Y_N_POINTS += 1

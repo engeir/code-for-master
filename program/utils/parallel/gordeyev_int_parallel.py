@@ -77,4 +77,5 @@ def shared_array(shape):
     return shared_arr
 
 
+# F_N_POINTS = $N_f$
 array = shared_array((int(cf.F_N_POINTS),))

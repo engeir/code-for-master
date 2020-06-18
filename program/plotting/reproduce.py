@@ -433,7 +433,8 @@ class PlotTemperature(Reproduce):
 
 
 class PlotHKExtremes(Reproduce):
-    """Reproduce figure with ridge plot over different temperatures.
+    """Reproduce figure with ridge plot over the extremes from
+    the Hello Kitty plot.
 
     In config, set
     ```

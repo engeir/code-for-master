@@ -40,7 +40,8 @@ def parallel(params, v, f, index):
     array[index[0]] = v_int_integrand(index[1], params, v, f)
 
 
-def v_int_integrand(y, params, v, f):  # $\label{lst:velocity}$
+# Velocity integral $\label{lst:velocity}$
+def v_int_integrand(y, params, v, f):
     sin = np.sin(p(y, params) * v)
     val = v * sin * f
     res = si.simps(val, v)
@@ -75,4 +76,5 @@ def shared_array(shape):
     return shared_arr
 
 
+# Y_N_POINTS = $N_y$
 array = shared_array((int(cf.Y_N_POINTS),))

@@ -72,9 +72,8 @@ class Simulation:
         Notes:
         ::
         Possible items in the sys_set dictionary include:
+            K_RADAR -- Radar wavenumber (= -4pi(radar frequency)/(speed of light)) [m^(-1)]
             B -- Magnetic field strength [T]
-            F0 -- Radar frequency [Hz]
-            F_MAX -- Range of frequency domain [Hz]
             MI -- Ion mass in atomic mass units [u]
             NE -- Electron number density [m^(-3)]
             NU_E -- Electron collision frequency [Hz]
