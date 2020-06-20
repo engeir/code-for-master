@@ -344,7 +344,8 @@ class PlotTemperature(Reproduce):
     def create_from_file(self, *args):
         """Accepts zero, one or two arguments.
 
-        If zero arguments are given, a default path is used to look for files.
+        If zero arguments are given,
+        a default path is used to look for files.
         ::
         If one argument is given, it should include
         the full path (with or without file ending).

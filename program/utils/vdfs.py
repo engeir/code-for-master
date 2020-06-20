@@ -112,8 +112,9 @@ class F_KAPPA_2(VDF):
     def f_0(self):
         """Return the values along velocity `v` of a kappa VDF.
 
-        Kappa VDF used in dispersion relation paper by Ziebell, Gaelzer and Simoes (2017).
-        Defined by Leubner (2002) (sec 3.2).
+        Kappa VDF used in dispersion relation paper by
+        Ziebell, Gaelzer and Simoes (2017). Defined by
+        Leubner (2002) (sec 3.2).
 
         Returns:
             np.ndarray -- 1D array with the VDF values at the sampled points

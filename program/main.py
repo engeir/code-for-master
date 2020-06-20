@@ -55,9 +55,9 @@ class Simulation:
     def create_data(self):
         """Create IS spectra.
 
-        The spectra should be appended to the `self.data` list, giving a list
-        of spectra that are themselves `np.ndarrays`, or into a list of such
-        lists as the aforementioned.
+        The spectra should be appended to the `self.data` list, giving a
+        list of spectra that are themselves `np.ndarrays`, or into a list
+        of such lists as the aforementioned.
 
         A list of spectra can be plotted in `plot_normal`, while a list of
         lists can be plotted by `plot_ridge`. When using `plot_ridge`, it is
@@ -72,7 +72,8 @@ class Simulation:
         Notes:
         ::
         Possible items in the sys_set dictionary include:
-            K_RADAR -- Radar wavenumber (= -4pi(radar frequency)/(speed of light)) [m^(-1)]
+            K_RADAR -- Radar wavenumber
+                       (= -4pi(radar frequency)/(speed of light)) [m^(-1)]
             B -- Magnetic field strength [T]
             MI -- Ion mass in atomic mass units [u]
             NE -- Electron number density [m^(-3)]

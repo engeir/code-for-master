@@ -51,8 +51,8 @@ class HelloKitty:
          is sufficient.
 
         Args:
-            vol {int or float} -- choose between two different input settings,
-                creating two different HK plots
+            vol {int or float} -- choose between two different
+            input settings, creating two different HK plots
         """
         self.vol = int(vol)
         if self.vol == 1:
