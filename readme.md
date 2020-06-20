@@ -56,7 +56,7 @@ which are given in `main.py`.
 ### Calculation method
 The program support different methods of calculating the spectrum, based on how you assume the particles to be distributed. This includes a Maxwellian distribution and a kappa distribution, in addition to any arbitrary isotropic distribution.
 
-The version that determine the calculation method is given in `main.py`, with additional keyword arguments.
+The version that determine the calculation method is described in `spectrum_calculation.py`, in the docstring of the function `isr_spectrum`, with additional keyword arguments.
 
 ## File structure <a name = "structure"></a>
 ```

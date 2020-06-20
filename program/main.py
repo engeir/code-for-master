@@ -114,8 +114,8 @@ class Simulation:
             self.legend_txt.append('Kappa')
         ```
         """
-        self.from_file = True
-        self.r.create_it('../figures/temp_ridge_neg.npz', from_file=self.from_file)
+        # self.from_file = True
+        self.r.create_it('../figures/temp_ridge.npz', from_file=self.from_file)
         self.f = self.r.f
         self.data = self.r.data
         self.legend_txt = self.r.legend_txt
@@ -168,5 +168,5 @@ class Simulation:
 
 
 if __name__ == '__main__':
-    # Simulation().run()
-    hk.HelloKitty(1).run()
+    Simulation().run()
+    # hk.HelloKitty(1).run()
