@@ -61,16 +61,15 @@ The version that determine the calculation method is given in `main.py`, with ad
 ## File structure <a name = "structure"></a>
 ```
 isr_spectrum/
-├── LICENSE
 ├── program/
 │   ├── data/
-│   │   ├── arecibo/
-│   │   │   ├── E4fe.dat
-│   │   │   ├── fe_zmuE-07.mat
-│   │   │   ├── SzeN.dat
-│   │   │   ├── theta_lims.dat
-│   │   │   ├── timeOfDayUT.dat
-│   │   │   └── z4fe.dat
+│   │   └── arecibo/
+│   │       ├── E4fe.dat
+│   │       ├── fe_zmuE-07.mat
+│   │       ├── SzeN.dat
+│   │       ├── theta_lims.dat
+│   │       ├── timeOfDayUT.dat
+│   │       └── z4fe.dat
 │   ├── inputs/
 │   │   ├── __init__.py
 │   │   └── config.py
@@ -85,14 +84,15 @@ isr_spectrum/
 │   │   └── test_ISR.py
 │   └── utils/
 │       ├── __init__.py
-│       ├── integrand_functions.py
 │       ├── parallel/
 │       │   ├── __init__.py
-│       │   ├── parallelization.py
+│       │   ├── gordeyev_int_parallel.py
 │       │   └── v_int_parallel.py
+│       ├── integrand_functions.py
 │       ├── read.py
 │       ├── spectrum_calculation.py
 │       └── vdfs.py
+├── LICENSE
 ├── readme.md
 └── requirements.txt
 ```
