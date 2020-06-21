@@ -16,7 +16,7 @@
 - [File structure](#structure)
 
 ## Info <a name = "info"></a>
-Makes plots of an incoherent scatter radar spectrum based on the theory presented in [Hagfors (1961)](https://agupubs.onlinelibrary.wiley.com/doi/epdf/10.1029/JZ066i006p01699) and [Mace (2003)](https://aip.scitation.org/doi/pdf/10.1063/1.1570828).
+Calculates an incoherent scatter radar spectrum based on the theory presented in [Hagfors (1961)](https://agupubs.onlinelibrary.wiley.com/doi/epdf/10.1029/JZ066i006p01699) and [Mace (2003)](https://aip.scitation.org/doi/pdf/10.1063/1.1570828).
 
 ## Installing <a name = "installing"></a>
 The program is built using `python3.8` and tested on **macOS**.
