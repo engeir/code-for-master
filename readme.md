@@ -1,7 +1,7 @@
 <h1 align="center">ISR spectrum</h1>
 <div align="center">
 
-![ISR spectrum](https://github.com/engeir/code-for-master/workflows/ISR%20spectrum/badge.svg)
+![ISR spectrum](https://github.com/engeir/isr_spectrum/workflows/ISR%20spectrum/badge.svg)
 
 </div>
 
