@@ -1,5 +1,5 @@
 """Script for calculating the peak power of the plasma line
-at different pitch angles, height and time of day.
+at different aspect angles, height and time of day.
 
 Already implemented are two versions, vol.1 and vol.2.
 Run from `main.py`.

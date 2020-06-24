@@ -83,7 +83,7 @@ class Simulation:
             T_I -- Ion temperature [K]
             T_ES -- Temperature of suprathermal electrons in the
                     gauss_shell VDF [K]
-            THETA -- Pitch angle [1]
+            THETA -- Aspect angle [1]
             Z -- Height of real data [100, 599] [km]
             mat_file -- Important when using real data and decides
                         the time of day
