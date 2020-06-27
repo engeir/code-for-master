@@ -517,9 +517,9 @@ class PlotHK:
             path = '../../figures/'
             # Old
             # self.name = 'hello_kitty_2020_6_9_2--28--4.npz'
-            # self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
+            self.name = 'hello_kitty_2020_6_8_22--1--51.npz'
             # New
-            self.name = 'hello_kitty_2020_6_15_22--27--16.npz'
+            # self.name = 'hello_kitty_2020_6_15_22--27--16.npz'
             # self.name = 'hello_kitty_2020_6_15_15--50--18.npz'
         self.name = self.name.split('.')[0]
         try:
@@ -572,7 +572,7 @@ class PlotHK:
                 pass
 
     def plot_it(self):
-        self.shade2p0([15.88, 18.72], [22.47, 23.75], [60, 64])
+        # self.shade2p0([15.88, 18.72], [22.47, 23.75], [60, 64])
         # self.shade2p0([20.29, 21.99], [22.45, 23.82], (25.38, 27.03), [32.82, 34.33], [46, 47], [61.55, 65])
         f = plt.figure(figsize=(8, 5))
         gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
@@ -582,14 +582,14 @@ class PlotHK:
                         origin='lower', aspect='auto', cmap='gist_heat')
         current_cmap = im.get_cmap()
         current_cmap.set_bad(color='green', alpha=.6)
-        # self.shade()
+        self.shade()
         plt.ylabel(r'Electron number density, $n_{\mathrm{e}}$')
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
         ax1 = plt.subplot(gs[1])
-        ax1.plot(self.file['angle'], 'k')
+        ax1.plot(180 - self.file['angle'], 'k')
         plt.xlim([0, len(self.file['angle']) - 1])
-        plt.yticks([30, 45, 60])
+        plt.yticks([150, 135, 120])
         plt.ylabel('Aspect angle')
         axs = []
         axs += [ax0]
@@ -604,4 +604,4 @@ class PlotHK:
 
 
 if __name__ == '__main__':
-    PlotHK().plot_it()
+    PlotHK().plot_it() # $\label{lst:plotHK}$
