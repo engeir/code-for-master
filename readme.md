@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![release](https://img.shields.io/github/release/engeir/isr_spectrum.svg)](https://github.com/engeir/isr_spectrum/releases/latest)
 ![ISR spectrum](https://github.com/engeir/isr_spectrum/workflows/ISR%20spectrum/badge.svg)
+![CodeQL](https://github.com/engeir/isr_spectrum/workflows/CodeQL/badge.svg)
 
 </div>
 
