@@ -27,7 +27,7 @@ Run
 ```
 pip install -r requirements.txt
 ```
-from directory `isr_spectrum` where `requirements.txt` is located to install all needed packages, and then navigate to the `program` folder:
+from directory `isr_spectrum` where [`requirements.txt`](requirements.txt) is located to install all needed packages, and then navigate to the [`program`](/program) folder:
 ```
 cd program
 ```
@@ -55,12 +55,12 @@ Z -- Height used for calculated distribution [100, 599] [km]
 mat_file -- Time of day for calculated distribution
 pitch_angle -- Pitch angle for calculated distribution
 ```
-which are given in `main.py`.
+which are given in [`main.py`](/program/main.py).
 
 ### Calculation method
 The program support different methods of calculating the spectrum, based on how you assume the particles to be distributed. This includes a Maxwellian distribution and a kappa distribution, in addition to any arbitrary isotropic distribution.
 
-The version that determine the calculation method is described in `spectrum_calculation.py`, in the docstring of the function `isr_spectrum`, with additional keyword arguments.
+The version that determine the calculation method is described in [`spectrum_calculation.py`](/program/utils/spectrum_calculation.py), in the docstring of the function [`isr_spectrum`](/program/utils/spectrum_calculation.py#L17), with additional keyword arguments.
 
 ## File structure <a name = "structure"></a>
 ```
